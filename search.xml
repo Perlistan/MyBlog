@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>C-Shard 语言基础2</title>
-    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
-    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
-      <categories>
-        <category>《C-Shard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>C-Shard 语言基础</title>
     <url>/MyBlog/2020/06/05/C-Shard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -93,6 +85,14 @@
       </categories>
   </entry>
   <entry>
+    <title>C-Shard 语言基础2</title>
+    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
+    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
+      <categories>
+        <category>《C-Shard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>MSSQL 常用语句-1</title>
     <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
     <content><![CDATA[<blockquote>
@@ -108,38 +108,6 @@
 <li>注意大数据下先筛选后分页</li>
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
-    <content><![CDATA[<blockquote>
-<p>关于 MSSQL 自动增长列倍增 ID 的问题</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
-</ul>
-<blockquote>
-<p>选择服务器</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
-<blockquote>
-<p>点击属性</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
-<blockquote>
-<p>在启动参数中输入 -t272</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
-<blockquote>
-<p>重新启动</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
 ]]></content>
       <categories>
         <category>MSSQL</category>
@@ -181,6 +149,38 @@
 ]]></content>
       <categories>
         <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
+    <content><![CDATA[<blockquote>
+<p>关于 MSSQL 自动增长列倍增 ID 的问题</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>MSSQL</category>
       </categories>
   </entry>
 </search>
