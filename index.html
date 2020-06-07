@@ -176,7 +176,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-08 01:01:39 / 修改时间：01:12:33" itemprop="dateCreated datePublished" datetime="2020-06-08T01:01:39+08:00">2020-06-08</time>
+              <time title="创建时间：2020-06-08 01:01:39 / 修改时间：01:15:15" itemprop="dateCreated datePublished" datetime="2020-06-08T01:01:39+08:00">2020-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -199,7 +199,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法："><a href="#使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法：" class="headerlink" title="使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法："></a>使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法：</h1><ul>
+          <a id="more"></a>
+
+<h1 id="使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法："><a href="#使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法：" class="headerlink" title="使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法："></a>使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法：</h1><ul>
 <li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
 </ul>
 <p><img src="/images/mssql-imgs/1.png" alt="选择服务器"></p>
@@ -250,7 +252,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-08 00:58:39 / 修改时间：01:11:54" itemprop="dateCreated datePublished" datetime="2020-06-08T00:58:39+08:00">2020-06-08</time>
+              <time title="创建时间：2020-06-08 00:58:39 / 修改时间：01:15:15" itemprop="dateCreated datePublished" datetime="2020-06-08T00:58:39+08:00">2020-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,7 +275,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="非特殊情况不建议用数据库做逻辑数据"><a href="#非特殊情况不建议用数据库做逻辑数据" class="headerlink" title="非特殊情况不建议用数据库做逻辑数据"></a>非特殊情况不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+          <a id="more"></a>
+
+<h1 id="非特殊情况不建议用数据库做逻辑数据"><a href="#非特殊情况不建议用数据库做逻辑数据" class="headerlink" title="非特殊情况不建议用数据库做逻辑数据"></a>非特殊情况不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -318,7 +322,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-08 00:54:40 / 修改时间：01:11:54" itemprop="dateCreated datePublished" datetime="2020-06-08T00:54:40+08:00">2020-06-08</time>
+              <time title="创建时间：2020-06-08 00:54:40 / 修改时间：01:15:15" itemprop="dateCreated datePublished" datetime="2020-06-08T00:54:40+08:00">2020-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -341,7 +345,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+          <a id="more"></a>
+
+<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
 
 <h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
 <li>offset 跳过 n 条数据，可单独使用</li>
@@ -399,7 +405,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-08 00:54:24" itemprop="dateModified" datetime="2020-06-08T00:54:24+08:00">2020-06-08</time>
+                <time title="修改时间：2020-06-08 01:15:15" itemprop="dateModified" datetime="2020-06-08T01:15:15+08:00">2020-06-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -422,7 +428,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+          <a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
 
 <h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
 
@@ -542,10 +550,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-06-05 03:04:44 / 修改时间：08:22:36" itemprop="dateCreated datePublished" datetime="2020-06-05T03:04:44+08:00">2020-06-05</time>
+              <time title="创建时间：2020-06-05 03:04:44" itemprop="dateCreated datePublished" datetime="2020-06-05T03:04:44+08:00">2020-06-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-08 01:15:15" itemprop="dateModified" datetime="2020-06-08T01:15:15+08:00">2020-06-08</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -567,15 +581,80 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>语言基础章节总结</strong></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/MyBlog/2020/06/05/C-Shard-Nutshell-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <a id="more"></a>
+
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>必须将重复的代码段封装成一个方法</li>
+<li>main 方法可以返回 int 类型，非 0 返回值代表一个错误</li>
+<li>main 方法可以接收字符串数组为参数</li>
+<li>如果需要使用关键字作为变量名需要在前面加 @ 符号</li>
+<li>C# 中所有值都是某种类型的实例</li>
+<li>值类型实例总是复制传递</li>
+<li>引用类型实例存在堆，引用地址存在栈</li>
+<li>decimal 不是原生数据类型</li>
+<li>整数类型默认以 int 类型进行计算；浮点数默认类型是 double</li>
+<li>数组中的元素总是存在连续的内存块中；数组是引用类型</li>
+<li>表达式本质上是值，最简单的表达式是常量和变量</li>
+<li>二元运算符（一般指数学运算）是左结合；赋值、lambda、null 合并运算和条件运算符都是右结合</li>
+<li>使用 ref out 将值类型参数变成引用传递</li>
+</ul>
+<hr>
+<h1 id="精度转换问题"><a href="#精度转换问题" class="headerlink" title="精度转换问题"></a>精度转换问题</h1><ul>
+<li>值类型小转大属于隐式转换，不会有损失；反之则需要显式转换且有损失；当一个非常大的 long 转换为 double 还是会有精度损失；整数比浮点数小，但精度比浮点数高</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> a = <span class="number">12345678901234567L</span>;</span><br><span class="line"><span class="keyword">double</span> b = a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际结果</span></span><br><span class="line">b = <span class="number">12345678901234568</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="一个类包含方法成员与数据成员"><a href="#一个类包含方法成员与数据成员" class="headerlink" title="一个类包含方法成员与数据成员"></a>一个类包含方法成员与数据成员</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 数据成员</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法成员</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">string</span> UserInfo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Power</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="实例成员与静态成员"><a href="#实例成员与静态成员" class="headerlink" title="实例成员与静态成员"></a>实例成员与静态成员</h1><p><strong>执行顺序：</strong></p>
+<ol>
+<li>静态成员</li>
+<li>静态构造方法</li>
+<li>实例成员</li>
+<li>构造方法</li>
+</ol>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 实例成员</span></span><br><span class="line"><span class="keyword">string</span> Name;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态成员，静态成员全局共享</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> num;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="值类型占用的内存大小就是其字段类型大小的总和"><a href="#值类型占用的内存大小就是其字段类型大小的总和" class="headerlink" title="值类型占用的内存大小就是其字段类型大小的总和"></a>值类型占用的内存大小就是其字段类型大小的总和</h1><ul>
+<li>共 12 byte，但 CLR 会以 8 byte 为参考乘字段的个数，最终大小为 16 byte</li>
+<li>最小 1 byte，不足 1 byte 的当 1 byte 用，例如 bool = 1 bit</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 4 byte</span></span><br><span class="line"><span class="keyword">int</span> a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 byte</span></span><br><span class="line"><span class="keyword">long</span> b;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="checked-整数溢出检查"><a href="#checked-整数溢出检查" class="headerlink" title="checked 整数溢出检查"></a>checked 整数溢出检查</h1><ul>
+<li>值类型溢出后会跳转到最大或最小值</li>
+<li>使用 checked 会检查指定代码，如果溢出则报错</li>
+<li>使用 unchecked 取消检查溢出（默认）</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="keyword">int</span>.MinValue;</span><br><span class="line">++a; <span class="comment">// a 等于 int.MaxValue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查溢出</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">checked</span></span><br><span class="line">&#123;</span><br><span class="line">  c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>浮点类型无法检查溢出，它们为正负无穷大</li>
+<li>一个 NaN 永远不等于其它值或其它 NaN 值，只能使用 IsNaN 判断；使用 Equals 判断两者 NaN 却是相等的</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">1.0</span> / <span class="number">-0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">0.0</span> / <span class="number">0.0</span> = <span class="comment">// NaN</span></span><br><span class="line">(<span class="number">1.0</span> / <span class="number">0.0</span>) - (<span class="number">1.0</span> / <span class="number">0.0</span>) = <span class="comment">// NaN（无穷减无穷）</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>float double 在内部都是用基于 2 来表示数值，只有基于 2 的数值才能精确表示；而 decimal 基于 10，它能精确表示基于 10、2、5 的数值，但 double decimal 都不能精确表示基于 10 的循环小数，这将影响值对比操作</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decimal</span> m = <span class="number">1</span>m / <span class="number">6</span>m <span class="comment">// 0.1666666666666666667M</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">1.0</span> / <span class="number">6.0</span> <span class="comment">// 0.166666666666</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h1><ul>
+<li>栈是存储局部变量和方法参数的内存；栈会在方法进入或退出时增加或减少，俗称进入和弹出操作</li>
+<li>栈是用来存放在方法中定义的一些基本类型变量和对象的引用变量；如果值类型是在方法内部创建（局部变量），则跟随方法入栈</li>
+<li>堆是保存对象实例的内存；新创建的对象会存在堆上并返回其引用地址，只要该地址不再被任何对象引用则被 GC 回收</li>
+<li>堆是用来存放由 new 创建的对象和数组，即动态申请的内存都存放在堆；如果值类型是引用类型的成员变量（例如在 new User() 里面有一个 public int a），也一起存储在堆上</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 此例来源于网络</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Point</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointX &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointY &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">StartProgram</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">double</span> pointX = <span class="number">100.1</span>;</span><br><span class="line">      InitialPoint(pointX);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitialPoint</span>(<span class="params"><span class="keyword">double</span> pointX</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">var</span> point = <span class="keyword">new</span> Point();</span><br><span class="line">      point.PointX = pointX;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例分析：假设主线程从 Start() 进入执行，我们分析一下方法中的变量在内存中的大致分配情况</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先将 Start() 方法指令压入栈底，然后压入局部变量 pointX ；紧接着将 InitialPoint() 方法压入栈底，形参 pointX</span></span><br><span class="line"><span class="comment">// 压入栈底，在堆上实例化 Point 对象（包括其成员变量 PointX 和 PointY)，并在栈上创建 point 变量指向堆上的 Point 对象</span></span><br><span class="line"><span class="comment">// 最后给成员变量 PointX 赋值</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"><a href="#静态字段也会被分配到堆中，但其会一直存活到应用程序域结束" class="headerlink" title="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"></a>静态字段也会被分配到堆中，但其会一直存活到应用程序域结束</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ABC</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">string</span> = <span class="string">"123"</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> = <span class="number">123</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
       
     </div>
 
