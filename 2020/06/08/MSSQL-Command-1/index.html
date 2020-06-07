@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"perlistan.github.io","root":"/MyBlog/","scheme":"Gemini","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","width":240,"display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="ROW_NUMBER 适用于 2008 及以下的版本123456789select * from (    select    UserName,    ROW_NUMBER() OVER(ORDER BY UserName) as row    from T_UserInfo) mainwhererowbetween 50 and 100;  OFFSET，FETCH NEXT 适用于 20">
+  <meta name="description" content="记录了常用的 MSSQL 语句方便开发">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常用语句-1">
 <meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/08/MSSQL-Command-1/index.html">
 <meta property="og:site_name" content="踩坑日记">
-<meta property="og:description" content="ROW_NUMBER 适用于 2008 及以下的版本123456789select * from (    select    UserName,    ROW_NUMBER() OVER(ORDER BY UserName) as row    from T_UserInfo) mainwhererowbetween 50 and 100;  OFFSET，FETCH NEXT 适用于 20">
+<meta property="og:description" content="记录了常用的 MSSQL 语句方便开发">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-06-07T16:54:40.479Z">
-<meta property="article:modified_time" content="2020-06-07T17:15:15.317Z">
+<meta property="article:modified_time" content="2020-06-07T17:31:47.755Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 
@@ -178,7 +178,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-08 00:54:40 / 修改时间：01:15:15" itemprop="dateCreated datePublished" datetime="2020-06-08T00:54:40+08:00">2020-06-08</time>
+              <time title="创建时间：2020-06-08 00:54:40 / 修改时间：01:31:47" itemprop="dateCreated datePublished" datetime="2020-06-08T00:54:40+08:00">2020-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -201,7 +201,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <a id="more"></a>
+        <blockquote>
+<p>记录了常用的 MSSQL 语句方便开发</p>
+</blockquote>
+<a id="more"></a>
 
 <h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
 
