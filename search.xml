@@ -119,26 +119,10 @@
       </categories>
   </entry>
   <entry>
-    <title>解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h1 id="使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法："><a href="#使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法：" class="headerlink" title="使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法："></a>使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法：</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
-</ul>
-<p><img src="/images/mssql-imgs/1.png" alt="选择服务器"></p>
-<p><img src="/images/mssql-imgs/2.png" alt="点击属性"></p>
-<p><img src="/images/mssql-imgs/3.png" alt="在启动参数中输入-t272"></p>
-<p><img src="/images/mssql-imgs/4.png" alt="重新启动"></p>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
     <title>常用语句-1</title>
     <url>/MyBlog/2020/06/05/MySQL-Command-1/</url>
-    <content><![CDATA[<a id="more"></a>
+    <content><![CDATA[<p>点击查看</p>
+<a id="more"></a>
 
 <h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
 
@@ -154,6 +138,23 @@
 ]]></content>
       <categories>
         <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<h1 id="使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法："><a href="#使用-SQL-Server-2012-时出现了主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况，要想不倍增可使用以下方法：" class="headerlink" title="使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法："></a>使用 SQL Server 2012 时出现了主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况，要想不倍增可使用以下方法：</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<p><img src="/images/mssql-imgs/1.png" alt="选择服务器"></p>
+<p><img src="/images/mssql-imgs/2.png" alt="点击属性"></p>
+<p><img src="/images/mssql-imgs/3.png" alt="在启动参数中输入-t272"></p>
+<p><img src="/images/mssql-imgs/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>MSSQL</category>
       </categories>
   </entry>
 </search>
