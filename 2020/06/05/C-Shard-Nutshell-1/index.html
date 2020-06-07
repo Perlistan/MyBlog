@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/MyBlog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/MyBlog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/MyBlog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/MyBlog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/MyBlog/css/main.css">
+
+
+<link rel="stylesheet" href="/MyBlog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"perlistan.github.io","root":"/MyBlog/","scheme":"Gemini","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","width":240,"display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="语言基础章节总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C-Shard 语言基础">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/05/C-Shard-Nutshell-1/index.html">
+<meta property="og:site_name" content="踩坑日记">
+<meta property="og:description" content="语言基础章节总结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-04T19:04:44.184Z">
+<meta property="article:modified_time" content="2020-06-05T00:22:36.183Z">
+<meta property="article:author" content="TAGOST">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/05/C-Shard-Nutshell-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C-Shard 语言基础 | 踩坑日记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/MyBlog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">踩坑日记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">私人笔记本</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/05/C-Shard-Nutshell-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/MyBlog/images/head.png">
+      <meta itemprop="name" content="TAGOST">
+      <meta itemprop="description" content="C# .NetCore Vue">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="踩坑日记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C-Shard 语言基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-05 03:04:44 / 修改时间：08:22:36" itemprop="dateCreated datePublished" datetime="2020-06-05T03:04:44+08:00">2020-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/MyBlog/categories/%E3%80%8AC-Shard-%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E3%80%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">《C-Shard 核心技术指南》笔记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>语言基础章节总结</strong></p>
+<a id="more"></a>
+
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>必须将重复的代码段封装成一个方法</li>
+<li>main 方法可以返回 int 类型，非 0 返回值代表一个错误</li>
+<li>main 方法可以接收字符串数组为参数</li>
+<li>如果需要使用关键字作为变量名需要在前面加 @ 符号</li>
+<li>C# 中所有值都是某种类型的实例</li>
+<li>值类型实例总是复制传递</li>
+<li>引用类型实例存在堆，引用地址存在栈</li>
+<li>decimal 不是原生数据类型</li>
+<li>整数类型默认以 int 类型进行计算；浮点数默认类型是 double</li>
+<li>数组中的元素总是存在连续的内存块中；数组是引用类型</li>
+<li>表达式本质上是值，最简单的表达式是常量和变量</li>
+<li>二元运算符（一般指数学运算）是左结合；赋值、lambda、null 合并运算和条件运算符都是右结合</li>
+<li>使用 ref out 将值类型参数变成引用传递</li>
+</ul>
+<hr>
+<h1 id="精度转换问题"><a href="#精度转换问题" class="headerlink" title="精度转换问题"></a>精度转换问题</h1><ul>
+<li>值类型小转大属于隐式转换，不会有损失；反之则需要显式转换且有损失；当一个非常大的 long 转换为 double 还是会有精度损失；整数比浮点数小，但精度比浮点数高</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> a = <span class="number">12345678901234567L</span>;</span><br><span class="line"><span class="keyword">double</span> b = a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际结果</span></span><br><span class="line">b = <span class="number">12345678901234568</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="一个类包含方法成员与数据成员"><a href="#一个类包含方法成员与数据成员" class="headerlink" title="一个类包含方法成员与数据成员"></a>一个类包含方法成员与数据成员</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 数据成员</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法成员</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">string</span> UserInfo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Power</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="实例成员与静态成员"><a href="#实例成员与静态成员" class="headerlink" title="实例成员与静态成员"></a>实例成员与静态成员</h1><p><strong>执行顺序：</strong></p>
+<ol>
+<li>静态成员</li>
+<li>静态构造方法</li>
+<li>实例成员</li>
+<li>构造方法</li>
+</ol>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 实例成员</span></span><br><span class="line"><span class="keyword">string</span> Name;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态成员，静态成员全局共享</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> num;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="值类型占用的内存大小就是其字段类型大小的总和"><a href="#值类型占用的内存大小就是其字段类型大小的总和" class="headerlink" title="值类型占用的内存大小就是其字段类型大小的总和"></a>值类型占用的内存大小就是其字段类型大小的总和</h1><ul>
+<li>共 12 byte，但 CLR 会以 8 byte 为参考乘字段的个数，最终大小为 16 byte</li>
+<li>最小 1 byte，不足 1 byte 的当 1 byte 用，例如 bool = 1 bit</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 4 byte</span></span><br><span class="line"><span class="keyword">int</span> a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 byte</span></span><br><span class="line"><span class="keyword">long</span> b;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="checked-整数溢出检查"><a href="#checked-整数溢出检查" class="headerlink" title="checked 整数溢出检查"></a>checked 整数溢出检查</h1><ul>
+<li>值类型溢出后会跳转到最大或最小值</li>
+<li>使用 checked 会检查指定代码，如果溢出则报错</li>
+<li>使用 unchecked 取消检查溢出（默认）</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="keyword">int</span>.MinValue;</span><br><span class="line">++a; <span class="comment">// a 等于 int.MaxValue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查溢出</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">checked</span></span><br><span class="line">&#123;</span><br><span class="line">  c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>浮点类型无法检查溢出，它们为正负无穷大</li>
+<li>一个 NaN 永远不等于其它值或其它 NaN 值，只能使用 IsNaN 判断；使用 Equals 判断两者 NaN 却是相等的</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">1.0</span> / <span class="number">-0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">0.0</span> / <span class="number">0.0</span> = <span class="comment">// NaN</span></span><br><span class="line">(<span class="number">1.0</span> / <span class="number">0.0</span>) - (<span class="number">1.0</span> / <span class="number">0.0</span>) = <span class="comment">// NaN（无穷减无穷）</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>float double 在内部都是用基于 2 来表示数值，只有基于 2 的数值才能精确表示；而 decimal 基于 10，它能精确表示基于 10、2、5 的数值，但 double decimal 都不能精确表示基于 10 的循环小数，这将影响值对比操作</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decimal</span> m = <span class="number">1</span>m / <span class="number">6</span>m <span class="comment">// 0.1666666666666666667M</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">1.0</span> / <span class="number">6.0</span> <span class="comment">// 0.166666666666</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h1><ul>
+<li>栈是存储局部变量和方法参数的内存；栈会在方法进入或退出时增加或减少，俗称进入和弹出操作</li>
+<li>栈是用来存放在方法中定义的一些基本类型变量和对象的引用变量；如果值类型是在方法内部创建（局部变量），则跟随方法入栈</li>
+<li>堆是保存对象实例的内存；新创建的对象会存在堆上并返回其引用地址，只要该地址不再被任何对象引用则被 GC 回收</li>
+<li>堆是用来存放由 new 创建的对象和数组，即动态申请的内存都存放在堆；如果值类型是引用类型的成员变量（例如在 new User() 里面有一个 public int a），也一起存储在堆上</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 此例来源于网络</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Point</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointX &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointY &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">StartProgram</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">double</span> pointX = <span class="number">100.1</span>;</span><br><span class="line">      InitialPoint(pointX);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitialPoint</span>(<span class="params"><span class="keyword">double</span> pointX</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">var</span> point = <span class="keyword">new</span> Point();</span><br><span class="line">      point.PointX = pointX;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例分析：假设主线程从 Start() 进入执行，我们分析一下方法中的变量在内存中的大致分配情况</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先将 Start() 方法指令压入栈底，然后压入局部变量 pointX ；紧接着将 InitialPoint() 方法压入栈底，形参 pointX</span></span><br><span class="line"><span class="comment">// 压入栈底，在堆上实例化 Point 对象（包括其成员变量 PointX 和 PointY)，并在栈上创建 point 变量指向堆上的 Point 对象</span></span><br><span class="line"><span class="comment">// 最后给成员变量 PointX 赋值</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"><a href="#静态字段也会被分配到堆中，但其会一直存活到应用程序域结束" class="headerlink" title="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"></a>静态字段也会被分配到堆中，但其会一直存活到应用程序域结束</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ABC</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">string</span> = <span class="string">"123"</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> = <span class="number">123</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/MyBlog/2020/06/05/C-Shard-Nutshell-2/" rel="next" title="C-Shard 语言基础2">
+      C-Shard 语言基础2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一句话攻略"><span class="nav-text">一句话攻略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#精度转换问题"><span class="nav-text">精度转换问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个类包含方法成员与数据成员"><span class="nav-text">一个类包含方法成员与数据成员</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例成员与静态成员"><span class="nav-text">实例成员与静态成员</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#值类型占用的内存大小就是其字段类型大小的总和"><span class="nav-text">值类型占用的内存大小就是其字段类型大小的总和</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#checked-整数溢出检查"><span class="nav-text">checked 整数溢出检查</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#栈和堆"><span class="nav-text">栈和堆</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"><span class="nav-text">静态字段也会被分配到堆中，但其会一直存活到应用程序域结束</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="TAGOST"
+      src="/MyBlog/images/head.png">
+  <p class="site-author-name" itemprop="name">TAGOST</p>
+  <div class="site-description" itemprop="description">C# .NetCore Vue</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/MyBlog/archives">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/MyBlog/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TAGOST</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/MyBlog/lib/anime.min.js"></script>
+  <script src="/MyBlog/lib/velocity/velocity.min.js"></script>
+  <script src="/MyBlog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/MyBlog/js/utils.js"></script>
+
+<script src="/MyBlog/js/motion.js"></script>
+
+
+<script src="/MyBlog/js/schemes/pisces.js"></script>
+
+
+<script src="/MyBlog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/MyBlog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
