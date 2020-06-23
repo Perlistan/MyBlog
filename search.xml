@@ -1,6 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>【MSSQL】常用语句</title>
+    <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
+    <content><![CDATA[<blockquote>
+<p>记录了常用的 MSSQL 语句方便开发</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
+<li>offset 跳过 n 条数据，可单独使用</li>
+<li>fetch next 是选择 n 行数据</li>
+<li>注意大数据下先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】varchar 自动增长列</title>
+    <url>/MyBlog/2020/06/08/MSSQL-QA-1/</url>
+    <content><![CDATA[<blockquote>
+<p>关于 MSSQL 字符串自动增长列连续 ID</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
+    <content><![CDATA[<blockquote>
+<p>关于 MSSQL 自动增长列倍增 ID 的问题</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MySQL】常用语句</title>
+    <url>/MyBlog/2020/06/05/MySQL-Command-1/</url>
+    <content><![CDATA[<blockquote>
+<p>记录了常用的 MySQL 语句方便开发</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据库索引</title>
+    <url>/MyBlog/2020/06/12/SQL-Index/</url>
+    <content><![CDATA[<blockquote>
+<p>数据库索引相关</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="索引简介"><a href="#索引简介" class="headerlink" title="索引简介"></a>索引简介</h1><p>众所周知，索引是关系型数据库中给数据库表中一列或多列的值排序后的存储结构，SQL 的主流索引结构有 B+ 树以及 Hash 结构，聚集索引以及非聚集索引用的是 B+树索引。这篇文章会总结 SQL Server 以及 MySQL 的 InnoDB 和 MyISAM 两种 SQL 的索引</p>
+<ul>
+<li><p>SQL Sever 索引类型有：唯一索引，主键索引，聚集索引，非聚集索引</p>
+</li>
+<li><p>MySQL 索引类型有：唯一索引，主键（聚集）索引，非聚集索引，全文索引</p>
+</li>
+</ul>
+<h1 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h1><ul>
+<li><p>数据行的物理顺序与列值（一般是主键的那一列）的逻辑顺序相同，一个表中只能拥有一个聚集索引</p>
+</li>
+<li><p>一个表就像新华字典，聚集索引就像是拼音目录，而每个字存放的页码就是我们的数据物理地址</p>
+</li>
+<li><p>如果要查询一个字，我们只需要查询该字对应在新华字典拼音目录对应的页码，就可以查询到对应字所在的位置</p>
+</li>
+<li><p>而拼音目录对应的 A-Z 的字顺序，和新华字典实际存储的字的顺序 A-Z 也是一样的，如果我们中文新出了一个字，拼音开头第一个是 B，那么他插入的时候也要按照拼音目录顺序插入到 A 字的后面</p>
+</li>
+</ul>
+<h2 id="聚集索引实际存放的示意图"><a href="#聚集索引实际存放的示意图" class="headerlink" title="聚集索引实际存放的示意图"></a>聚集索引实际存放的示意图</h2><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95%E5%9B%BE.png" alt="聚集索引图"></p>
+<ul>
+<li>从上图可以看出聚集索引的好处了，索引的叶子节点就是对应的数据节点（MySQL 的 MyISAM 除外，此存储引擎的聚集索引和非聚集索引只多了个唯一约束，其他没什么区别），可以直接获取到对应的全部列的数据，而非聚集索引在索引没有覆盖到对应的列的时候需要进行二次查询，后面会详细讲。<strong>因此在查询方面，聚集索引的速度往往会更占优势</strong></li>
+</ul>
+<h2 id="创建聚集索引"><a href="#创建聚集索引" class="headerlink" title="创建聚集索引"></a>创建聚集索引</h2><ul>
+<li><p>如果不创建索引，系统会自动创建一个隐藏列作为表的聚集索引</p>
+</li>
+<li><p>创建表的时候指定主键（注意：SQL Sever 默认主键为聚集索引，也可以指定为非聚集索引，而 MySQL 里主键就是聚集索引）</p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> t1(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">int</span> primary <span class="keyword">key</span> <span class="keyword">identity</span>(<span class="number">1</span>,<span class="number">1</span>),</span><br><span class="line">	<span class="keyword">name</span> <span class="keyword">nvarchar</span>(<span class="number">255</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建表后添加聚集索引</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- SQL Server</span></span><br><span class="line"><span class="keyword">create</span> clustered <span class="keyword">index</span> clustered_index <span class="keyword">on</span> table_name(colum_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- MySQL</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> primary <span class="keyword">key</span>(colum_name)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>值得注意的是，最好还是在创建表的同时添加聚集索引，由于聚集索引的物理顺序上的特殊性，因此如果之后再创建索引会导致索引列的排序变动，此时非常耗费时间及性能</li>
+</ul>
+<h1 id="非聚集索引"><a href="#非聚集索引" class="headerlink" title="非聚集索引"></a>非聚集索引</h1><ul>
+<li><p>该索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同，一个表中可以拥有多个非聚集索引</p>
+</li>
+<li><p>除了聚集索引以外的索引都是非聚集索引，只是人们想细分一下非聚集索引，分成普通索引、唯一索引、全文索引</p>
+</li>
+<li><p>如果非要把非聚集索引类比成现实生活中的东西，那么非聚集索引就像新华字典的偏旁字典，他结构顺序与实际存放顺序不一定一致</p>
+</li>
+</ul>
+<h2 id="非聚集索引示意图"><a href="#非聚集索引示意图" class="headerlink" title="非聚集索引示意图"></a>非聚集索引示意图</h2><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/%E9%9D%9E%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95.png" alt="非聚集索引"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>TCP/IP 学习总结</title>
+    <url>/MyBlog/2020/06/10/Web-TCPIP/</url>
+    <content><![CDATA[<blockquote>
+<p>TCP/IP 学习总结</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="OSI-七层协议，实际常用的就只有【应用、运输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、运输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、运输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、运输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/web/%E4%B8%83%E5%B1%82%E5%8D%8F%E8%AE%AE.png" alt="七层协议"></p>
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>TCP/IP 是众多网络协议中的统称</li>
+<li>物理层是在传输比特</li>
+<li>数据从底层到上层的迁移过程时，其标头会被删除；从上层往底层则加上标头</li>
+<li>通讯是双向的，不可能出现第四层跟第五层通信</li>
+<li>网络间的通信是基于 IP 地址而不是物理地址</li>
+<li>应用层、表示层、会话层已经合并，一般指 Web 应用或浏览器</li>
+</ul>
+<h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><ul>
+<li>TCP 是可靠的链接传输协议</li>
+<li>TCP 是长连接</li>
+</ul>
+<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
+<li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
+<li>IP 是为了找到服务器，端口号是为了找到指定的程序</li>
+<li>IP 是唯一的，端口上限是 65535，所以一个 IP 最多建立 65535 条链接</li>
+</ul>
+<h1 id="物理地址、IP-地址、端口地址"><a href="#物理地址、IP-地址、端口地址" class="headerlink" title="物理地址、IP 地址、端口地址"></a>物理地址、IP 地址、端口地址</h1><ul>
+<li>物理地址：一般指网卡硬件地址，硬件码唯一</li>
+<li>IP 地址：网络地址，外网 / 局域网 IP，网络唯一</li>
+<li>端口地址：同一台电脑上唯一</li>
+</ul>
+<h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
+<li>主要针对物理地址和 IP 地址</li>
+<li>单播：一个接收者，类似 P2P</li>
+<li>多播：多个接收者，类似群聊 224 开头</li>
+<li>广播：面向所有人，类似游戏公告 255.255.255.255</li>
+</ul>
+<h1 id="TCP-IP-版本"><a href="#TCP-IP-版本" class="headerlink" title="TCP/IP 版本"></a>TCP/IP 版本</h1><ul>
+<li>IPV4：地址空间不足和 32 位的低效率</li>
+<li>IPV5：基于七层协议，没有投入使用</li>
+<li>IPV6：扩大了地址空间，现在有 128 位</li>
+</ul>
+<h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
+<li>允许一些电脑在局限的 IP 范围内通信</li>
+<li>MAC 地址是局域网上的地址</li>
+<li>目前的局域网都是基于以太网实现</li>
+<li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
     <title>C-Shard 语言基础</title>
     <url>/MyBlog/2020/06/05/C-Shard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -90,97 +293,6 @@
     <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
       <categories>
         <category>《C-Shard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>MSSQL 常用语句-1</title>
-    <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
-    <content><![CDATA[<blockquote>
-<p>记录了常用的 MSSQL 语句方便开发</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-
-<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
-<li>offset 跳过 n 条数据，可单独使用</li>
-<li>fetch next 是选择 n 行数据</li>
-<li>注意大数据下先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/MSSQL-QA-2/</url>
-    <content><![CDATA[<blockquote>
-<p>关于 MSSQL 自动增长列倍增 ID 的问题</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
-</ul>
-<blockquote>
-<p>选择服务器</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
-<blockquote>
-<p>点击属性</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
-<blockquote>
-<p>在启动参数中输入 -t272</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
-<blockquote>
-<p>重新启动</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>varchar 自动增长列</title>
-    <url>/MyBlog/2020/06/08/MSSQL-QA-1/</url>
-    <content><![CDATA[<blockquote>
-<p>关于 MSSQL 字符串自动增长列连续 ID</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="非特殊情况不建议用数据库做逻辑数据"><a href="#非特殊情况不建议用数据库做逻辑数据" class="headerlink" title="非特殊情况不建议用数据库做逻辑数据"></a>非特殊情况不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>MySQL 常用语句-1</title>
-    <url>/MyBlog/2020/06/05/MySQL-Command-1/</url>
-    <content><![CDATA[<blockquote>
-<p>记录了常用的 MySQL 语句方便开发</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>MySQL</category>
       </categories>
   </entry>
 </search>
