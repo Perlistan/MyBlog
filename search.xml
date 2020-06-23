@@ -1,6 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C-Shard 语言基础</title>
+    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-1/</url>
+    <content><![CDATA[<blockquote>
+<p>语言基础章节的学习总结</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>必须将重复的代码段封装成一个方法</li>
+<li>main 方法可以返回 int 类型，非 0 返回值代表一个错误</li>
+<li>main 方法可以接收字符串数组为参数</li>
+<li>如果需要使用关键字作为变量名需要在前面加 @ 符号</li>
+<li>C# 中所有值都是某种类型的实例</li>
+<li>值类型实例总是复制传递</li>
+<li>引用类型实例存在堆，引用地址存在栈</li>
+<li>decimal 不是原生数据类型</li>
+<li>整数类型默认以 int 类型进行计算；浮点数默认类型是 double</li>
+<li>数组中的元素总是存在连续的内存块中；数组是引用类型</li>
+<li>表达式本质上是值，最简单的表达式是常量和变量</li>
+<li>二元运算符（一般指数学运算）是左结合；赋值、lambda、null 合并运算和条件运算符都是右结合</li>
+<li>使用 ref out 将值类型参数变成引用传递</li>
+</ul>
+<hr>
+<h1 id="精度转换问题"><a href="#精度转换问题" class="headerlink" title="精度转换问题"></a>精度转换问题</h1><ul>
+<li>值类型小转大属于隐式转换，不会有损失；反之则需要显式转换且有损失；当一个非常大的 long 转换为 double 还是会有精度损失；整数比浮点数小，但精度比浮点数高</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">long</span> a = <span class="number">12345678901234567L</span>;</span><br><span class="line"><span class="keyword">double</span> b = a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际结果</span></span><br><span class="line">b = <span class="number">12345678901234568</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="一个类包含方法成员与数据成员"><a href="#一个类包含方法成员与数据成员" class="headerlink" title="一个类包含方法成员与数据成员"></a>一个类包含方法成员与数据成员</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 数据成员</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法成员</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">string</span> UserInfo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Power</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="实例成员与静态成员"><a href="#实例成员与静态成员" class="headerlink" title="实例成员与静态成员"></a>实例成员与静态成员</h1><p><strong>执行顺序：</strong></p>
+<ol>
+<li>静态成员</li>
+<li>静态构造方法</li>
+<li>实例成员</li>
+<li>构造方法</li>
+</ol>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 实例成员</span></span><br><span class="line"><span class="keyword">string</span> Name;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态成员，静态成员全局共享</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> num;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="值类型占用的内存大小就是其字段类型大小的总和"><a href="#值类型占用的内存大小就是其字段类型大小的总和" class="headerlink" title="值类型占用的内存大小就是其字段类型大小的总和"></a>值类型占用的内存大小就是其字段类型大小的总和</h1><ul>
+<li>共 12 byte，但 CLR 会以 8 byte 为参考乘字段的个数，最终大小为 16 byte</li>
+<li>最小 1 byte，不足 1 byte 的当 1 byte 用，例如 bool = 1 bit</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 4 byte</span></span><br><span class="line"><span class="keyword">int</span> a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 byte</span></span><br><span class="line"><span class="keyword">long</span> b;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="checked-整数溢出检查"><a href="#checked-整数溢出检查" class="headerlink" title="checked 整数溢出检查"></a>checked 整数溢出检查</h1><ul>
+<li>值类型溢出后会跳转到最大或最小值</li>
+<li>使用 checked 会检查指定代码，如果溢出则报错</li>
+<li>使用 unchecked 取消检查溢出（默认）</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="keyword">int</span>.MinValue;</span><br><span class="line">++a; <span class="comment">// a 等于 int.MaxValue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查溢出</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">checked</span></span><br><span class="line">&#123;</span><br><span class="line">  c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>浮点类型无法检查溢出，它们为正负无穷大</li>
+<li>一个 NaN 永远不等于其它值或其它 NaN 值，只能使用 IsNaN 判断；使用 Equals 判断两者 NaN 却是相等的</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="number">1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">1.0</span> / <span class="number">-0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">0.0</span> / <span class="number">0.0</span> = <span class="comment">// NaN</span></span><br><span class="line">(<span class="number">1.0</span> / <span class="number">0.0</span>) - (<span class="number">1.0</span> / <span class="number">0.0</span>) = <span class="comment">// NaN（无穷减无穷）</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>float double 在内部都是用基于 2 来表示数值，只有基于 2 的数值才能精确表示；而 decimal 基于 10，它能精确表示基于 10、2、5 的数值，但 double decimal 都不能精确表示基于 10 的循环小数，这将影响值对比操作</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">decimal</span> m = <span class="number">1</span>m / <span class="number">6</span>m <span class="comment">// 0.1666666666666666667M</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">1.0</span> / <span class="number">6.0</span> <span class="comment">// 0.166666666666</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h1><ul>
+<li>栈是存储局部变量和方法参数的内存；栈会在方法进入或退出时增加或减少，俗称进入和弹出操作</li>
+<li>栈是用来存放在方法中定义的一些基本类型变量和对象的引用变量；如果值类型是在方法内部创建（局部变量），则跟随方法入栈</li>
+<li>堆是保存对象实例的内存；新创建的对象会存在堆上并返回其引用地址，只要该地址不再被任何对象引用则被 GC 回收</li>
+<li>堆是用来存放由 new 创建的对象和数组，即动态申请的内存都存放在堆；如果值类型是引用类型的成员变量（例如在 new User() 里面有一个 public int a），也一起存储在堆上</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 此例来源于网络</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Point</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointX &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointY &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">StartProgram</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">double</span> pointX = <span class="number">100.1</span>;</span><br><span class="line">      InitialPoint(pointX);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitialPoint</span>(<span class="params"><span class="keyword">double</span> pointX</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">var</span> point = <span class="keyword">new</span> Point();</span><br><span class="line">      point.PointX = pointX;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例分析：假设主线程从 Start() 进入执行，我们分析一下方法中的变量在内存中的大致分配情况</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先将 Start() 方法指令压入栈底，然后压入局部变量 pointX ；紧接着将 InitialPoint() 方法压入栈底，形参 pointX</span></span><br><span class="line"><span class="comment">// 压入栈底，在堆上实例化 Point 对象（包括其成员变量 PointX 和 PointY)，并在栈上创建 point 变量指向堆上的 Point 对象</span></span><br><span class="line"><span class="comment">// 最后给成员变量 PointX 赋值</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"><a href="#静态字段也会被分配到堆中，但其会一直存活到应用程序域结束" class="headerlink" title="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"></a>静态字段也会被分配到堆中，但其会一直存活到应用程序域结束</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ABC</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">string</span> = <span class="string">"123"</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> = <span class="number">123</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>《C-Shard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>C-Shard 语言基础2</title>
+    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
+    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
+      <categories>
+        <category>《C-Shard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】varchar 自动增长列</title>
+    <url>/MyBlog/2020/06/08/MSSQL-QA-1/</url>
+    <content><![CDATA[<blockquote>
+<p>关于 MSSQL 字符串自动增长列连续 ID</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【MSSQL】常用语句</title>
     <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
     <content><![CDATA[<blockquote>
@@ -16,20 +122,6 @@
 <li>注意大数据下先筛选后分页</li>
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MSSQL】varchar 自动增长列</title>
-    <url>/MyBlog/2020/06/08/MSSQL-QA-1/</url>
-    <content><![CDATA[<blockquote>
-<p>关于 MSSQL 字符串自动增长列连续 ID</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>SQL</category>
@@ -134,7 +226,7 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- SQL Server</span></span><br><span class="line"><span class="keyword">create</span> clustered <span class="keyword">index</span> clustered_index <span class="keyword">on</span> table_name(colum_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- MySQL</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> table_name <span class="keyword">add</span> primary <span class="keyword">key</span>(colum_name)</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>值得注意的是，最好还是在创建表的同时添加聚集索引，由于聚集索引的物理顺序上的特殊性，因此如果之后再创建索引会导致索引列的排序变动，此时非常耗费时间及性能</li>
+<li><strong>值得注意的是，最好还是在创建表的同时添加聚集索引，由于聚集索引的物理顺序上的特殊性，因此如果之后再创建索引会导致索引列的排序变动，此时非常耗费时间及性能</strong></li>
 </ul>
 <h1 id="非聚集索引"><a href="#非聚集索引" class="headerlink" title="非聚集索引"></a>非聚集索引</h1><ul>
 <li><p>该索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同，一个表中可以拥有多个非聚集索引</p>
@@ -158,7 +250,7 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="OSI-七层协议，实际常用的就只有【应用、运输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、运输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、运输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、运输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/web/%E4%B8%83%E5%B1%82%E5%8D%8F%E8%AE%AE.png" alt="七层协议"></p>
+<h1 id="OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/web/%E4%B8%83%E5%B1%82%E5%8D%8F%E8%AE%AE.png" alt="七层协议"></p>
 <h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
 <li>TCP/IP 是众多网络协议中的统称</li>
 <li>物理层是在传输比特</li>
@@ -166,6 +258,7 @@
 <li>通讯是双向的，不可能出现第四层跟第五层通信</li>
 <li>网络间的通信是基于 IP 地址而不是物理地址</li>
 <li>应用层、表示层、会话层已经合并，一般指 Web 应用或浏览器</li>
+<li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
 </ul>
 <h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><ul>
 <li>TCP 是可靠的链接传输协议</li>
@@ -198,101 +291,26 @@
 <li>目前的局域网都是基于以太网实现</li>
 <li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
 </ul>
+<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
+<li>第一次：客户端发送一条 SYN 数据请求服务端</li>
+<li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
+<li>第三次：客户端收到后返回 ACK 到服务端</li>
+</ul>
+<h2 id="2、数据通信"><a href="#2、数据通信" class="headerlink" title="2、数据通信"></a>2、数据通信</h2><ul>
+<li>客户端发送 Get / Post 等 HTTP 协议</li>
+<li>回报数据会分批接收</li>
+<li>在 HTTP 协议中默认情况是请求一次断开一次，可以用 keep-alive 保持链接</li>
+</ul>
+<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><ul>
+<li>端口是有限的，不释放就会让服务器崩溃，必须双方一起释放</li>
+<li>第一次：客户端发送 FIN 到服务端</li>
+<li>第二次：服务端回报 FIN + ACK 给客户端</li>
+<li>第三次：服务端发送 FIN 到客户端</li>
+<li>第四次：客户端回报 ACK 给服务端</li>
+</ul>
 ]]></content>
       <categories>
         <category>Web</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>C-Shard 语言基础</title>
-    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-1/</url>
-    <content><![CDATA[<blockquote>
-<p>语言基础章节的学习总结</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>必须将重复的代码段封装成一个方法</li>
-<li>main 方法可以返回 int 类型，非 0 返回值代表一个错误</li>
-<li>main 方法可以接收字符串数组为参数</li>
-<li>如果需要使用关键字作为变量名需要在前面加 @ 符号</li>
-<li>C# 中所有值都是某种类型的实例</li>
-<li>值类型实例总是复制传递</li>
-<li>引用类型实例存在堆，引用地址存在栈</li>
-<li>decimal 不是原生数据类型</li>
-<li>整数类型默认以 int 类型进行计算；浮点数默认类型是 double</li>
-<li>数组中的元素总是存在连续的内存块中；数组是引用类型</li>
-<li>表达式本质上是值，最简单的表达式是常量和变量</li>
-<li>二元运算符（一般指数学运算）是左结合；赋值、lambda、null 合并运算和条件运算符都是右结合</li>
-<li>使用 ref out 将值类型参数变成引用传递</li>
-</ul>
-<hr>
-<h1 id="精度转换问题"><a href="#精度转换问题" class="headerlink" title="精度转换问题"></a>精度转换问题</h1><ul>
-<li>值类型小转大属于隐式转换，不会有损失；反之则需要显式转换且有损失；当一个非常大的 long 转换为 double 还是会有精度损失；整数比浮点数小，但精度比浮点数高</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">long</span> a = <span class="number">12345678901234567L</span>;</span><br><span class="line"><span class="keyword">double</span> b = a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际结果</span></span><br><span class="line">b = <span class="number">12345678901234568</span>;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="一个类包含方法成员与数据成员"><a href="#一个类包含方法成员与数据成员" class="headerlink" title="一个类包含方法成员与数据成员"></a>一个类包含方法成员与数据成员</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 数据成员</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法成员</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">string</span> UserInfo &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Power</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="实例成员与静态成员"><a href="#实例成员与静态成员" class="headerlink" title="实例成员与静态成员"></a>实例成员与静态成员</h1><p><strong>执行顺序：</strong></p>
-<ol>
-<li>静态成员</li>
-<li>静态构造方法</li>
-<li>实例成员</li>
-<li>构造方法</li>
-</ol>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Test</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 实例成员</span></span><br><span class="line"><span class="keyword">string</span> Name;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态成员，静态成员全局共享</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> num;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Test</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="值类型占用的内存大小就是其字段类型大小的总和"><a href="#值类型占用的内存大小就是其字段类型大小的总和" class="headerlink" title="值类型占用的内存大小就是其字段类型大小的总和"></a>值类型占用的内存大小就是其字段类型大小的总和</h1><ul>
-<li>共 12 byte，但 CLR 会以 8 byte 为参考乘字段的个数，最终大小为 16 byte</li>
-<li>最小 1 byte，不足 1 byte 的当 1 byte 用，例如 bool = 1 bit</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 4 byte</span></span><br><span class="line"><span class="keyword">int</span> a;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 8 byte</span></span><br><span class="line"><span class="keyword">long</span> b;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="checked-整数溢出检查"><a href="#checked-整数溢出检查" class="headerlink" title="checked 整数溢出检查"></a>checked 整数溢出检查</h1><ul>
-<li>值类型溢出后会跳转到最大或最小值</li>
-<li>使用 checked 会检查指定代码，如果溢出则报错</li>
-<li>使用 unchecked 取消检查溢出（默认）</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="keyword">int</span>.MinValue;</span><br><span class="line">++a; <span class="comment">// a 等于 int.MaxValue</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查溢出</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">1000000</span>;</span><br><span class="line"><span class="keyword">int</span> c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">checked</span></span><br><span class="line">&#123;</span><br><span class="line">  c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>浮点类型无法检查溢出，它们为正负无穷大</li>
-<li>一个 NaN 永远不等于其它值或其它 NaN 值，只能使用 IsNaN 判断；使用 Equals 判断两者 NaN 却是相等的</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="number">1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">1.0</span> / <span class="number">-0.0</span> = <span class="comment">// 负无穷</span></span><br><span class="line"><span class="number">-1.0</span> / <span class="number">0.0</span> = <span class="comment">// 正无穷</span></span><br><span class="line"><span class="number">0.0</span> / <span class="number">0.0</span> = <span class="comment">// NaN</span></span><br><span class="line">(<span class="number">1.0</span> / <span class="number">0.0</span>) - (<span class="number">1.0</span> / <span class="number">0.0</span>) = <span class="comment">// NaN（无穷减无穷）</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>float double 在内部都是用基于 2 来表示数值，只有基于 2 的数值才能精确表示；而 decimal 基于 10，它能精确表示基于 10、2、5 的数值，但 double decimal 都不能精确表示基于 10 的循环小数，这将影响值对比操作</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">decimal</span> m = <span class="number">1</span>m / <span class="number">6</span>m <span class="comment">// 0.1666666666666666667M</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">1.0</span> / <span class="number">6.0</span> <span class="comment">// 0.166666666666</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="栈和堆"><a href="#栈和堆" class="headerlink" title="栈和堆"></a>栈和堆</h1><ul>
-<li>栈是存储局部变量和方法参数的内存；栈会在方法进入或退出时增加或减少，俗称进入和弹出操作</li>
-<li>栈是用来存放在方法中定义的一些基本类型变量和对象的引用变量；如果值类型是在方法内部创建（局部变量），则跟随方法入栈</li>
-<li>堆是保存对象实例的内存；新创建的对象会存在堆上并返回其引用地址，只要该地址不再被任何对象引用则被 GC 回收</li>
-<li>堆是用来存放由 new 创建的对象和数组，即动态申请的内存都存放在堆；如果值类型是引用类型的成员变量（例如在 new User() 里面有一个 public int a），也一起存储在堆上</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 此例来源于网络</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Point</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointX &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> PointY &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">StartProgram</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">double</span> pointX = <span class="number">100.1</span>;</span><br><span class="line">      InitialPoint(pointX);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitialPoint</span>(<span class="params"><span class="keyword">double</span> pointX</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">      <span class="keyword">var</span> point = <span class="keyword">new</span> Point();</span><br><span class="line">      point.PointX = pointX;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例分析：假设主线程从 Start() 进入执行，我们分析一下方法中的变量在内存中的大致分配情况</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先将 Start() 方法指令压入栈底，然后压入局部变量 pointX ；紧接着将 InitialPoint() 方法压入栈底，形参 pointX</span></span><br><span class="line"><span class="comment">// 压入栈底，在堆上实例化 Point 对象（包括其成员变量 PointX 和 PointY)，并在栈上创建 point 变量指向堆上的 Point 对象</span></span><br><span class="line"><span class="comment">// 最后给成员变量 PointX 赋值</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h1 id="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"><a href="#静态字段也会被分配到堆中，但其会一直存活到应用程序域结束" class="headerlink" title="静态字段也会被分配到堆中，但其会一直存活到应用程序域结束"></a>静态字段也会被分配到堆中，但其会一直存活到应用程序域结束</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ABC</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">string</span> = <span class="string">"123"</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> = <span class="number">123</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>《C-Shard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>C-Shard 语言基础2</title>
-    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
-    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
-      <categories>
-        <category>《C-Shard 核心技术指南》笔记</category>
       </categories>
   </entry>
 </search>
