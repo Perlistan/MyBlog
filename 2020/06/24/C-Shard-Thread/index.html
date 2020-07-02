@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/2.png">
 <meta property="article:published_time" content="2020-06-24T08:12:05.068Z">
-<meta property="article:modified_time" content="2020-07-02T20:36:18.599Z">
+<meta property="article:modified_time" content="2020-07-02T20:38:34.736Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
@@ -203,7 +203,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-03 04:36:18" itemprop="dateModified" datetime="2020-07-03T04:36:18+08:00">2020-07-03</time>
+                <time title="修改时间：2020-07-03 04:38:34" itemprop="dateModified" datetime="2020-07-03T04:38:34+08:00">2020-07-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -249,7 +249,7 @@
 <h2 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h2><ul>
 <li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">bool done &#x3D; false;</span><br><span class="line"></span><br><span class="line">var str &#x3D; &quot;asd&quot;;</span><br><span class="line"></span><br><span class="line">Action&lt;string&gt; threadStart &#x3D; (str) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 局部变量</span><br><span class="line">    var lee &#x3D; str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">"asd"</span>;</span><br><span class="line"></span><br><span class="line">Action&lt;<span class="keyword">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
 <h2 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h2><ul>

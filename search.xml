@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C-Shard 语言基础2</title>
+    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
+    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
+      <categories>
+        <category>《C-Shard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>C-Shard 语言基础</title>
     <url>/MyBlog/2020/06/05/C-Shard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -85,11 +93,24 @@
       </categories>
   </entry>
   <entry>
-    <title>C-Shard 语言基础2</title>
-    <url>/MyBlog/2020/06/05/C-Shard-Nutshell-2/</url>
-    <content><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
+    <title>【MSSQL】常用语句</title>
+    <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
+    <content><![CDATA[<blockquote>
+<p>记录了常用的 MSSQL 语句方便开发</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
+<li>offset 跳过 n 条数据，可单独使用</li>
+<li>fetch next 是选择 n 行数据</li>
+<li>注意大数据下先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-        <category>《C-Shard 核心技术指南》笔记</category>
+        <category>SQL</category>
       </categories>
   </entry>
   <entry>
@@ -118,7 +139,7 @@
 <h2 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h2><ul>
 <li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bool done &#x3D; false;</span><br><span class="line"></span><br><span class="line">var str &#x3D; &quot;asd&quot;;</span><br><span class="line"></span><br><span class="line">Action&lt;string&gt; threadStart &#x3D; (str) &#x3D;&gt;</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 局部变量</span><br><span class="line">    var lee &#x3D; str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">"asd"</span>;</span><br><span class="line"></span><br><span class="line">Action&lt;<span class="keyword">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
 <h2 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h2><ul>
@@ -145,27 +166,6 @@
 ]]></content>
       <categories>
         <category>C-Shard</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MSSQL】常用语句</title>
-    <url>/MyBlog/2020/06/08/MSSQL-Command-1/</url>
-    <content><![CDATA[<blockquote>
-<p>记录了常用的 MSSQL 语句方便开发</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    ROW_NUMBER() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="keyword">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) <span class="keyword">main</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="keyword">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-
-<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
-<li>offset 跳过 n 条数据，可单独使用</li>
-<li>fetch next 是选择 n 行数据</li>
-<li>注意大数据下先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
       </categories>
   </entry>
   <entry>
@@ -209,6 +209,30 @@
 <p>重新启动</p>
 </blockquote>
 <p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MySQL】常用语句</title>
+    <url>/MyBlog/2020/06/05/MySQL-Command-1/</url>
+    <content><![CDATA[<blockquote>
+<p>记录了常用的 MySQL 语句方便开发</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>SQL</category>
@@ -268,30 +292,6 @@
 </li>
 </ul>
 <h2 id="非聚集索引示意图"><a href="#非聚集索引示意图" class="headerlink" title="非聚集索引示意图"></a>非聚集索引示意图</h2><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/2.png" alt="非聚集索引"></p>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MySQL】常用语句</title>
-    <url>/MyBlog/2020/06/05/MySQL-Command-1/</url>
-    <content><![CDATA[<blockquote>
-<p>记录了常用的 MySQL 语句方便开发</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>SQL</category>
