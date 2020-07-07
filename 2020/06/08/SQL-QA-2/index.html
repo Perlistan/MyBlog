@@ -22,19 +22,22 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Web】TCP&#x2F;IP 学习总结">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/index.html">
+<meta property="og:title" content="【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/08/SQL-QA-2/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
-<meta property="article:published_time" content="2020-06-10T07:34:37.708Z">
-<meta property="article:modified_time" content="2020-07-06T10:28:58.712Z">
+<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png">
+<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png">
+<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png">
+<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png">
+<meta property="article:published_time" content="2020-06-07T17:01:39.657Z">
+<meta property="article:modified_time" content="2020-07-06T10:28:58.714Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
+<meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/08/SQL-QA-2/">
 
 
 <script id="page-configurations">
@@ -47,7 +50,7 @@
   };
 </script>
 
-  <title>【Web】TCP/IP 学习总结 | 踩坑日记</title>
+  <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题 | 踩坑日记</title>
   
 
 
@@ -172,7 +175,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/08/SQL-QA-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -185,7 +188,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Web】TCP/IP 学习总结
+          【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题
         </h1>
 
         <div class="post-meta">
@@ -195,7 +198,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-10 15:34:37" itemprop="dateCreated datePublished" datetime="2020-06-10T15:34:37+08:00">2020-06-10</time>
+              <time title="创建时间：2020-06-08 01:01:39" itemprop="dateCreated datePublished" datetime="2020-06-08T01:01:39+08:00">2020-06-08</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -210,7 +213,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/MyBlog/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+                  <a href="/MyBlog/categories/SQL/" itemprop="url" rel="index"><span itemprop="name">SQL</span></a>
                 </span>
             </span>
 
@@ -230,68 +233,25 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>TCP/IP 是众多网络协议中的统称</li>
-<li>通讯是双向的，不可能出现第四层跟第五层通信</li>
-<li>网络发现是基于 IP 地址而不是物理地址；数据转发才是基于物理地址</li>
-<li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
-<li>应用层、表示层、会话层已经合并，一般指 Web 应用</li>
-<li>HTTP 是协议，约束报文头规则</li>
+<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
 </ul>
-<h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><ul>
-<li>TCP 是可靠的链接传输协议</li>
-<li>三次握手、数据传输、四次挥手</li>
-<li>所有请求都是从应用层到物理层来回往返交换</li>
-</ul>
-<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端应用层 -&gt; 传输层 -&gt; 网络层 -&gt; 链路层 -&gt; 物理层 到服务端物理层 -&gt; 链路层 -&gt; 网络层 -&gt; 传输层 -&gt; 应用层</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>注意三次握手攻击，客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
-</ul>
-<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
-<li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
-<li>IP 是为了找到服务器，端口号是为了找到指定的程序</li>
-<li>IP 是唯一的，端口上限是 65535，所以一个 IP 最多建立 65535 条链接</li>
-</ul>
-<h1 id="物理地址、IP-地址、端口地址"><a href="#物理地址、IP-地址、端口地址" class="headerlink" title="物理地址、IP 地址、端口地址"></a>物理地址、IP 地址、端口地址</h1><ul>
-<li>物理地址：一般指网卡硬件地址，硬件码唯一</li>
-<li>IP 地址：网络地址，外网 / 局域网 IP，网络唯一</li>
-<li>端口地址：同一台电脑上唯一</li>
-</ul>
-<h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
-<li>主要针对物理地址和 IP 地址</li>
-<li>单播：一个接收者，类似 P2P</li>
-<li>多播：多个接收者，类似群聊 224 开头</li>
-<li>广播：面向所有人，类似游戏公告 255.255.255.255</li>
-</ul>
-<h1 id="TCP-IP-版本"><a href="#TCP-IP-版本" class="headerlink" title="TCP/IP 版本"></a>TCP/IP 版本</h1><ul>
-<li>IPV4：地址空间不足和 32 位的低效率</li>
-<li>IPV5：基于七层协议，没有投入使用</li>
-<li>IPV6：扩大了地址空间，现在有 128 位</li>
-</ul>
-<h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
-<li>允许一些电脑在局限的 IP 范围内通信</li>
-<li>目前的局域网都是基于以太网实现</li>
-<li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
-</ul>
-<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
-<li>第一次：客户端发送一条 SYN 数据请求服务端</li>
-<li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
-<li>第三次：客户端收到后返回 ACK 到服务端</li>
-</ul>
-<h2 id="2、数据通信"><a href="#2、数据通信" class="headerlink" title="2、数据通信"></a>2、数据通信</h2><ul>
-<li>客户端发送 Get / Post 等 HTTP 协议</li>
-<li>回报数据会分批接收</li>
-<li>如今的浏览器会自动开启 HTTP-Alive 保持链接</li>
-</ul>
-<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><ul>
-<li>端口是有限的，不释放就会让服务器崩溃，必须双方一起释放</li>
-<li>第一次：客户端发送 FIN 到服务端</li>
-<li>第二次：服务端回报 FIN + ACK 给客户端</li>
-<li>第三次：服务端发送 FIN 到客户端</li>
-<li>第四次：客户端回报 ACK 给服务端</li>
-</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
 
     </div>
 
@@ -307,12 +267,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/08/SQL-QA-2/" rel="prev" title="【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题">
-      <i class="fa fa-chevron-left"></i> 【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题
+    <a href="/MyBlog/2020/06/08/SQL-QA-1/" rel="prev" title="【MSSQL】varchar 自动增长列">
+      <i class="fa fa-chevron-left"></i> 【MSSQL】varchar 自动增长列
     </a></div>
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/12/SQL-Index/" rel="next" title="【SQL】数据库索引">
-      【SQL】数据库索引 <i class="fa fa-chevron-right"></i>
+    <a href="/MyBlog/2020/06/10/Web-TCPIP/" rel="next" title="【Web】TCP/IP 学习总结">
+      【Web】TCP/IP 学习总结 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -372,7 +332,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><span class="nav-text">OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一句话攻略"><span class="nav-text">一句话攻略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-TCP"><span class="nav-text">什么是 TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-Socket"><span class="nav-text">什么是 Socket</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理地址、IP-地址、端口地址"><span class="nav-text">物理地址、IP 地址、端口地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单播、多播、广播"><span class="nav-text">单播、多播、广播</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP-IP-版本"><span class="nav-text">TCP&#x2F;IP 版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局域网-LAN"><span class="nav-text">局域网 LAN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一般接口请求过程"><span class="nav-text">一般接口请求过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、三次握手"><span class="nav-text">1、三次握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、数据通信"><span class="nav-text">2、数据通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、四次挥手"><span class="nav-text">3、四次挥手</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><span class="nav-text">解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

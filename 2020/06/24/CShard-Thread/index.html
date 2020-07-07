@@ -20,22 +20,22 @@
     var CONFIG = {"hostname":"perlistan.github.io","root":"/MyBlog/","scheme":"Gemini","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","width":240,"display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="多线程与异步学习总结">
+  <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C-Shard 多线程&#x2F;异步">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/24/C-Shard-Thread/index.html">
+<meta property="og:title" content="【CShard】多线程&#x2F;异步">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/24/CShard-Thread/index.html">
 <meta property="og:site_name" content="踩坑日记">
-<meta property="og:description" content="多线程与异步学习总结">
+<meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/2.png">
 <meta property="article:published_time" content="2020-06-24T08:12:05.068Z">
-<meta property="article:modified_time" content="2020-07-02T20:38:34.736Z">
+<meta property="article:modified_time" content="2020-07-06T10:28:58.701Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/24/C-Shard-Thread/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-Thread/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>C-Shard 多线程/异步 | 踩坑日记</title>
+  <title>【CShard】多线程/异步 | 踩坑日记</title>
   
 
 
@@ -173,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/24/C-Shard-Thread/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-Thread/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -186,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C-Shard 多线程/异步
+          【CShard】多线程/异步
         </h1>
 
         <div class="post-meta">
@@ -203,7 +203,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-03 04:38:34" itemprop="dateModified" datetime="2020-07-03T04:38:34+08:00">2020-07-03</time>
+                <time title="修改时间：2020-07-06 18:28:58" itemprop="dateModified" datetime="2020-07-06T18:28:58+08:00">2020-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -211,7 +211,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/MyBlog/categories/C-Shard/" itemprop="url" rel="index"><span itemprop="name">C-Shard</span></a>
+                  <a href="/MyBlog/categories/CShard/" itemprop="url" rel="index"><span itemprop="name">CShard</span></a>
                 </span>
             </span>
 
@@ -227,49 +227,49 @@
 
       
         <blockquote>
-<p>多线程与异步学习总结</p>
+<p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
 <h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
 <li>单线程应用：只在主线程运行</li>
-<li>多线程应用：在一个进程（主线程）中调用多个线程</li>
-<li>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</li>
-<li>线程一旦结束则无法重启</li>
+<li>多线程应用：在主线程中调用多个线程运行</li>
+<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
+<li>不要人为的通过延时操控线程执行顺序</li>
 <li>Join 可以等待线程结束才继续运行，如果附带参数则代表等待 N 秒后还未运行完则跳出</li>
 <li>Sleep 会暂停当前线程，如果传入参数为 0，则放弃当前线程</li>
 <li>Yield 也会暂停当前线程，但只会调用同一 CPU 上的其它线程</li>
 <li>花费大部分时间等待某事发生称为 I/O-Bound</li>
 <li>花费大部分时间用 CPU 计算的工作叫 CPU-Bound</li>
-<li>不同线程影响同一变量称为线程安全</li>
+<li><strong>不同线程影响同一变量称为线程安全</strong></li>
 <li>子线程异常无法被主线程捕获</li>
 <li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
 </ul>
-<h2 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h2><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
-<h2 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h2><ul>
+<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
+<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
 <li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
 </ul>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">"asd"</span>;</span><br><span class="line"></span><br><span class="line">Action&lt;<span class="keyword">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
-<h2 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h2><ul>
+<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
 <li>一般使用 lock 关键字来实现线程安全</li>
 </ul>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">readonly</span> <span class="keyword">object</span> _lock = <span class="keyword">new</span> <span class="keyword">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><ul>
+<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
 <li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
 </ul>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">"等待接收信号！此时阻塞线程"</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">"接收到信号！"</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
 
-<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><ul>
+<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
 <li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
 <li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
 <li>最简单的执行线程池的方式就是 Task.Run</li>
 <li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
 <li>CLR 通过队列限流防止超额订阅</li>
 </ul>
-<h2 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h2><ul>
+<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
 <li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
 <li>await 关键字就是 Task.Wait</li>
 </ul>
@@ -288,10 +288,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/12/SQL-Index/" rel="prev" title="数据库索引">
-      <i class="fa fa-chevron-left"></i> 数据库索引
+    <a href="/MyBlog/2020/06/12/SQL-Index/" rel="prev" title="【SQL】数据库索引">
+      <i class="fa fa-chevron-left"></i> 【SQL】数据库索引
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/MyBlog/2020/07/06/Redis-Cache/" rel="next" title="【Redis】缓存穿透/布隆过滤器/分布式锁">
+      【Redis】缓存穿透/布隆过滤器/分布式锁 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -350,7 +353,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程"><span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的运行流程"><span class="nav-text">线程的运行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于匿名委托的闭包变量传递"><span class="nav-text">关于匿名委托的闭包变量传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程锁"><span class="nav-text">线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信号"><span class="nav-text">信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池"><span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TASK"><span class="nav-text">TASK</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程"><span class="nav-text">线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程的运行流程"><span class="nav-text">线程的运行流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于匿名委托的闭包变量传递"><span class="nav-text">关于匿名委托的闭包变量传递</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程锁"><span class="nav-text">线程锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#信号"><span class="nav-text">信号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池"><span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TASK"><span class="nav-text">TASK</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -365,13 +368,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/MyBlog/archives">
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/MyBlog/categories/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>

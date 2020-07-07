@@ -22,19 +22,17 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Web】TCP&#x2F;IP 学习总结">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/index.html">
+<meta property="og:title" content="【Redis】缓存穿透&#x2F;布隆过滤器&#x2F;分布式锁">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/07/06/Redis-Cache/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
-<meta property="article:published_time" content="2020-06-10T07:34:37.708Z">
-<meta property="article:modified_time" content="2020-07-06T10:28:58.712Z">
+<meta property="article:published_time" content="2020-07-05T17:30:53.979Z">
+<meta property="article:modified_time" content="2020-07-07T03:27:28.059Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/07/06/Redis-Cache/">
 
 
 <script id="page-configurations">
@@ -47,7 +45,7 @@
   };
 </script>
 
-  <title>【Web】TCP/IP 学习总结 | 踩坑日记</title>
+  <title>【Redis】缓存穿透/布隆过滤器/分布式锁 | 踩坑日记</title>
   
 
 
@@ -172,7 +170,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/10/Web-TCPIP/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/07/06/Redis-Cache/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -185,7 +183,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Web】TCP/IP 学习总结
+          【Redis】缓存穿透/布隆过滤器/分布式锁
         </h1>
 
         <div class="post-meta">
@@ -195,14 +193,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-10 15:34:37" itemprop="dateCreated datePublished" datetime="2020-06-10T15:34:37+08:00">2020-06-10</time>
+              <time title="创建时间：2020-07-06 01:30:53" itemprop="dateCreated datePublished" datetime="2020-07-06T01:30:53+08:00">2020-07-06</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-06 18:28:58" itemprop="dateModified" datetime="2020-07-06T18:28:58+08:00">2020-07-06</time>
+                <time title="修改时间：2020-07-07 11:27:28" itemprop="dateModified" datetime="2020-07-07T11:27:28+08:00">2020-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -210,7 +208,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/MyBlog/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+                  <a href="/MyBlog/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
                 </span>
             </span>
 
@@ -230,67 +228,48 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>TCP/IP 是众多网络协议中的统称</li>
-<li>通讯是双向的，不可能出现第四层跟第五层通信</li>
-<li>网络发现是基于 IP 地址而不是物理地址；数据转发才是基于物理地址</li>
-<li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
-<li>应用层、表示层、会话层已经合并，一般指 Web 应用</li>
-<li>HTTP 是协议，约束报文头规则</li>
+<h1 id="数据库瓶颈"><a href="#数据库瓶颈" class="headerlink" title="数据库瓶颈"></a>数据库瓶颈</h1><ul>
+<li>一般情况下数据库最先有瓶颈，最开始的解决方法是创建数据库连接池避免频繁创建链接（类似线程池）</li>
+<li>接下来是缓存层、分区、分表、分库、数据库集群</li>
+<li>目前常用的情况是用 Redis 作缓存层</li>
 </ul>
-<h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><ul>
-<li>TCP 是可靠的链接传输协议</li>
-<li>三次握手、数据传输、四次挥手</li>
-<li>所有请求都是从应用层到物理层来回往返交换</li>
+<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><ul>
+<li>请求 Redis 没有的数据导致直接查询数据库的行为叫缓存穿透</li>
+<li>可以将不存在的数据用 NULL 缓存进 Redis，但这种做法会被连续穿透产生 N 个 NULL 最后把 Redis 撑爆</li>
+<li>缓存雪崩与缓存击穿也属于穿透，是特殊情况下的表现</li>
+<li><strong>一般项目不需要解决穿透问题，因为数据太小数据库都能硬抗</strong></li>
 </ul>
-<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端应用层 -&gt; 传输层 -&gt; 网络层 -&gt; 链路层 -&gt; 物理层 到服务端物理层 -&gt; 链路层 -&gt; 网络层 -&gt; 传输层 -&gt; 应用层</span><br></pre></td></tr></table></figure>
+<h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><ul>
+<li>缓存层突然失效导致所有请求访问数据库</li>
+<li><strong>Redis 所有的 key 有效期不能一致，否则会统一过期；可以采用随机过期时间避免这个问题</strong></li>
+<li><strong>Redis 宕机也会雪崩；可以采用分布式集群 Redis</strong></li>
+<li>切片集群：将主数据分切多个部分存在多个 Redis</li>
+<li>副本集群：将主数据完整复制一份到多个 Redis</li>
+<li>HASH 一致性算法：根据 Redis 集群数量以 key 为 HASH 取模将数据分配到不同的 Redis</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 采用 HASH 环</span></span><br><span class="line"><span class="comment">// 假设环的大小为 2 的 32 次方</span></span><br><span class="line"><span class="comment">// 用 Redis 的 IP 取模</span></span><br><span class="line"></span><br><span class="line">Hash(ip) % (Redis数量 ^ <span class="number">32</span>) = Redis 服务器所在环的位置</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>注意三次握手攻击，客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
+<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><ul>
+<li>只缓存了一条数据并且失效</li>
 </ul>
-<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
-<li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
-<li>IP 是为了找到服务器，端口号是为了找到指定的程序</li>
-<li>IP 是唯一的，端口上限是 65535，所以一个 IP 最多建立 65535 条链接</li>
+<h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><ul>
+<li>布隆过滤器会创建一个布尔数组，将请求的数据经过 HASH 后在指定的数组位置上标记为 True，然后再用数据库的值经过哈希后进行对比，如果为 True，则数据存在</li>
+<li>布隆算法有一定错误率，如果布隆告诉你数据存在，那数据库可能不存在；如果布隆告诉你数据不存在，那就一定不存在</li>
+<li>布隆过滤器是一个用错误率换取空间和时间的算法</li>
+<li>如果使用一个 HASH 方法被暴力破解，那么可以使用多个 HASH 方法来解决。如果还被破解那就只能重写 HASH 方法</li>
+<li>多个 HASH 方法下只要有一个结果为 FALSE，那么直接返回不存在</li>
+<li>HASH 方法不是越多越好，布尔数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
+<li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
 </ul>
-<h1 id="物理地址、IP-地址、端口地址"><a href="#物理地址、IP-地址、端口地址" class="headerlink" title="物理地址、IP 地址、端口地址"></a>物理地址、IP 地址、端口地址</h1><ul>
-<li>物理地址：一般指网卡硬件地址，硬件码唯一</li>
-<li>IP 地址：网络地址，外网 / 局域网 IP，网络唯一</li>
-<li>端口地址：同一台电脑上唯一</li>
-</ul>
-<h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
-<li>主要针对物理地址和 IP 地址</li>
-<li>单播：一个接收者，类似 P2P</li>
-<li>多播：多个接收者，类似群聊 224 开头</li>
-<li>广播：面向所有人，类似游戏公告 255.255.255.255</li>
-</ul>
-<h1 id="TCP-IP-版本"><a href="#TCP-IP-版本" class="headerlink" title="TCP/IP 版本"></a>TCP/IP 版本</h1><ul>
-<li>IPV4：地址空间不足和 32 位的低效率</li>
-<li>IPV5：基于七层协议，没有投入使用</li>
-<li>IPV6：扩大了地址空间，现在有 128 位</li>
-</ul>
-<h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
-<li>允许一些电脑在局限的 IP 范围内通信</li>
-<li>目前的局域网都是基于以太网实现</li>
-<li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
-</ul>
-<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
-<li>第一次：客户端发送一条 SYN 数据请求服务端</li>
-<li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
-<li>第三次：客户端收到后返回 ACK 到服务端</li>
-</ul>
-<h2 id="2、数据通信"><a href="#2、数据通信" class="headerlink" title="2、数据通信"></a>2、数据通信</h2><ul>
-<li>客户端发送 Get / Post 等 HTTP 协议</li>
-<li>回报数据会分批接收</li>
-<li>如今的浏览器会自动开启 HTTP-Alive 保持链接</li>
-</ul>
-<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><ul>
-<li>端口是有限的，不释放就会让服务器崩溃，必须双方一起释放</li>
-<li>第一次：客户端发送 FIN 到服务端</li>
-<li>第二次：服务端回报 FIN + ACK 给客户端</li>
-<li>第三次：服务端发送 FIN 到客户端</li>
-<li>第四次：客户端回报 ACK 给服务端</li>
+<h1 id="布隆过滤器公式"><a href="#布隆过滤器公式" class="headerlink" title="布隆过滤器公式"></a>布隆过滤器公式</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fpp = <span class="number">0.01</span> <span class="comment">// 能接受的错误率</span></span><br><span class="line">n = <span class="number">10000</span> <span class="comment">// 数据库字段大小</span></span><br><span class="line">m = -(n * ln(fpp) / ln(<span class="number">2</span>) ^ <span class="number">2</span>) <span class="comment">// 合适的布尔数组长度</span></span><br><span class="line">k = m / n * ln(<span class="number">2</span>) <span class="comment">// 合适的 HASH 方法个数</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line">BF.ADD newFilter foo <span class="comment">// 添加元素</span></span><br><span class="line">BF.EXISTS newFilter foo <span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.MADD myFilter foo bar baz <span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar <span class="comment">// 查询多个元素</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span> <span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、需要导入的数据库指定字段的数量</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><ul>
+<li>单一应用的锁只能解决当前项目的问题，分布式应用下要有一个中间商来解决锁的问题</li>
+<li>死锁：抢到锁后无法释放锁</li>
+<li>正常情况下可以为分布式锁加过期时间来解锁，但在并发情况下可能无法正确设置过期时间</li>
+<li>可以使用消息队列来排队加锁避免并发产生的系列问题</li>
 </ul>
 
     </div>
@@ -307,12 +286,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/08/SQL-QA-2/" rel="prev" title="【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题">
-      <i class="fa fa-chevron-left"></i> 【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题
+    <a href="/MyBlog/2020/06/24/CShard-Thread/" rel="prev" title="【CShard】多线程/异步">
+      <i class="fa fa-chevron-left"></i> 【CShard】多线程/异步
     </a></div>
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/12/SQL-Index/" rel="next" title="【SQL】数据库索引">
-      【SQL】数据库索引 <i class="fa fa-chevron-right"></i>
+    <a href="/MyBlog/2020/07/06/NetCore-gRPC/" rel="next" title="【.Net Core】gRPC">
+      【.Net Core】gRPC <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -372,7 +351,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><span class="nav-text">OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一句话攻略"><span class="nav-text">一句话攻略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-TCP"><span class="nav-text">什么是 TCP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是-Socket"><span class="nav-text">什么是 Socket</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理地址、IP-地址、端口地址"><span class="nav-text">物理地址、IP 地址、端口地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单播、多播、广播"><span class="nav-text">单播、多播、广播</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP-IP-版本"><span class="nav-text">TCP&#x2F;IP 版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局域网-LAN"><span class="nav-text">局域网 LAN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一般接口请求过程"><span class="nav-text">一般接口请求过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、三次握手"><span class="nav-text">1、三次握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、数据通信"><span class="nav-text">2、数据通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、四次挥手"><span class="nav-text">3、四次挥手</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据库瓶颈"><span class="nav-text">数据库瓶颈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存穿透"><span class="nav-text">缓存穿透</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存雪崩"><span class="nav-text">缓存雪崩</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存击穿"><span class="nav-text">缓存击穿</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#布隆过滤器"><span class="nav-text">布隆过滤器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#布隆过滤器公式"><span class="nav-text">布隆过滤器公式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-中使用布隆过滤器插件"><span class="nav-text">Redis 中使用布隆过滤器插件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分布式锁"><span class="nav-text">分布式锁</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
