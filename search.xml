@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>【CShard】语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【Asp.Net】全局异常处理</title>
     <url>/MyBlog/2020/07/07/Asp.Net-Exception/</url>
     <content><![CDATA[<blockquote>
@@ -29,59 +18,83 @@
       </categories>
   </entry>
   <entry>
-    <title>【Redis】缓存穿透/布隆过滤器/分布式锁</title>
-    <url>/MyBlog/2020/07/06/Redis-Cache/</url>
+    <title>【CShard】Socket</title>
+    <url>/MyBlog/2020/07/20/CShard-Socket/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="数据库瓶颈"><a href="#数据库瓶颈" class="headerlink" title="数据库瓶颈"></a>数据库瓶颈</h1><ul>
-<li>一般情况下数据库最先有瓶颈，最开始的解决方法是创建数据库连接池避免频繁创建链接（类似线程池）</li>
-<li>接下来是缓存层、分区、分表、分库、数据库集群</li>
-<li>目前常用的情况是用 Redis 作缓存层</li>
-</ul>
-<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><ul>
-<li>请求 Redis 没有的数据导致直接查询数据库的行为叫缓存穿透</li>
-<li>可以将不存在的数据用 NULL 缓存进 Redis，但这种做法会被连续穿透产生 N 个 NULL 最后把 Redis 撑爆</li>
-<li>缓存雪崩与缓存击穿也属于穿透，是特殊情况下的表现</li>
-<li><strong>一般项目不需要解决穿透问题，因为数据太小数据库都能硬抗</strong></li>
-</ul>
-<h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><ul>
-<li>缓存层突然失效导致所有请求访问数据库</li>
-<li><strong>Redis 所有的 key 有效期不能一致，否则会统一过期；可以采用随机过期时间避免这个问题</strong></li>
-<li><strong>Redis 宕机也会雪崩；可以采用分布式集群 Redis</strong></li>
-<li>切片集群：将主数据分切多个部分存在多个 Redis</li>
-<li>副本集群：将主数据完整复制一份到多个 Redis</li>
-<li>HASH 一致性算法：根据 Redis 集群数量以 key 为 HASH 取模将数据分配到不同的 Redis</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 采用 HASH 环</span></span><br><span class="line"><span class="comment">// 假设环的大小为 2 的 32 次方</span></span><br><span class="line"><span class="comment">// 用 Redis 的 IP 取模</span></span><br><span class="line"></span><br><span class="line">Hash(ip) % (Redis数量 ^ <span class="number">32</span>) = Redis 服务器所在环的位置</span><br></pre></td></tr></table></figure>
+<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><p>- </p>
+]]></content>
+      <categories>
+        <category>CShard</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【CShard】多线程/异步</title>
+    <url>/MyBlog/2020/06/24/CShard-Thread/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
 
-<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><ul>
-<li>只缓存了一条数据并且失效</li>
+<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
+<li>单线程应用：只在主线程运行</li>
+<li>多线程应用：在主线程中调用多个线程运行</li>
+<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
+<li>不要人为的通过延时操控线程执行顺序</li>
+<li>花费大部分时间等待某事发生称为 I/O-Bound</li>
+<li>花费大部分时间用 CPU 计算的工作叫 CPU-Bound</li>
+<li><strong>不同线程影响同一变量称为线程安全</strong></li>
+<li>子线程异常无法被主线程捕获</li>
+<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
+<li>线程效率并不是线性增长，它还需要一些管理成本</li>
+<li></li>
 </ul>
-<h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><ul>
-<li>布隆过滤器会创建一个布尔数组，将请求的数据经过 HASH 后在指定的数组位置上标记为 True，然后再用数据库的值经过哈希后进行对比，如果为 True，则数据存在</li>
-<li>布隆算法有一定错误率，如果布隆告诉你数据存在，那数据库可能不存在；如果布隆告诉你数据不存在，那就一定不存在</li>
-<li>布隆过滤器是一个用错误率换取空间和时间的算法</li>
-<li>如果使用一个 HASH 方法被暴力破解，那么可以使用多个 HASH 方法来解决。如果还被破解那就只能重写 HASH 方法</li>
-<li>多个 HASH 方法下只要有一个结果为 FALSE，那么直接返回不存在</li>
-<li>HASH 方法不是越多越好，布尔数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
-<li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
+<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
+<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
+<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
 </ul>
-<h1 id="布隆过滤器公式"><a href="#布隆过滤器公式" class="headerlink" title="布隆过滤器公式"></a>布隆过滤器公式</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">fpp = <span class="number">0.01</span> <span class="comment">// 能接受的错误率</span></span><br><span class="line">n = <span class="number">10000</span> <span class="comment">// 数据库字段大小</span></span><br><span class="line">m = -(n * ln(fpp) / ln(<span class="number">2</span>) ^ <span class="number">2</span>) <span class="comment">// 合适的布尔数组长度</span></span><br><span class="line">k = m / n * ln(<span class="number">2</span>) <span class="comment">// 合适的 HASH 方法个数</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">"asd"</span>;</span><br><span class="line"></span><br><span class="line">Action&lt;<span class="keyword">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
 
-<h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line">BF.ADD newFilter foo <span class="comment">// 添加元素</span></span><br><span class="line">BF.EXISTS newFilter foo <span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.MADD myFilter foo bar baz <span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar <span class="comment">// 查询多个元素</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span> <span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、需要导入的数据库指定字段的数量</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
+<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
+<li>一般使用 lock 关键字来实现线程安全</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">readonly</span> <span class="keyword">object</span> _lock = <span class="keyword">new</span> <span class="keyword">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><ul>
-<li>单一应用的锁只能解决当前项目的问题，分布式应用下要有一个中间商来解决锁的问题</li>
-<li>死锁：抢到锁后无法释放锁</li>
-<li>正常情况下可以为分布式锁加过期时间来解锁，但在并发情况下可能无法正确设置过期时间</li>
-<li>可以使用消息队列来排队加锁避免并发产生的系列问题</li>
+<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
+<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">"等待接收信号！此时阻塞线程"</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">"接收到信号！"</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
+
+<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
+<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
+<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
+<li>最简单的执行线程池的方式就是 Task.Run</li>
+<li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
+<li>CLR 通过队列限流防止超额订阅</li>
+</ul>
+<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
+<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
+<li>await 关键字就是 Task.Wait</li>
+<li></li>
 </ul>
 ]]></content>
       <categories>
-        <category>Redis</category>
+        <category>CShard</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【CShard】语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
       </categories>
   </entry>
   <entry>
@@ -169,6 +182,123 @@
       </categories>
   </entry>
   <entry>
+    <title>【Centos7】MariaDB 设置</title>
+    <url>/MyBlog/2020/07/08/Centos-MariaDB/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
+      <categories>
+        <category>Centos</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Effekseer】RMMZ 技能粒子特效软件教程</title>
+    <url>/MyBlog/2020/07/10/Other-Effekseer/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="一般说明"><a href="#一般说明" class="headerlink" title="一般说明"></a>一般说明</h1><ul>
+<li>mean：常量固定值</li>
+<li>dev：倍率</li>
+<li>1 秒 = 60 帧</li>
+</ul>
+<h1 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h1><ul>
+<li>Window -&gt; Recorder</li>
+<li>可以选择导出的分辨率、格式、图层、帧动画</li>
+</ul>
+<h1 id="Basic-Settings-基本设置"><a href="#Basic-Settings-基本设置" class="headerlink" title="Basic Settings 基本设置"></a>Basic Settings 基本设置</h1><ul>
+<li>visibility：显示/隐藏</li>
+<li>name：图层名</li>
+<li>spawn count：生成的图层数量</li>
+<li>infinite：无限数量</li>
+<li>inherit position：继承坐标</li>
+<li>inherit rotation：继承旋转</li>
+<li>inherit scale：继承大小</li>
+<li>destory after time：生命周期结束后清除对象</li>
+<li>destory with parent：将父类一起清除</li>
+<li>destory when no：？</li>
+<li>time to live：生命周期（帧）</li>
+<li>spawn rate：生命周期 / 这个值 = 实际生命周期；千万不要设为 0，会瞬间生成一车粒子电脑直接爆炸</li>
+<li>initial delay：特效开始播放时间（帧）</li>
+</ul>
+<h1 id="Position-坐标"><a href="#Position-坐标" class="headerlink" title="Position 坐标"></a>Position 坐标</h1><ul>
+<li>set position：常规坐标</li>
+<li>pva：递增坐标</li>
+<li>easing：时间轴坐标</li>
+<li>f-curve：？</li>
+</ul>
+<h1 id="Rotation-旋转"><a href="#Rotation-旋转" class="headerlink" title="Rotation 旋转"></a>Rotation 旋转</h1><ul>
+<li>fixed angle：常规角度</li>
+<li>pva：递增角度</li>
+<li>easing：时间轴角度</li>
+</ul>
+<h1 id="Base-Render-Settings-贴图渲染设置"><a href="#Base-Render-Settings-贴图渲染设置" class="headerlink" title="Base Render Settings 贴图渲染设置"></a>Base Render Settings 贴图渲染设置</h1><ul>
+<li>texture：贴图</li>
+<li>fade-in：淡入</li>
+<li>fade-out：淡出</li>
+<li>frame count：淡出淡入的值</li>
+</ul>
+<h2 id="blend-颜色叠加方式，类似-PS"><a href="#blend-颜色叠加方式，类似-PS" class="headerlink" title="blend 颜色叠加方式，类似 PS"></a>blend 颜色叠加方式，类似 PS</h2><ul>
+<li>opacity：无透明度</li>
+<li>blend：有透明度</li>
+<li>additive：明度叠加</li>
+<li>subtract：减去</li>
+<li>multiply：叠加</li>
+</ul>
+<h2 id="UV-动画类型"><a href="#UV-动画类型" class="headerlink" title="UV 动画类型"></a>UV 动画类型</h2><ul>
+<li>standard：静态</li>
+<li>scroll：循环滚动</li>
+</ul>
+<h1 id="Render-Settings-渲染扩展设置"><a href="#Render-Settings-渲染扩展设置" class="headerlink" title="Render Settings 渲染扩展设置"></a>Render Settings 渲染扩展设置</h1><h2 id="sprite-精灵"><a href="#sprite-精灵" class="headerlink" title="sprite 精灵"></a>sprite 精灵</h2><ul>
+<li>vertex color 自定义颜色</li>
+<li>vertex coords 自定义贴图形状</li>
+</ul>
+<h3 id="color-all-颜色叠加"><a href="#color-all-颜色叠加" class="headerlink" title="color all 颜色叠加"></a>color all 颜色叠加</h3><ul>
+<li>fixed：固定值</li>
+<li>random：随机范围</li>
+<li>easing：时间轴范围</li>
+<li>f-curve：？</li>
+</ul>
+<h3 id="configuration-配置"><a href="#configuration-配置" class="headerlink" title="configuration 配置"></a>configuration 配置</h3><ul>
+<li>Billboard：固定面向镜头</li>
+<li>Rotated Billboard：支持旋转</li>
+</ul>
+<h2 id="ring-光环"><a href="#ring-光环" class="headerlink" title="ring 光环"></a>ring 光环</h2><ul>
+<li>rendering order：</li>
+</ul>
+<h3 id="shape-形状"><a href="#shape-形状" class="headerlink" title="shape 形状"></a>shape 形状</h3><ul>
+<li>dount：圆形</li>
+<li>crescent：半圆</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【DDD】ABP 基础</title>
+    <url>/MyBlog/2020/07/09/DDD-ABP/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="DDD-分层"><a href="#DDD-分层" class="headerlink" title="DDD 分层"></a>DDD 分层</h1><ul>
+<li>Appliction 层里存放 DTO 与接口和实现类</li>
+<li>Domain 层里放 Entity，聚合根相当于 BaseEntity 包含 Id 等公共属性</li>
+<li></li>
+</ul>
+]]></content>
+      <categories>
+        <category>DDD</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【.Net Core】gRPC</title>
     <url>/MyBlog/2020/07/06/NetCore-gRPC/</url>
     <content><![CDATA[<blockquote>
@@ -180,58 +310,63 @@
       </categories>
   </entry>
   <entry>
-    <title>【CShard】多线程/异步</title>
-    <url>/MyBlog/2020/06/24/CShard-Thread/</url>
+    <title>【Redis】缓存穿透/布隆过滤器/分布式锁</title>
+    <url>/MyBlog/2020/07/06/Redis-Cache/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
-<li>单线程应用：只在主线程运行</li>
-<li>多线程应用：在主线程中调用多个线程运行</li>
-<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
-<li>不要人为的通过延时操控线程执行顺序</li>
-<li>Join 可以等待线程结束才继续运行，如果附带参数则代表等待 N 秒后还未运行完则跳出</li>
-<li>Sleep 会暂停当前线程，如果传入参数为 0，则放弃当前线程</li>
-<li>Yield 也会暂停当前线程，但只会调用同一 CPU 上的其它线程</li>
-<li>花费大部分时间等待某事发生称为 I/O-Bound</li>
-<li>花费大部分时间用 CPU 计算的工作叫 CPU-Bound</li>
-<li><strong>不同线程影响同一变量称为线程安全</strong></li>
-<li>子线程异常无法被主线程捕获</li>
-<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
+<h1 id="数据库瓶颈"><a href="#数据库瓶颈" class="headerlink" title="数据库瓶颈"></a>数据库瓶颈</h1><ul>
+<li>一般情况下数据库最先有瓶颈，最开始的解决方法是创建数据库连接池避免频繁创建链接（类似线程池）</li>
+<li>接下来是缓存层、分区、分表、分库、数据库集群</li>
+<li>目前常用的情况是用 Redis 作缓存层</li>
 </ul>
-<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
-<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
-<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
+<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><ul>
+<li>请求 Redis 没有的数据导致直接查询数据库的行为叫缓存穿透</li>
+<li>可以将不存在的数据用 NULL 缓存进 Redis，但这种做法会被连续穿透产生 N 个 NULL 最后把 Redis 撑爆</li>
+<li>缓存雪崩与缓存击穿也属于穿透，是特殊情况下的表现</li>
+<li><strong>一般项目不需要解决穿透问题，因为数据太小数据库都能硬抗</strong></li>
 </ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">"asd"</span>;</span><br><span class="line"></span><br><span class="line">Action&lt;<span class="keyword">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!done)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(lee);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">threadStart(str);</span><br></pre></td></tr></table></figure>
+<h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><ul>
+<li>缓存层突然失效导致所有请求访问数据库</li>
+<li><strong>Redis 所有的 key 有效期不能一致，否则会统一过期；可以采用随机过期时间避免这个问题</strong></li>
+<li><strong>Redis 宕机也会雪崩；可以采用分布式集群 Redis</strong></li>
+<li>切片集群：将主数据分切多个部分存在多个 Redis</li>
+<li>副本集群：将主数据完整复制一份到多个 Redis</li>
+<li>HASH 一致性算法：根据 Redis 集群数量以 key 为 HASH 取模将数据分配到不同的 Redis</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 采用 HASH 环</span></span><br><span class="line"><span class="comment">// 假设环的大小为 2 的 32 次方</span></span><br><span class="line"><span class="comment">// 用 Redis 的 IP 取模</span></span><br><span class="line"></span><br><span class="line">Hash(ip) % (Redis数量 ^ <span class="number">32</span>) = Redis 服务器所在环的位置</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
-<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
-<li>一般使用 lock 关键字来实现线程安全</li>
+<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><ul>
+<li>只缓存了一条数据并且失效</li>
 </ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">readonly</span> <span class="keyword">object</span> _lock = <span class="keyword">new</span> <span class="keyword">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><ul>
+<li>布隆过滤器会创建一个 Bit 数组，将请求的数据经过 HASH 后在指定的数组位置上标记为 True，然后再用数据库的值经过哈希后进行对比，如果为 1，则数据存在</li>
+<li>布隆算法有一定错误率，如果布隆告诉你数据存在，那数据库可能不存在；如果布隆告诉你数据不存在，那就一定不存在</li>
+<li>布隆过滤器是一个用错误率换取空间和时间的算法</li>
+<li>如果使用一个 HASH 方法被暴力破解，那么可以使用多个 HASH 方法来解决。如果还被破解那就只能重写 HASH 方法</li>
+<li>多个 HASH 方法下只要有一个结果为 FALSE，那么直接返回不存在</li>
+<li>HASH 方法不是越多越好，Bit 数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
+<li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
+</ul>
+<h1 id="布隆过滤器公式"><a href="#布隆过滤器公式" class="headerlink" title="布隆过滤器公式"></a>布隆过滤器公式</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">fpp = <span class="number">0.01</span> <span class="comment">// 能接受的错误率</span></span><br><span class="line">n = <span class="number">10000</span> <span class="comment">// 数据库字段大小</span></span><br><span class="line">m = -(n * ln(fpp) / ln(<span class="number">2</span>) ^ <span class="number">2</span>) <span class="comment">// 合适的布尔数组长度</span></span><br><span class="line">k = m / n * ln(<span class="number">2</span>) <span class="comment">// 合适的 HASH 方法个数</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
-<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">"等待接收信号！此时阻塞线程"</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">"接收到信号！"</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
+<h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line">BF.ADD newFilter foo <span class="comment">// 添加元素</span></span><br><span class="line">BF.EXISTS newFilter foo <span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.MADD myFilter foo bar baz <span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar <span class="comment">// 查询多个元素</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span> <span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、需要导入的数据库指定字段的数量</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
-<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
-<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
-<li>最简单的执行线程池的方式就是 Task.Run</li>
-<li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
-<li>CLR 通过队列限流防止超额订阅</li>
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><ul>
+<li>单一应用的锁只能解决当前项目的问题，分布式应用下要有一个中间商来解决锁的问题</li>
+<li>死锁：抢到锁后无法释放锁</li>
+<li>正常情况下可以为分布式锁加过期时间来解锁，但在并发情况下可能无法正确设置过期时间</li>
+<li>可以使用消息队列来排队加锁避免并发产生的系列问题</li>
 </ul>
-<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
-<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
-<li>await 关键字就是 Task.Wait</li>
+<h1 id="Redis-锁与-Zookeeper-的不同"><a href="#Redis-锁与-Zookeeper-的不同" class="headerlink" title="Redis 锁与 Zookeeper 的不同"></a>Redis 锁与 Zookeeper 的不同</h1><ul>
+<li>Redis 锁设置有效期可能会在设置前发生并发而跳过设置过期时间，同时锁的过期时间不知道设置多少合适</li>
+<li>Zookeeper 是基于最终一致性的服务框架，它可以在多节点上写入数据；有持久节点和临时节点</li>
 </ul>
 ]]></content>
       <categories>
-        <category>CShard</category>
+        <category>Redis</category>
       </categories>
   </entry>
   <entry>
@@ -256,30 +391,6 @@
       </categories>
   </entry>
   <entry>
-    <title>【MySQL】常用语句</title>
-    <url>/MyBlog/2020/06/05/SQL-MySQL-Command/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【MSSQL】varchar 自动增长列</title>
     <url>/MyBlog/2020/06/08/SQL-QA-1/</url>
     <content><![CDATA[<blockquote>
@@ -288,38 +399,6 @@
 <a id="more"></a>
 
 <h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">'DC'</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/SQL-QA-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
-</ul>
-<blockquote>
-<p>选择服务器</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
-<blockquote>
-<p>点击属性</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
-<blockquote>
-<p>在启动参数中输入 -t272</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
-<blockquote>
-<p>重新启动</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
 ]]></content>
       <categories>
         <category>SQL</category>
@@ -385,6 +464,173 @@
       </categories>
   </entry>
   <entry>
+    <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/SQL-QA-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Web】ES 6-11 语法</title>
+    <url>/MyBlog/2020/07/09/Web-ECMA/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="let"><a href="#let" class="headerlink" title="let"></a>let</h1><ul>
+<li>let 是块级作用域，属于局部变量</li>
+<li>let 不会代码升级，不像 var 先引用再定义变量时会隐式的定义变量</li>
+<li>var 的变量是全局的，包括常见的 for 循环里的 var i = 0。使用完毕后并不会重置，所以要将 var 改成 let</li>
+</ul>
+<h1 id="const"><a href="#const" class="headerlink" title="const"></a>const</h1><ul>
+<li>常量使用大写</li>
+<li>块级作用域</li>
+<li>常量数组允许修改，因为引用的是同一个内存地址</li>
+</ul>
+<h1 id="变量解构赋值"><a href="#变量解构赋值" class="headerlink" title="变量解构赋值"></a>变量解构赋值</h1><ul>
+<li>相当于为数组定义 key</li>
+<li>方法名可以从 play: function(){} 简化为 play(){}</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 数组</span></span><br><span class="line"><span class="keyword">const</span> arr = [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>];</span><br><span class="line"><span class="keyword">let</span> [power, my, qq, yy] = arr;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象</span></span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'aaa'</span>,</span><br><span class="line">  age: <span class="number">17</span>,</span><br><span class="line">  play() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'123'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123; name, age, play &#125; = obj;</span><br></pre></td></tr></table></figure>
+
+<h1 id="模板字符串"><a href="#模板字符串" class="headerlink" title="模板字符串"></a>模板字符串</h1><ul>
+<li>类似 C# 里的 $“你的名字是：{Name}”</li>
+<li>注意这里使用的是反引号，键盘上的波浪线</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> str = <span class="string">`数字是：<span class="subst">$&#123;arr[<span class="number">0</span>]&#125;</span>`</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str);</span><br></pre></td></tr></table></figure>
+
+<h1 id="简化对象"><a href="#简化对象" class="headerlink" title="简化对象"></a>简化对象</h1><ul>
+<li>将 str : str 精简为 str</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str = <span class="string">'你好'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> my = &#123;</span><br><span class="line">  str,  <span class="comment">// str : str</span></span><br><span class="line">  obj,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h1 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h1><ul>
+<li>没有构造方法</li>
+<li>没有 arguments 变量</li>
+<li><strong>箭头函数不适合在对象的方法和涉及 this 回调的情况下使用</strong></li>
+<li>语法上类似 C# 匿名委托</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> fn = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>this 在箭头函数下的作用域指向问题</strong></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">'window 下的 name'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'lee'</span>,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 普通方法能正常获取 obj.name = lee</span></span><br><span class="line">  getName() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 普通方法下的箭头函数会返回 obj.name = lee</span></span><br><span class="line">  getName2() &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;</span><br><span class="line">      name: <span class="string">'普通方法下的箭头函数'</span>,</span><br><span class="line"></span><br><span class="line">      fn: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    obj.fn();</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 箭头函数下的箭头函数会返回 window.name</span></span><br><span class="line">  getName3: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;</span><br><span class="line">      name: <span class="string">'箭头函数下的箭头函数'</span>,</span><br><span class="line"></span><br><span class="line">      fn: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    obj.fn();</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">obj.getName();</span><br><span class="line">obj.getName2();</span><br><span class="line">obj.getName3();</span><br></pre></td></tr></table></figure>
+
+<h1 id="函数参数默认值"><a href="#函数参数默认值" class="headerlink" title="函数参数默认值"></a>函数参数默认值</h1><ul>
+<li>类似 C# 的默认参数一样，有默认值的参数要放到最后</li>
+<li>允许用冒号为指定的参数赋值</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">User</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(User.Name);</span><br><span class="line">  <span class="built_in">console</span>.log(User.Age);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Get(&#123;</span><br><span class="line">  Name: <span class="string">'Lee'</span>,</span><br><span class="line">  Age: <span class="number">26</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">&#123; Name, Age = <span class="number">18</span> &#125;</span>) </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">Get(&#123;</span><br><span class="line">  Name: <span class="string">'Lee'</span>,</span><br><span class="line">  Age: <span class="number">26</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="rest-参数"><a href="#rest-参数" class="headerlink" title="rest 参数"></a>rest 参数</h1><ul>
+<li>这是一个取代 arguments 的关键字</li>
+<li>rest 参数必须放到最后</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// es5 中返回一个对象</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">User(<span class="string">'Lee'</span>, <span class="string">'Wu'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6 中返回一个数组</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">User(<span class="string">'Lee'</span>, <span class="string">'Wu'</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>它能将数组拆分成单个方法参数逐个传递</strong></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="string">'LEE'</span>, <span class="string">'WU'</span>, <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(arr); <span class="comment">// LEE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Get(...arr);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果要接收多个参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a + b); <span class="comment">// LEEWU</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Get(...arr);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数组合并和克隆</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// es5</span></span><br><span class="line"><span class="built_in">console</span>.log(arr1.concat(arr2));</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6</span></span><br><span class="line"><span class="comment">// 如果只写一个数组那就是克隆</span></span><br><span class="line"><span class="comment">// 复合数组依然遵循值类型深拷贝，引用类型浅拷贝</span></span><br><span class="line"><span class="comment">// 也可以将一些 object 类型的伪数组转换成真数组</span></span><br><span class="line"><span class="built_in">console</span>.log([...arr1, ...arr2]); <span class="comment">// [1,2,3,4,5,6]</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Symbol"><a href="#Symbol" class="headerlink" title="Symbol"></a>Symbol</h1><ul>
+<li>第七种数据类型（undefined string symbol object null number bool）</li>
+<li>值唯一</li>
+<li>无法与包含自身在内的其它类型运算</li>
+<li>无法使用 for 遍历，但可以用 Reflect.ownKeys 获取所有 key</li>
+<li><strong>一般是某些关键字的内置属性，例如数组 Symbol.iterator</strong></li>
+<li>类似 C# 里的扩展方法</li>
+</ul>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><h2 id="for…of-与-for…in-的区别"><a href="#for…of-与-for…in-的区别" class="headerlink" title="for…of 与 for…in 的区别"></a>for…of 与 for…in 的区别</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...of 展示的是 value</span></span><br><span class="line"><span class="comment">// 注意：此方式无法作用于对象</span></span><br><span class="line"><span class="comment">// 原理是必须实现了 symbol.iterator 才能使用</span></span><br><span class="line"><span class="comment">// 请求一次返回一次结果，直到遍历完毕或条件结束</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> value <span class="keyword">of</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...in 展示的是 key</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">of</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="让对象可以使用-for…of"><a href="#让对象可以使用-for…of" class="headerlink" title="让对象可以使用 for…of"></a>让对象可以使用 for…of</h2><ul>
+<li>为不可遍历的对象添加一个 symbol.iterator 方法，此方法有固定格式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  list: [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 手动添加迭代器</span></span><br><span class="line">  [<span class="built_in">Symbol</span>.iterator]() &#123;</span><br><span class="line">    <span class="comment">// 索引 Id</span></span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      next: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="keyword">this</span>.list.length - <span class="number">1</span>) &#123;</span><br><span class="line">          ++index;</span><br><span class="line">          <span class="keyword">return</span> &#123; <span class="attr">value</span>: <span class="keyword">this</span>.list[index], <span class="attr">done</span>: <span class="literal">false</span> &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123; <span class="attr">value</span>: <span class="literal">undefined</span>, <span class="attr">done</span>: <span class="literal">true</span> &#125;;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> v <span class="keyword">of</span> obj) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="生成器，类似-C-enumerable"><a href="#生成器，类似-C-enumerable" class="headerlink" title="生成器，类似 C# enumerable"></a>生成器，类似 C# enumerable</h2><ul>
+<li>注意方法定义时要加 * 号</li>
+<li>调用只能通过 xx.next() 方法迭代</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">User</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> i = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">yield</span> ++i;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> fn = User();</span><br><span class="line"><span class="built_in">console</span>.log(fn.next()); <span class="comment">// 0</span></span><br><span class="line"><span class="built_in">console</span>.log(fn.next()); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>next() 会同时调用其它代码</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">User</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(name);</span><br><span class="line">  <span class="keyword">yield</span> <span class="string">'第一次 next() 时会返回此结果和执行以上的代码'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> a = <span class="string">'123'</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(a);</span><br><span class="line">  <span class="keyword">yield</span> <span class="string">'第二次以此类推'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 也可以往 next() 加参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">User</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(name);</span><br><span class="line">  <span class="keyword">let</span> v1 = <span class="keyword">yield</span> <span class="string">'这是第一个'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(v1);</span><br><span class="line">  <span class="keyword">let</span> v2 = <span class="keyword">yield</span> <span class="string">'第二个'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> fn = User(<span class="string">'LEE'</span>);</span><br><span class="line">fn.next(); <span class="comment">// 打印 LEE</span></span><br><span class="line">fn.next(<span class="string">'111'</span>); <span class="comment">// 第二次运行时会将参数赋值给 v1 然后打印 111</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h1><ul>
+<li>Promise 有两个固定参数 resolve 成功 / reject 出错</li>
+<li>then 提供接收成功和失败信息的方法</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> fnAsync = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">ok, error</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> result = <span class="number">111</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 成功</span></span><br><span class="line">  ok(result);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 失败</span></span><br><span class="line">  error(result);</span><br><span class="line">&#125;).then(</span><br><span class="line">  (okMsg) =&gt; &#123;&#125;,</span><br><span class="line">  (errMsg) =&gt; &#123;&#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="链式回调"><a href="#链式回调" class="headerlink" title="链式回调"></a>链式回调</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> ran = <span class="built_in">Math</span>.round(<span class="built_in">Math</span>.random() * <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (ran &gt; <span class="number">50</span>) &#123;</span><br><span class="line">    resolve(ran);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  reject(ran);</span><br><span class="line">&#125;)</span><br><span class="line">  .then(<span class="function">(<span class="params">okMsg</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> okMsg;</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function">(<span class="params">okMsg</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">      reject(okMsg);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function">(<span class="params">okMsg</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(okMsg);</span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function">(<span class="params">errMsg</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(errMsg);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="Set-集合"><a href="#Set-集合" class="headerlink" title="Set 集合"></a>Set 集合</h1><ul>
+<li>自带去重</li>
+<li>实现了 iterator</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基本语法</span></span><br><span class="line"><span class="keyword">let</span> s = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">s.add(<span class="number">123</span>);</span><br><span class="line">s.delete(<span class="number">123</span>);</span><br><span class="line">s.clear();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 去重</span></span><br><span class="line"><span class="built_in">console</span>.log([...new <span class="built_in">Set</span>(arr1)]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 交集</span></span><br><span class="line"><span class="keyword">const</span> arr2 = [<span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">console</span>.log([...new <span class="built_in">Set</span>(arr1)].filter(<span class="function">(<span class="params">value</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Set</span>(arr2).has(value)));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 并集</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Set</span>([...arr1, ...arr2]));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 差集</span></span><br><span class="line"><span class="built_in">console</span>.log([...new <span class="built_in">Set</span>(arr1)].filter(<span class="function">(<span class="params">value</span>) =&gt;</span> !<span class="keyword">new</span> <span class="built_in">Set</span>(arr2).has(value)));</span><br></pre></td></tr></table></figure>
+
+<h1 id="Map-键值对"><a href="#Map-键值对" class="headerlink" title="Map 键值对"></a>Map 键值对</h1><ul>
+<li>实现了 iterator</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基本语法</span></span><br><span class="line"><span class="keyword">let</span> m = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line"></span><br><span class="line">m.set(<span class="string">'key2'</span>, <span class="number">123</span>);</span><br><span class="line">m.set(<span class="string">'key3'</span>, (value) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'dddd'</span>);</span><br><span class="line">&#125;);</span><br><span class="line">m.set(</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="number">123</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">'poo'</span></span><br><span class="line">);</span><br><span class="line">m.get();</span><br><span class="line">m.delete();</span><br><span class="line">m.clear();</span><br><span class="line">m.size; <span class="comment">// 获取集合数量</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Class-类"><a href="#Class-类" class="headerlink" title="Class 类"></a>Class 类</h1><ul>
+<li>方法重写：子类的方法与父类的方法同名时会覆盖父类方法达成方法重写</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ES 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义字段</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">  <span class="keyword">this</span>.age = age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义方法</span></span><br><span class="line">User.prototype.getUserName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'ES 5：'</span> + <span class="keyword">this</span>.name);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="keyword">new</span> User(<span class="string">'LEE'</span>, <span class="number">18</span>);</span><br><span class="line">user.getUserName();</span><br><span class="line"></span><br><span class="line"><span class="comment">// ES 6</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(name, age) &#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  getUser() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'ES 6：'</span> + <span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="keyword">new</span> User(<span class="string">'LEE'</span>, <span class="number">18</span>);</span><br><span class="line">user.getUser();</span><br></pre></td></tr></table></figure>
+
+<h2 id="静态成员"><a href="#静态成员" class="headerlink" title="静态成员"></a>静态成员</h2><ul>
+<li>与 C# 的概念相同，实例成员用实例类调用，静态成员直接用类调用。因为它们分别存在不同的内存区域</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> name = <span class="string">'LEE'</span>;</span><br><span class="line">  <span class="keyword">static</span> age = <span class="number">18</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> getUser() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(name, age) &#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  getUser() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">User.getUser();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="keyword">new</span> User(<span class="string">'LEE2'</span>, <span class="number">11</span>);</span><br><span class="line">user.getUser();</span><br></pre></td></tr></table></figure>
+
+<h2 id="ES-6-类的继承"><a href="#ES-6-类的继承" class="headerlink" title="ES 6 类的继承"></a>ES 6 类的继承</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(name, age) &#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  getUser() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserInfo</span> <span class="keyword">extends</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  <span class="comment">// super 就是 C# 里的 base，调用父类的构造方法</span></span><br><span class="line">  <span class="keyword">constructor</span>(name, age, gender) &#123;</span><br><span class="line">    <span class="keyword">super</span>(name, age);</span><br><span class="line">    <span class="keyword">this</span>.gender = gender;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  showGender() &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.gender === <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'男'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> userInfo = <span class="keyword">new</span> UserInfo(<span class="string">'LEE'</span>, <span class="number">11</span>, <span class="number">1</span>);</span><br><span class="line">userInfo.getUser();</span><br><span class="line">userInfo.showGender();</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">  <span class="keyword">get</span> userName() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">set</span> userName(value) &#123;</span><br><span class="line">    <span class="keyword">this</span>.name = <span class="string">'Set：'</span> + value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="keyword">new</span> User();</span><br><span class="line">user.userName = <span class="string">'asd'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(user.userName);</span><br></pre></td></tr></table></figure>
+
+<h1 id="数值扩展"><a href="#数值扩展" class="headerlink" title="数值扩展"></a>数值扩展</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// EPSILON 最小精度</span></span><br><span class="line"><span class="comment">// 浮点数计算是有误差的，可以用两数差值与 EPSILON 对比，如果误差小于最小精度那就能选择性忽略</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">0.1</span> + <span class="number">0.2</span>); <span class="comment">// 0.30000000000000004</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Check</span>(<span class="params">num1, num2</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Math</span>.abs(num1 - num2) &lt; <span class="built_in">Number</span>.EPSILON;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(Check(<span class="number">0.1</span> + <span class="number">0.2</span>, <span class="number">0.3</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 二、八、十六进制，默认是十进制</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bit2 = <span class="number">0b00000010</span>; <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bit8 = <span class="number">0o00000010</span>; <span class="comment">// 8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bit16 = <span class="number">0x00000010</span>; <span class="comment">// 16</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断是否有限数</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Number</span>.isFinite(num));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断是否数字</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Number</span>.isNaN(num));</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【Web】TCP/IP 学习总结</title>
     <url>/MyBlog/2020/06/10/Web-TCPIP/</url>
     <content><![CDATA[<blockquote>
@@ -392,24 +638,25 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层"><a href="#OSI-七层协议，实际常用的就只有【应用、传输、网络、链路】层" class="headerlink" title="OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层"></a>OSI 七层协议，实际常用的就只有【应用、传输、网络、链路】层</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
+<h1 id="OSI-七层协议"><a href="#OSI-七层协议" class="headerlink" title="OSI 七层协议"></a>OSI 七层协议</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
 <h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
 <li>TCP/IP 是众多网络协议中的统称</li>
 <li>通讯是双向的，不可能出现第四层跟第五层通信</li>
 <li>网络发现是基于 IP 地址而不是物理地址；数据转发才是基于物理地址</li>
 <li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
-<li>应用层、表示层、会话层已经合并，一般指 Web 应用</li>
-<li>HTTP 是协议，约束报文头规则</li>
+<li><strong>应用层、表示层、会话层统一为应用层</strong></li>
+<li><strong>数据链路层、物理层统一为数据链路层</strong></li>
 </ul>
 <h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><ul>
 <li>TCP 是可靠的链接传输协议</li>
 <li>三次握手、数据传输、四次挥手</li>
 <li>所有请求都是从应用层到物理层来回往返交换</li>
 </ul>
-<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">客户端应用层 -&gt; 传输层 -&gt; 网络层 -&gt; 链路层 -&gt; 物理层 到服务端物理层 -&gt; 链路层 -&gt; 网络层 -&gt; 传输层 -&gt; 应用层</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 常用的流程</span></span><br><span class="line">网络流进入猫，猫属于物理层</span><br><span class="line">然后猫将数据发到链路层将流数据转换为可读数据</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>注意三次握手攻击，客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
+<h1 id="什么是-UDP"><a href="#什么是-UDP" class="headerlink" title="什么是 UDP"></a>什么是 UDP</h1><ul>
+<li>不可靠的连接，单方面只管发送，不管对方是否收到数据</li>
+<li>顺序不保证，可能会丢包</li>
 </ul>
 <h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
 <li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
@@ -424,13 +671,19 @@
 <h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
 <li>主要针对物理地址和 IP 地址</li>
 <li>单播：一个接收者，类似 P2P</li>
-<li>多播：多个接收者，类似群聊 224 开头</li>
-<li>广播：面向所有人，类似游戏公告 255.255.255.255</li>
+<li>多播：多个接收者，类似群聊</li>
+<li>广播：面向所有人，类似游戏公告</li>
 </ul>
-<h1 id="TCP-IP-版本"><a href="#TCP-IP-版本" class="headerlink" title="TCP/IP 版本"></a>TCP/IP 版本</h1><ul>
+<h1 id="IP-版本"><a href="#IP-版本" class="headerlink" title="IP 版本"></a>IP 版本</h1><ul>
 <li>IPV4：地址空间不足和 32 位的低效率</li>
 <li>IPV5：基于七层协议，没有投入使用</li>
-<li>IPV6：扩大了地址空间，现在有 128 位</li>
+<li>IPV6：扩大了地址空间，128 位</li>
+<li>A 类：1 - 126 开头</li>
+<li>本地：127</li>
+<li>B 类：128 - 191 开头</li>
+<li>C 类：192 - 223</li>
+<li>D 类：224 - 239</li>
+<li>广播：255.255.255.255</li>
 </ul>
 <h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
 <li>允许一些电脑在局限的 IP 范围内通信</li>
@@ -438,6 +691,7 @@
 <li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
 </ul>
 <h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
+<li>注意三次握手攻击，客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
 <li>第一次：客户端发送一条 SYN 数据请求服务端</li>
 <li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
 <li>第三次：客户端收到后返回 ACK 到服务端</li>
@@ -453,6 +707,52 @@
 <li>第二次：服务端回报 FIN + ACK 给客户端</li>
 <li>第三次：服务端发送 FIN 到客户端</li>
 <li>第四次：客户端回报 ACK 给服务端</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MySQL】常用语句</title>
+    <url>/MyBlog/2020/06/05/SQL-MySQL-Command/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Web】前端框架从后端读取路由的弊端</title>
+    <url>/MyBlog/2020/07/22/Web-WhyNotLoadBackgroudRouter/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="为什么不要从后端读取路由"><a href="#为什么不要从后端读取路由" class="headerlink" title="为什么不要从后端读取路由"></a>为什么不要从后端读取路由</h1><p>拿 Vue 来说，一般情况下不管是写死路由还是从后端请求路由都是为了解决防止用户进入指定页面的问题。</p>
+<p>就算用户进入了指定页面，所有的实际操作都要经过后端二次验证才能继续进行，用户不可能进入某个页面后就为所欲为。另外，懂技术的人都有自己的特殊手法进入指定页面。</p>
+<p>既然如此，最终结果一致的情况下这种做法相当于伪需求。</p>
+<h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
+<li>动态请求会产生多余的网络请求</li>
+<li>如果后端炸了获取不到路由怎么办</li>
+<li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
+<li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
 </ul>
 ]]></content>
       <categories>
