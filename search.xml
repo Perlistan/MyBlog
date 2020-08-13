@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>【Asp.Net】全局异常处理</title>
-    <url>/MyBlog/2020/07/07/Asp.Net-Exception/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="Asp-net-Framework-MVC"><a href="#Asp-net-Framework-MVC" class="headerlink" title="Asp.net Framework MVC"></a>Asp.net Framework MVC</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 先继承 HandleError 特性</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">HandleErrorAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 OnException 方法</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnException</span>(<span class="params">ExceptionContext filterContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        filterContext.Result = <span class="keyword">new</span> JsonResult</span><br><span class="line">        &#123;</span><br><span class="line">            ContentType = HttpStatusCode.BadRequest.ToString(),</span><br><span class="line">            Data = <span class="keyword">new</span> &#123; msg = filterContext.Exception.Message &#125;,</span><br><span class="line">            JsonRequestBehavior = JsonRequestBehavior.AllowGet</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        filterContext.ExceptionHandled = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局过滤器，如果不存在此文件自己创建</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FilterConfig</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RegisterGlobalFilters</span>(<span class="params">GlobalFilterCollection filters</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        filters.Add(<span class="keyword">new</span> MyGlobalException());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 Global Application_Start 添加过滤器</span></span><br><span class="line">FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);</span><br></pre></td></tr></table></figure>
-
-<h1 id="Asp-net-Framework-WebAPI"><a href="#Asp-net-Framework-WebAPI" class="headerlink" title="Asp.net Framework WebAPI"></a>Asp.net Framework WebAPI</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 继承指定类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">ExceptionHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 Handle</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Handle</span>(<span class="params">ExceptionHandlerContext context</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        context.Result = <span class="keyword">new</span> ResponseMessageResult(context.Request.CreateResponse(System.Net.HttpStatusCode.NotFound));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 WebConfig 中添加</span></span><br><span class="line">config.Services.Replace(<span class="keyword">typeof</span>(IExceptionHandler), <span class="keyword">new</span> MyGlobalException());</span><br></pre></td></tr></table></figure>
-
-<h1 id="Asp-Net-Core"><a href="#Asp-Net-Core" class="headerlink" title="Asp.Net Core"></a>Asp.Net Core</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 新建一个中间件类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyExceptionMiddleware</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> RequestDelegate _next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddleware</span>(<span class="params">RequestDelegate requestDelegate</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._next = requestDelegate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 捕获所有下层中间件引发的异常</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext httpContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> _next(httpContext);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span>(RegexException ane)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status200OK;</span><br><span class="line">            <span class="keyword">await</span> httpContext.Response.WriteAsync(JsonConvert.SerializeObject(<span class="keyword">new</span> &#123; msg = ane.Message &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;</span><br><span class="line">            <span class="comment">// logger write</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 StartUP Configure 最上面添加</span></span><br><span class="line">app.UseMiddleware&lt;MyExceptionMiddleware&gt;();</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Asp.Net</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【CShard】语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【CShard】语言基础</title>
     <url>/MyBlog/2020/06/05/CShard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -113,6 +85,73 @@
       </categories>
   </entry>
   <entry>
+    <title>【CShard】语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Asp.Net】全局异常处理</title>
+    <url>/MyBlog/2020/07/07/Asp.Net-Exception/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Asp-net-Framework-MVC"><a href="#Asp-net-Framework-MVC" class="headerlink" title="Asp.net Framework MVC"></a>Asp.net Framework MVC</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 先继承 HandleError 特性</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">HandleErrorAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 OnException 方法</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnException</span>(<span class="params">ExceptionContext filterContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        filterContext.Result = <span class="keyword">new</span> JsonResult</span><br><span class="line">        &#123;</span><br><span class="line">            ContentType = HttpStatusCode.BadRequest.ToString(),</span><br><span class="line">            Data = <span class="keyword">new</span> &#123; msg = filterContext.Exception.Message &#125;,</span><br><span class="line">            JsonRequestBehavior = JsonRequestBehavior.AllowGet</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        filterContext.ExceptionHandled = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局过滤器，如果不存在此文件自己创建</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FilterConfig</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RegisterGlobalFilters</span>(<span class="params">GlobalFilterCollection filters</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        filters.Add(<span class="keyword">new</span> MyGlobalException());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 Global Application_Start 添加过滤器</span></span><br><span class="line">FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);</span><br></pre></td></tr></table></figure>
+
+<h1 id="Asp-net-Framework-WebAPI"><a href="#Asp-net-Framework-WebAPI" class="headerlink" title="Asp.net Framework WebAPI"></a>Asp.net Framework WebAPI</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 继承指定类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">ExceptionHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 Handle</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Handle</span>(<span class="params">ExceptionHandlerContext context</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        context.Result = <span class="keyword">new</span> ResponseMessageResult(context.Request.CreateResponse(System.Net.HttpStatusCode.NotFound));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 WebConfig 中添加</span></span><br><span class="line">config.Services.Replace(<span class="keyword">typeof</span>(IExceptionHandler), <span class="keyword">new</span> MyGlobalException());</span><br></pre></td></tr></table></figure>
+
+<h1 id="Asp-Net-Core"><a href="#Asp-Net-Core" class="headerlink" title="Asp.Net Core"></a>Asp.Net Core</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 新建一个中间件类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyExceptionMiddleware</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> RequestDelegate _next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddleware</span>(<span class="params">RequestDelegate requestDelegate</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._next = requestDelegate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 捕获所有下层中间件引发的异常</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext httpContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> _next(httpContext);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span>(RegexException ane)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status200OK;</span><br><span class="line">            <span class="keyword">await</span> httpContext.Response.WriteAsync(JsonConvert.SerializeObject(<span class="keyword">new</span> &#123; msg = ane.Message &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;</span><br><span class="line">            <span class="comment">// logger write</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 StartUP Configure 最上面添加</span></span><br><span class="line">app.UseMiddleware&lt;MyExceptionMiddleware&gt;();</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Asp.Net</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Centos7】Docker</title>
+    <url>/MyBlog/2020/07/25/Centos-Docker/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h1><ul>
+<li>它类似沙盒，沙盒里面放着一堆集装箱，每个集装箱相互独立互不影响，拥有独立的运行环境</li>
+<li>Docker 主要解决了运维问题，它能将应用所需环境都封装起来打包成一个镜像，然后交给 Docker 沙盒托管，减少运维成本</li>
+<li>实现 DevOps 完成代码自动测试、发布、打包为镜像最后发布到服务器的 CI/CD 流程</li>
+<li>Docker 基于 Golang 开发</li>
+<li>能快速的迭代运行环境与应用版本，只需要修改配置文件批量更新即可</li>
+<li>支持横向扩展，例如高并发的情况下业务后端处理不过来时可以一键开启 N 个相同的业务镜像进行负载均衡</li>
+</ul>
+<h1 id="Docker-与-VM-的区别"><a href="#Docker-与-VM-的区别" class="headerlink" title="Docker 与 VM 的区别"></a>Docker 与 VM 的区别</h1><ul>
+<li><strong>Docker 是使用 Linux 中的 namespace 实现的</strong></li>
+<li>VM 过于笨重，使用硬件模拟出一台虚拟主机，占用物理机资源</li>
+<li>Docker 直接使用物理机资源运行镜像，镜像大小很小</li>
+<li>性能上使用 VM 可能开 3 个就卡，Docker 可以开 30 个不卡</li>
+<li>Linux 111 服务器上可以做到开启几十个镜像服务，相同配置下用 Windows 服务器开一个 VM 都卡死</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Centos</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【.Net Core】gRPC</title>
+    <url>/MyBlog/2020/07/06/NetCore-gRPC/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>.Net Core</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【CShard】多线程/异步</title>
     <url>/MyBlog/2020/06/24/CShard-Thread/</url>
     <content><![CDATA[<blockquote>
@@ -168,61 +207,16 @@
       </categories>
   </entry>
   <entry>
-    <title>【Centos7】Docker</title>
-    <url>/MyBlog/2020/07/25/Centos-Docker/</url>
+    <title>【Centos7】MariaDB 设置</title>
+    <url>/MyBlog/2020/07/08/Centos-MariaDB/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h1><ul>
-<li>它类似沙盒，沙盒里面放着一堆集装箱，每个集装箱相互独立互不影响，拥有独立的运行环境</li>
-<li>Docker 主要解决了运维问题，它能将应用所需环境都封装起来打包成一个镜像，然后交给 Docker 沙盒托管，减少运维成本</li>
-<li>实现 DevOps 完成代码自动测试、发布、打包为镜像最后发布到服务器的 CI/CD 流程</li>
-<li>Docker 基于 Golang 开发</li>
-<li>能快速的迭代运行环境与应用版本，只需要修改配置文件批量更新即可</li>
-<li>支持横向扩展，例如高并发的情况下业务后端处理不过来时可以一键开启 N 个相同的业务镜像进行负载均衡</li>
-</ul>
-<h1 id="Docker-与-VM-的区别"><a href="#Docker-与-VM-的区别" class="headerlink" title="Docker 与 VM 的区别"></a>Docker 与 VM 的区别</h1><ul>
-<li><strong>Docker 是使用 Linux 中的 namespace 实现的</strong></li>
-<li>VM 过于笨重，使用硬件模拟出一台虚拟主机，占用物理机资源</li>
-<li>Docker 直接使用物理机资源运行镜像，镜像大小很小</li>
-<li>性能上使用 VM 可能开 3 个就卡，Docker 可以开 30 个不卡</li>
-<li>Linux 111 服务器上可以做到开启几十个镜像服务，相同配置下用 Windows 服务器开一个 VM 都卡死</li>
-</ul>
-]]></content>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
       <categories>
         <category>Centos</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【DDD】领域驱动设计</title>
-    <url>/MyBlog/2020/07/09/Other-DDD/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>DDD 解决了需求经常变，想重构又怕出错的问题</li>
-<li>学习 ABP 能帮助入门 DDD，熟悉领域服务、领域事件、聚合根（充血模型）</li>
-<li></li>
-<li></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Other</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【.Net Core】gRPC</title>
-    <url>/MyBlog/2020/07/06/NetCore-gRPC/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>.Net Core</category>
       </categories>
   </entry>
   <entry>
@@ -237,91 +231,6 @@
 ]]></content>
       <categories>
         <category>CShard</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【TDD】测试驱动开发</title>
-    <url>/MyBlog/2020/07/31/Other-TDD/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="传统流程的弊端"><a href="#传统流程的弊端" class="headerlink" title="传统流程的弊端"></a>传统流程的弊端</h1><ul>
-<li>大部分测试是手动的</li>
-<li>业务紧急没时间做测试</li>
-<li>无法重构代码，怕破坏原有模块</li>
-<li>文档从不更新</li>
-<li>学习和维护成本高</li>
-</ul>
-<h1 id="什么是-TDD"><a href="#什么是-TDD" class="headerlink" title="什么是 TDD"></a>什么是 TDD</h1><ul>
-<li>它是一种敏捷开发</li>
-<li>传统流程是先做好项目再统一测试，现在是开发时就编写测试</li>
-<li>根据测试编写业务代码能减少维护成本</li>
-<li>大多数情况下都是测试行为，也就是 public 方法</li>
-</ul>
-<h1 id="测试的三个阶段"><a href="#测试的三个阶段" class="headerlink" title="测试的三个阶段"></a>测试的三个阶段</h1><ul>
-<li>Arrange：创建对象、 数据、输入</li>
-<li>Act：执行方法并返回结果</li>
-<li>Assert：检查结果</li>
-</ul>
-<h1 id="TDD-流程"><a href="#TDD-流程" class="headerlink" title="TDD 流程"></a>TDD 流程</h1><ul>
-<li>拆分需求</li>
-<li>编写测试</li>
-<li><strong>验证测试</strong></li>
-<li>根据测试代码编写产品代码</li>
-<li><strong>验证测试</strong></li>
-<li>重构</li>
-<li><strong>验证测试</strong></li>
-</ul>
-<h1 id="测试分类"><a href="#测试分类" class="headerlink" title="测试分类"></a>测试分类</h1><ul>
-<li>单元测试：独立模块的测试</li>
-<li>集成测试：包含数据库在内一定范围的联合测试</li>
-<li>皮下测试：针对接口层的测试</li>
-<li>UI 测试：在 UI 层的测试</li>
-</ul>
-<h1 id="在-Net-中使用-xUnit-进行测试"><a href="#在-Net-中使用-xUnit-进行测试" class="headerlink" title="在 .Net 中使用 xUnit 进行测试"></a>在 .Net 中使用 xUnit 进行测试</h1><ul>
-<li>新建 xUnit 测试项目</li>
-<li>项目命名规范：被测试项目名 + Test</li>
-<li>测试类命名规范：被测试类名 + Test</li>
-<li>测试类中每个方法都会走一遍构造方法</li>
-</ul>
-<h2 id="如何测试？"><a href="#如何测试？" class="headerlink" title="如何测试？"></a>如何测试？</h2><ul>
-<li>使用 new 创建实例调用方法</li>
-<li>最后使用 Assert 类进行结果检测</li>
-</ul>
-<h2 id="测试分组"><a href="#测试分组" class="headerlink" title="测试分组"></a>测试分组</h2><ul>
-<li>[Trait(“大类名”,”小类名”)] 此特性可以将各个测试方法分组，要在测试资源管理器中选择特征</li>
-<li>一个方法或类可以拥有多个 Trait</li>
-</ul>
-<h2 id="忽略测试"><a href="#忽略测试" class="headerlink" title="忽略测试"></a>忽略测试</h2><ul>
-<li>在 Fact 上加一个参数 Skip = “xxxx” 即可</li>
-</ul>
-<h2 id="自定义输出测试信息"><a href="#自定义输出测试信息" class="headerlink" title="自定义输出测试信息"></a>自定义输出测试信息</h2><ul>
-<li>注入 ITestOutputHelper 接口</li>
-<li>使用该接口的实例方法 WriteLine 输出信息</li>
-</ul>
-<h2 id="共享上下文"><a href="#共享上下文" class="headerlink" title="共享上下文"></a>共享上下文</h2><ul>
-<li>使用时类不要有副作用，否则会产生麻烦</li>
-</ul>
-<h3 id="单个类中使用一个实例"><a href="#单个类中使用一个实例" class="headerlink" title="单个类中使用一个实例"></a>单个类中使用一个实例</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserFixtrue</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> UserService userService &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserFixTrue</span>(<span class="params">UserService userService</span>)</span>&#123;</span><br><span class="line">        userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后回到测试类中创建这个实例</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTest</span>: <span class="title">IClassFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> UserFixtrue userFixtrue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserTest</span>(<span class="params">UserFixtrue userFixtrue</span>)</span>&#123;</span><br><span class="line">        userFixtrue = userFixtrue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="多个类中使用一个实例"><a href="#多个类中使用一个实例" class="headerlink" title="多个类中使用一个实例"></a>多个类中使用一个实例</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 以上一个例子的类为基础创建一个 Collection 类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">CollectionDefinition(<span class="meta-string">&quot;ddd&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserCollectionFixtrue</span>: <span class="title">ICollectionFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后就能在各个类中使用同一个实例</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Collection(<span class="meta-string">&quot;ddd&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTest</span>: <span class="title">IClassFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> UserFixtrue userFixtrue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserTest</span>(<span class="params">UserFixtrue userFixtrue</span>)</span>&#123;</span><br><span class="line">        userFixtrue = userFixtrue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="数据驱动测试"><a href="#数据驱动测试" class="headerlink" title="数据驱动测试"></a>数据驱动测试</h2><ul>
-<li>将 [Fact] 改成 [Theory] 特性</li>
-</ul>
-<h3 id="InlineData"><a href="#InlineData" class="headerlink" title="InlineData"></a>InlineData</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 定义被测试类 User</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Add</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> num1 + num2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义测试类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">InlineData(1, 2, 3)</span>]</span><br><span class="line">[<span class="meta">InlineData(1, 2, 5)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="MemberData"><a href="#MemberData" class="headerlink" title="MemberData"></a>MemberData</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 定义被测试类 User</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Add</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> num1 + num2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义数据类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTestData</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> List&lt;<span class="keyword">object</span>[]&gt; Data = <span class="keyword">new</span> List&lt;<span class="keyword">object</span>[]&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">object</span>[] &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">object</span>[] &#123; <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> IEnumerable&lt;<span class="keyword">object</span>[]&gt; Data()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义测试类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">MemberData(nameof(UserTestData.Data), MemberType = typeof(UserTestData))</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="外部数据来源"><a href="#外部数据来源" class="headerlink" title="外部数据来源"></a>外部数据来源</h3><ul>
-<li>就是以 MemberData 为基础，将实现改为读取文件流并返回</li>
-</ul>
-<h3 id="自定义-Data-Attribute"><a href="#自定义-Data-Attribute" class="headerlink" title="自定义 Data Attribute"></a>自定义 Data Attribute</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyDataAttribute</span>: <span class="title">DataAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// override GetData 方法</span></span><br><span class="line">    <span class="comment">// 使用 yield return 返回数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在测试方法中调用该 Attribute 即可</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">MyData</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Other</category>
       </categories>
   </entry>
   <entry>
@@ -434,6 +343,25 @@
       </categories>
   </entry>
   <entry>
+    <title>【DDD】领域驱动设计</title>
+    <url>/MyBlog/2020/07/09/Other-DDD/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>DDD 解决了需求经常变，想重构又怕出错的问题</li>
+<li>学习 ABP 能帮助入门 DDD，熟悉领域服务、领域事件、聚合根（充血模型）</li>
+<li></li>
+<li></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【Redis】缓存穿透/布隆过滤器/分布式锁</title>
     <url>/MyBlog/2020/07/06/Redis-Cache/</url>
     <content><![CDATA[<blockquote>
@@ -474,7 +402,7 @@
 <li>HASH 方法不是越多越好，Bit 数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
 <li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
 </ul>
-<h1 id="简易布隆过滤器实现"><a href="#简易布隆过滤器实现" class="headerlink" title="简易布隆过滤器实现"></a>简易布隆过滤器实现</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 能接受的错误率</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">float</span> Fpp &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据库某个字段的数据量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> FieldCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// BitArray 大小</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> BitArrayLength &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Hash 的数量（用多个 Hash 匹配更精确）</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">byte</span> HashCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 位数组</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> BitArray BitArray &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 配置方法</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fpp&quot;&gt;</span>精准率<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fieldCount&quot;&gt;</span>数据库字段数量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Config</span>(<span class="params"><span class="keyword">float</span> fpp = <span class="number">0.001f</span>, <span class="keyword">int</span> fieldCount = <span class="number">10000</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Fpp = fpp;</span><br><span class="line">    FieldCount = fieldCount;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置布隆数组大小</span></span><br><span class="line">    BitArrayLength = (<span class="keyword">int</span>)Math.Round(-(fieldCount * Math.Log(fpp) / Math.Pow(Math.Log(<span class="number">2</span>), <span class="number">2</span>)));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置合适的 bit 集合数量</span></span><br><span class="line">    HashCount = (<span class="keyword">byte</span>)Math.Round(BitArrayLength / fieldCount * Math.Log(<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line">    BitArray = <span class="keyword">new</span> BitArray(BitArrayLength);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 获取 key 的哈希集合</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;<span class="keyword">int</span>&gt; <span class="title">GetHashList</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> hash = key.GetHashCode();</span><br><span class="line">    <span class="keyword">var</span> random = <span class="keyword">new</span> Random(hash);</span><br><span class="line">    <span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; HashCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        list.Add(random.Next() % BitArrayLength);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合添加 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetBitArray</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        BitArray.Set(data, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合查询 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">GetBitArray</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (BitArray[data])</span><br><span class="line">        &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> count == HashCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="简易布隆过滤器实现"><a href="#简易布隆过滤器实现" class="headerlink" title="简易布隆过滤器实现"></a>简易布隆过滤器实现</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BitArray 大小</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> BitArrayLength &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Hash 的数量（用多个 Hash 匹配更精确）</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">byte</span> HashCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 位数组</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> BitArray BitArray &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 配置方法</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fpp&quot;&gt;</span>精准率<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fieldCount&quot;&gt;</span>数据库字段数量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Config</span>(<span class="params"><span class="keyword">float</span> fpp = <span class="number">0.001f</span>, <span class="keyword">int</span> fieldCount = <span class="number">10000</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置布隆数组大小</span></span><br><span class="line">    BitArrayLength = (<span class="keyword">int</span>)Math.Round(-(fieldCount * Math.Log(fpp) / Math.Pow(Math.Log(<span class="number">2</span>), <span class="number">2</span>)));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置合适的 bit 集合数量</span></span><br><span class="line">    HashCount = (<span class="keyword">byte</span>)Math.Round(BitArrayLength / fieldCount * Math.Log(<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line">    BitArray = <span class="keyword">new</span> BitArray(BitArrayLength);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 获取 key 的哈希集合</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;<span class="keyword">int</span>&gt; <span class="title">GetHashList</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> hash = key.GetHashCode();</span><br><span class="line">    <span class="keyword">var</span> random = <span class="keyword">new</span> Random(hash);</span><br><span class="line">    <span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; HashCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        list.Add(random.Next() % BitArrayLength);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合添加 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetBitArray</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        BitArray.Set(data, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合查询 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">bool</span> <span class="title">GetBitArray</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (BitArray[data])</span><br><span class="line">        &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> count == HashCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line">BF.ADD newFilter foo <span class="comment">// 添加元素</span></span><br><span class="line">BF.EXISTS newFilter foo <span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.MADD myFilter foo bar baz <span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar <span class="comment">// 查询多个元素</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span> <span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、数据库某个字段的数据量</span></span><br></pre></td></tr></table></figure>
 
@@ -494,112 +422,88 @@
       </categories>
   </entry>
   <entry>
-    <title>【MSSQL】varchar 自动增长列</title>
-    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-1/</url>
+    <title>【TDD】测试驱动开发</title>
+    <url>/MyBlog/2020/07/31/Other-TDD/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">&#x27;DC&#x27;</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+<h1 id="传统流程的弊端"><a href="#传统流程的弊端" class="headerlink" title="传统流程的弊端"></a>传统流程的弊端</h1><ul>
+<li>大部分测试是手动的</li>
+<li>业务紧急没时间做测试</li>
+<li>无法重构代码，怕破坏原有模块</li>
+<li>文档从不更新</li>
+<li>学习和维护成本高</li>
 </ul>
-<blockquote>
-<p>选择服务器</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
-<blockquote>
-<p>点击属性</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
-<blockquote>
-<p>在启动参数中输入 -t272</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
-<blockquote>
-<p>重新启动</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【Centos7】MariaDB 设置</title>
-    <url>/MyBlog/2020/07/08/Centos-MariaDB/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
-      <categories>
-        <category>Centos</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【Web】TypeScript</title>
-    <url>/MyBlog/2020/08/05/Web-TypeScript/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
-
-<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
-<li>将 tsconfig.json 中的 outDir 注释取消</li>
-<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
+<h1 id="什么是-TDD"><a href="#什么是-TDD" class="headerlink" title="什么是 TDD"></a>什么是 TDD</h1><ul>
+<li>它是一种敏捷开发</li>
+<li>传统流程是先做好项目再统一测试，现在是开发时就编写测试</li>
+<li>根据测试编写业务代码能减少维护成本</li>
+<li>大多数情况下都是测试行为，也就是 public 方法</li>
 </ul>
-<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; name: <span class="string">&#x27;lee&#x27;</span>, age: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Web</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【MySQL】常用语句</title>
-    <url>/MyBlog/2020/06/05/SQL-MySQL-Command/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
+<h1 id="测试的三个阶段"><a href="#测试的三个阶段" class="headerlink" title="测试的三个阶段"></a>测试的三个阶段</h1><ul>
+<li>Arrange：创建对象、 数据、输入</li>
+<li>Act：执行方法并返回结果</li>
+<li>Assert：检查结果</li>
 </ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="TDD-流程"><a href="#TDD-流程" class="headerlink" title="TDD 流程"></a>TDD 流程</h1><ul>
+<li>拆分需求</li>
+<li>编写测试</li>
+<li><strong>验证测试</strong></li>
+<li>根据测试代码编写产品代码</li>
+<li><strong>验证测试</strong></li>
+<li>重构</li>
+<li><strong>验证测试</strong></li>
+</ul>
+<h1 id="测试分类"><a href="#测试分类" class="headerlink" title="测试分类"></a>测试分类</h1><ul>
+<li>单元测试：独立模块的测试</li>
+<li>集成测试：包含数据库在内一定范围的联合测试</li>
+<li>皮下测试：针对接口层的测试</li>
+<li>UI 测试：在 UI 层的测试</li>
+</ul>
+<h1 id="在-Net-中使用-xUnit-进行测试"><a href="#在-Net-中使用-xUnit-进行测试" class="headerlink" title="在 .Net 中使用 xUnit 进行测试"></a>在 .Net 中使用 xUnit 进行测试</h1><ul>
+<li>新建 xUnit 测试项目</li>
+<li>项目命名规范：被测试项目名 + Test</li>
+<li>测试类命名规范：被测试类名 + Test</li>
+<li>测试类中每个方法都会走一遍构造方法</li>
+</ul>
+<h2 id="如何测试？"><a href="#如何测试？" class="headerlink" title="如何测试？"></a>如何测试？</h2><ul>
+<li>使用 new 创建实例调用方法</li>
+<li>最后使用 Assert 类进行结果检测</li>
+</ul>
+<h2 id="测试分组"><a href="#测试分组" class="headerlink" title="测试分组"></a>测试分组</h2><ul>
+<li>[Trait(“大类名”,”小类名”)] 此特性可以将各个测试方法分组，要在测试资源管理器中选择特征</li>
+<li>一个方法或类可以拥有多个 Trait</li>
+</ul>
+<h2 id="忽略测试"><a href="#忽略测试" class="headerlink" title="忽略测试"></a>忽略测试</h2><ul>
+<li>在 Fact 上加一个参数 Skip = “xxxx” 即可</li>
+</ul>
+<h2 id="自定义输出测试信息"><a href="#自定义输出测试信息" class="headerlink" title="自定义输出测试信息"></a>自定义输出测试信息</h2><ul>
+<li>注入 ITestOutputHelper 接口</li>
+<li>使用该接口的实例方法 WriteLine 输出信息</li>
+</ul>
+<h2 id="共享上下文"><a href="#共享上下文" class="headerlink" title="共享上下文"></a>共享上下文</h2><ul>
+<li>使用时类不要有副作用，否则会产生麻烦</li>
+</ul>
+<h3 id="单个类中使用一个实例"><a href="#单个类中使用一个实例" class="headerlink" title="单个类中使用一个实例"></a>单个类中使用一个实例</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserFixtrue</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> UserService userService &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserFixTrue</span>(<span class="params">UserService userService</span>)</span>&#123;</span><br><span class="line">        userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后回到测试类中创建这个实例</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTest</span>: <span class="title">IClassFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> UserFixtrue userFixtrue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserTest</span>(<span class="params">UserFixtrue userFixtrue</span>)</span>&#123;</span><br><span class="line">        userFixtrue = userFixtrue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="多个类中使用一个实例"><a href="#多个类中使用一个实例" class="headerlink" title="多个类中使用一个实例"></a>多个类中使用一个实例</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 以上一个例子的类为基础创建一个 Collection 类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">CollectionDefinition(<span class="meta-string">&quot;ddd&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserCollectionFixtrue</span>: <span class="title">ICollectionFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后就能在各个类中使用同一个实例</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Collection(<span class="meta-string">&quot;ddd&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTest</span>: <span class="title">IClassFixtrue</span>&lt;<span class="title">UserFixtrue</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> UserFixtrue userFixtrue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserTest</span>(<span class="params">UserFixtrue userFixtrue</span>)</span>&#123;</span><br><span class="line">        userFixtrue = userFixtrue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据驱动测试"><a href="#数据驱动测试" class="headerlink" title="数据驱动测试"></a>数据驱动测试</h2><ul>
+<li>将 [Fact] 改成 [Theory] 特性</li>
+</ul>
+<h3 id="InlineData"><a href="#InlineData" class="headerlink" title="InlineData"></a>InlineData</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 定义被测试类 User</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Add</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> num1 + num2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义测试类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">InlineData(1, 2, 3)</span>]</span><br><span class="line">[<span class="meta">InlineData(1, 2, 5)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="MemberData"><a href="#MemberData" class="headerlink" title="MemberData"></a>MemberData</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 定义被测试类 User</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Add</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> num1 + num2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义数据类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserTestData</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> List&lt;<span class="keyword">object</span>[]&gt; Data = <span class="keyword">new</span> List&lt;<span class="keyword">object</span>[]&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">object</span>[] &#123; <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;,</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">object</span>[] &#123; <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> IEnumerable&lt;<span class="keyword">object</span>[]&gt; Data()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义测试类</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">MemberData(nameof(UserTestData.Data), MemberType = typeof(UserTestData))</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="外部数据来源"><a href="#外部数据来源" class="headerlink" title="外部数据来源"></a>外部数据来源</h3><ul>
+<li>就是以 MemberData 为基础，将实现改为读取文件流并返回</li>
+</ul>
+<h3 id="自定义-Data-Attribute"><a href="#自定义-Data-Attribute" class="headerlink" title="自定义 Data Attribute"></a>自定义 Data Attribute</h3><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyDataAttribute</span>: <span class="title">DataAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// override GetData 方法</span></span><br><span class="line">    <span class="comment">// 使用 yield return 返回数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在测试方法中调用该 Attribute 即可</span></span><br><span class="line"></span><br><span class="line">[<span class="meta">Theory</span>]</span><br><span class="line">[<span class="meta">MyData</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddTest</span>(<span class="params"><span class="keyword">int</span> num1, <span class="keyword">int</span> num2, <span class="keyword">int</span> result</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User();</span><br><span class="line">    <span class="keyword">var</span> outResult = user.Add(num1, num2);</span><br><span class="line">    Assert.Equal(result, outResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>SQL</category>
+        <category>Other</category>
       </categories>
   </entry>
   <entry>
@@ -656,6 +560,76 @@
 </li>
 </ul>
 <h2 id="非聚集索引示意图"><a href="#非聚集索引示意图" class="headerlink" title="非聚集索引示意图"></a>非聚集索引示意图</h2><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/2.png" alt="非聚集索引"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】varchar 自动增长列</title>
+    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-1/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">&#x27;DC&#x27;</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】解决 SQL Server 服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决使用-SQL-Server-2012-时出现主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决使用 SQL Server 2012 时出现主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MySQL】常用语句</title>
+    <url>/MyBlog/2020/06/05/SQL-MySQL-Command/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> * <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(<span class="keyword">name</span>) <span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">id</span>,</span><br><span class="line"><span class="keyword">name</span></span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> * <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id=table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">desc</span> <span class="keyword">limit</span> <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>SQL</category>
@@ -739,6 +713,32 @@
 <li>第三次：服务端发送 FIN 到客户端</li>
 <li>第四次：客户端回报 ACK 给服务端</li>
 </ul>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Web】TypeScript</title>
+    <url>/MyBlog/2020/08/05/Web-TypeScript/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
+<li>将 tsconfig.json 中的 outDir 注释取消</li>
+<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
+</ul>
+<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; name: <span class="string">&#x27;lee&#x27;</span>, age: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Web</category>
