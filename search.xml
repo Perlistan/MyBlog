@@ -18,17 +18,6 @@
       </categories>
   </entry>
   <entry>
-    <title>【CShard】语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【CShard】语言基础</title>
     <url>/MyBlog/2020/06/05/CShard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -177,6 +166,17 @@
       </categories>
   </entry>
   <entry>
+    <title>【CShard】语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【Centos7】Docker</title>
     <url>/MyBlog/2020/07/25/Centos-Docker/</url>
     <content><![CDATA[<blockquote>
@@ -213,122 +213,6 @@
 <a id="more"></a>]]></content>
       <categories>
         <category>.Net Core</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【DDD】领域驱动设计</title>
-    <url>/MyBlog/2020/07/09/Other-DDD/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>DDD 解决了需求经常变，想重构又怕出错的问题</li>
-<li>学习 ABP 能帮助入门 DDD，熟悉领域服务、领域事件、聚合根（充血模型）</li>
-<li></li>
-<li></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Other</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>事务原则</title>
-    <url>/MyBlog/2020/09/12/Other-ACID-CAP/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h1><ul>
-<li>Atomicity：原子性</li>
-<li>Consistency：一致性</li>
-<li>Isolation：独立性</li>
-<li>Durability：持久性</li>
-</ul>
-<h1 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h1><ul>
-<li>Consistency：一致性</li>
-<li>Availability：高可用</li>
-<li>Partition tolerance：分区容错性</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Other</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>设计模式</title>
-    <url>/MyBlog/2020/08/24/Other-DesignMode/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><h2 id="单一原则-SRP"><a href="#单一原则-SRP" class="headerlink" title="单一原则 SRP"></a>单一原则 SRP</h2><ul>
-<li>降低类的复杂度，一个类只负责一项职责，一个方法只做一件事</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 类单一</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserDTO <span class="title">GetUser</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetUser</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">File</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> FileDTO <span class="title">GetFile</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetFile</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法单一</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Run</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Run</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">CarRun</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Run(<span class="string">$&quot;【汽车】<span class="subst">&#123;str&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">HumanRun</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Run(<span class="string">$&quot;【人类】<span class="subst">&#123;str&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="开闭原则-OCP"><a href="#开闭原则-OCP" class="headerlink" title="开闭原则 OCP"></a>开闭原则 OCP</h2><ul>
-<li>对扩展开放，对修改关闭</li>
-<li>模块相互独立，新功能使用新代码实现，不要修改旧代码</li>
-</ul>
-<h2 id="里式替换原则-LSP"><a href="#里式替换原则-LSP" class="headerlink" title="里式替换原则 LSP"></a>里式替换原则 LSP</h2><ul>
-<li>子类不要重写父类的方法</li>
-<li>子类用新方法完成新功能</li>
-</ul>
-<h2 id="依赖倒置原则-DIP"><a href="#依赖倒置原则-DIP" class="headerlink" title="依赖倒置原则 DIP"></a>依赖倒置原则 DIP</h2><ul>
-<li>高层依赖低层的抽象而不是实例</li>
-<li>常用的情况是面向接口编程</li>
-<li>IOC 框架就是以此诞生的</li>
-</ul>
-<h2 id="接口隔离原则-ISP"><a href="#接口隔离原则-ISP" class="headerlink" title="接口隔离原则 ISP"></a>接口隔离原则 ISP</h2><ul>
-<li>为各个类创建专用的接口</li>
-</ul>
-<h2 id="合成复用-CRP"><a href="#合成复用-CRP" class="headerlink" title="合成复用 CRP"></a>合成复用 CRP</h2><ul>
-<li><h2 id="迪米特-LoD"><a href="#迪米特-LoD" class="headerlink" title="迪米特 LoD"></a>迪米特 LoD</h2></li>
-<li><p>类似三层架构，UI 只跟 BLL 联系，BLL 只跟 DAL 联系，禁止 UI 直接跟 DAL 联系</p>
-</li>
-</ul>
-<h1 id="结构型"><a href="#结构型" class="headerlink" title="结构型"></a>结构型</h1><ul>
-<li>本质就是封装 N 层</li>
-</ul>
-<h2 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h2><ul>
-<li>分为类适配器和对象适配器</li>
-<li>类适配器：继承父类和接口</li>
-<li>对象适配器：实现接口，涉及对象由依赖注入生成</li>
-<li>主要以适配某个组件为主，例如封装 Redis 的通用方法</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 类适配器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">Dad</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象适配器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad _dad = <span class="keyword">new</span> Dad();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _dad.Get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><ul>
-<li>看上去跟适配器模式很像</li>
-<li>主要以通用功能为主</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 普通代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad _dad = <span class="keyword">new</span> Dad();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 单例代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> Dad2 _dad2 = <span class="keyword">new</span> Dad2();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注入代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad3 _dad3;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">A</span>(<span class="params">IDad3 dad3</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>.Dad3 = dad3;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _dad.Get();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write log</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h2><h2 id="装饰模式"><a href="#装饰模式" class="headerlink" title="装饰模式"></a>装饰模式</h2><h2 id="组合模式"><a href="#组合模式" class="headerlink" title="组合模式"></a>组合模式</h2><h2 id="外观模式"><a href="#外观模式" class="headerlink" title="外观模式"></a>外观模式</h2><h2 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h2><h1 id="创建型"><a href="#创建型" class="headerlink" title="创建型"></a>创建型</h1><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><ul>
-<li>只存在一个对象实例</li>
-<li>使用 IOC 时可以让其实现单例注入</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">Singleton</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">Singleton</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> RedisHelper GetRedisHelper &#123; <span class="keyword">get</span>; &#125; = <span class="keyword">new</span> RedisHelper();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><h2 id="建造模式"><a href="#建造模式" class="headerlink" title="建造模式"></a>建造模式</h2><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><h1 id="行为型"><a href="#行为型" class="headerlink" title="行为型"></a>行为型</h1><h2 id="模板模式"><a href="#模板模式" class="headerlink" title="模板模式"></a>模板模式</h2><h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h2 id="访问模式"><a href="#访问模式" class="headerlink" title="访问模式"></a>访问模式</h2><h2 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h2><h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><h2 id="中介模式"><a href="#中介模式" class="headerlink" title="中介模式"></a>中介模式</h2><h2 id="备忘录模式"><a href="#备忘录模式" class="headerlink" title="备忘录模式"></a>备忘录模式</h2><h2 id="解析器模式"><a href="#解析器模式" class="headerlink" title="解析器模式"></a>解析器模式</h2><h2 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h2><h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2>]]></content>
-      <categories>
-        <category>Other</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>【算法】七大查找算法</title>
-    <url>/MyBlog/2020/09/10/Other-FindMath/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>Other</category>
       </categories>
   </entry>
   <entry>
@@ -418,14 +302,82 @@
       </categories>
   </entry>
   <entry>
-    <title>【算法】十大排序算法</title>
-    <url>/MyBlog/2020/09/10/Other-SortMath/</url>
+    <title>【DDD】领域驱动设计</title>
+    <url>/MyBlog/2020/07/09/Other-DDD/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>DDD 解决了需求经常变，想重构又怕出错的问题</li>
+<li>学习 ABP 能帮助入门 DDD，熟悉领域服务、领域事件、聚合根（充血模型）</li>
+<li></li>
+<li></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>设计模式</title>
+    <url>/MyBlog/2020/08/24/Other-DesignMode/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><h2 id="单一原则-SRP"><a href="#单一原则-SRP" class="headerlink" title="单一原则 SRP"></a>单一原则 SRP</h2><ul>
+<li>降低类的复杂度，一个类只负责一项职责，一个方法只做一件事</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 类单一</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserDTO <span class="title">GetUser</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetUser</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">File</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> FileDTO <span class="title">GetFile</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetFile</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法单一</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Run</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Run</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">CarRun</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Run(<span class="string">$&quot;【汽车】<span class="subst">&#123;str&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">HumanRun</span>(<span class="params"><span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Run(<span class="string">$&quot;【人类】<span class="subst">&#123;str&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="开闭原则-OCP"><a href="#开闭原则-OCP" class="headerlink" title="开闭原则 OCP"></a>开闭原则 OCP</h2><ul>
+<li>对扩展开放，对修改关闭</li>
+<li>模块相互独立，新功能使用新代码实现，不要修改旧代码</li>
+</ul>
+<h2 id="里式替换原则-LSP"><a href="#里式替换原则-LSP" class="headerlink" title="里式替换原则 LSP"></a>里式替换原则 LSP</h2><ul>
+<li>子类不要重写父类的方法</li>
+<li>子类用新方法完成新功能</li>
+</ul>
+<h2 id="依赖倒置原则-DIP"><a href="#依赖倒置原则-DIP" class="headerlink" title="依赖倒置原则 DIP"></a>依赖倒置原则 DIP</h2><ul>
+<li>高层依赖低层的抽象而不是实例</li>
+<li>常用的情况是面向接口编程</li>
+<li>IOC 框架就是以此诞生的</li>
+</ul>
+<h2 id="接口隔离原则-ISP"><a href="#接口隔离原则-ISP" class="headerlink" title="接口隔离原则 ISP"></a>接口隔离原则 ISP</h2><ul>
+<li>为各个类创建专用的接口</li>
+</ul>
+<h2 id="合成复用-CRP"><a href="#合成复用-CRP" class="headerlink" title="合成复用 CRP"></a>合成复用 CRP</h2><ul>
+<li><h2 id="迪米特-LoD"><a href="#迪米特-LoD" class="headerlink" title="迪米特 LoD"></a>迪米特 LoD</h2></li>
+<li><p>类似三层架构，UI 只跟 BLL 联系，BLL 只跟 DAL 联系，禁止 UI 直接跟 DAL 联系</p>
+</li>
+</ul>
+<h1 id="结构型"><a href="#结构型" class="headerlink" title="结构型"></a>结构型</h1><ul>
+<li>本质就是封装 N 层</li>
+</ul>
+<h2 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h2><ul>
+<li>分为类适配器和对象适配器</li>
+<li>类适配器：继承父类和接口</li>
+<li>对象适配器：实现接口，涉及对象由依赖注入生成</li>
+<li>主要以适配某个组件为主，例如封装 Redis 的通用方法</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 类适配器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">Dad</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象适配器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad _dad = <span class="keyword">new</span> Dad();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _dad.Get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><ul>
+<li>看上去跟适配器模式很像</li>
+<li>主要以通用功能为主</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 普通代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad _dad = <span class="keyword">new</span> Dad();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 单例代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> Dad2 _dad2 = <span class="keyword">new</span> Dad2();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注入代理</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dad3 _dad3;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">A</span>(<span class="params">IDad3 dad3</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>.Dad3 = dad3;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _dad.Get();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// write log</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h2><h2 id="装饰模式"><a href="#装饰模式" class="headerlink" title="装饰模式"></a>装饰模式</h2><h2 id="组合模式"><a href="#组合模式" class="headerlink" title="组合模式"></a>组合模式</h2><h2 id="外观模式"><a href="#外观模式" class="headerlink" title="外观模式"></a>外观模式</h2><h2 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h2><h1 id="创建型"><a href="#创建型" class="headerlink" title="创建型"></a>创建型</h1><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><ul>
+<li>只存在一个对象实例</li>
+<li>使用 IOC 时可以让其实现单例注入</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">Singleton</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">Singleton</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> RedisHelper GetRedisHelper &#123; <span class="keyword">get</span>; &#125; = <span class="keyword">new</span> RedisHelper();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><h2 id="建造模式"><a href="#建造模式" class="headerlink" title="建造模式"></a>建造模式</h2><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><h1 id="行为型"><a href="#行为型" class="headerlink" title="行为型"></a>行为型</h1><h2 id="模板模式"><a href="#模板模式" class="headerlink" title="模板模式"></a>模板模式</h2><h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h2 id="访问模式"><a href="#访问模式" class="headerlink" title="访问模式"></a>访问模式</h2><h2 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h2><h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><h2 id="中介模式"><a href="#中介模式" class="headerlink" title="中介模式"></a>中介模式</h2><h2 id="备忘录模式"><a href="#备忘录模式" class="headerlink" title="备忘录模式"></a>备忘录模式</h2><h2 id="解析器模式"><a href="#解析器模式" class="headerlink" title="解析器模式"></a>解析器模式</h2><h2 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h2><h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2>]]></content>
       <categories>
         <category>Other</category>
       </categories>
@@ -656,20 +608,6 @@
       </categories>
   </entry>
   <entry>
-    <title>【MSSQL】varchar 自动增长列</title>
-    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-1/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">&#x27;DC&#x27;</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【MSSQL】常用语句</title>
     <url>/MyBlog/2020/06/08/SQL-MSSQL-Command/</url>
     <content><![CDATA[<blockquote>
@@ -687,6 +625,20 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
 
 <h1 id="读写分离时复制功能登录失败问题"><a href="#读写分离时复制功能登录失败问题" class="headerlink" title="读写分离时复制功能登录失败问题"></a>读写分离时复制功能登录失败问题</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 先查询出本地计算机名和数据库名</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> @@SERVERNAME</span><br><span class="line"><span class="keyword">select</span> serverproperty(<span class="string">&#x27;servername&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 同步两者名字即可使用计算机名登录</span></span><br><span class="line"></span><br><span class="line">exec sp_dropserver <span class="string">&#x27;DESKTOP-7RNV68B&#x27;</span></span><br><span class="line">exec sp_addserver <span class="string">&#x27;TAGOST&#x27;</span>,<span class="string">&#x27;local&#x27;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【MSSQL】varchar 自动增长列</title>
+    <url>/MyBlog/2020/06/08/SQL-MSSQL-QA-1/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="不建议用数据库做逻辑数据"><a href="#不建议用数据库做逻辑数据" class="headerlink" title="不建议用数据库做逻辑数据"></a>不建议用数据库做逻辑数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> @nowtime datetime</span><br><span class="line"><span class="keyword">declare</span> @newUUID <span class="built_in">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> @nowtime = <span class="keyword">GETDATE</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">@newUUID = <span class="string">&#x27;DC&#x27;</span>+<span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>,<span class="keyword">YEAR</span>(@nowtime))+<span class="keyword">RIGHT</span>(<span class="number">100</span>+<span class="keyword">MONTH</span>(@nowtime),<span class="number">2</span>)+<span class="keyword">RIGHT</span>(<span class="number">10000</span>+<span class="keyword">ISNULL</span>(<span class="keyword">RIGHT</span>(<span class="keyword">max</span>(<span class="keyword">uuid</span>),<span class="number">4</span>),<span class="number">0</span>)+<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Test</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> @newUUID</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">Test</span></span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> <span class="keyword">uuID</span></span><br><span class="line"><span class="keyword">go</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>SQL</category>
@@ -725,28 +677,6 @@
       </categories>
   </entry>
   <entry>
-    <title>【Web】前端框架从后端读取路由的弊端</title>
-    <url>/MyBlog/2020/07/22/Web-WhyNotUseBackgroudRouter/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="为什么不要从后端读取路由"><a href="#为什么不要从后端读取路由" class="headerlink" title="为什么不要从后端读取路由"></a>为什么不要从后端读取路由</h1><p>拿 Vue 来说，一般情况下不管是写死路由还是从后端请求路由都是为了解决防止用户进入指定页面的问题。</p>
-<p>就算用户进入了指定页面，所有的实际操作都要经过后端二次验证才能继续进行，用户不可能进入某个页面后就为所欲为。另外，懂技术的人都有自己的特殊手法进入指定页面。</p>
-<p>既然如此，最终结果一致的情况下这种做法相当于伪需求。</p>
-<h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
-<li>动态请求会产生多余的网络请求</li>
-<li>如果后端炸了获取不到路由怎么办</li>
-<li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
-<li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Web</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【MySQL】常用语句</title>
     <url>/MyBlog/2020/06/05/SQL-MySQL-Command/</url>
     <content><![CDATA[<blockquote>
@@ -773,29 +703,16 @@
       </categories>
   </entry>
   <entry>
-    <title>【Web】TypeScript</title>
-    <url>/MyBlog/2020/08/05/Web-TypeScript/</url>
+    <title>【MYSQL】MYSQL 详解</title>
+    <url>/MyBlog/2020/11/17/SQL-MYSQL/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
-
-<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
-<li>将 tsconfig.json 中的 outDir 注释取消</li>
-<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
-</ul>
-<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; name: <span class="string">&#x27;lee&#x27;</span>, age: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Web</category>
+        <category>SQL</category>
       </categories>
   </entry>
   <entry>
@@ -882,6 +799,102 @@
       </categories>
   </entry>
   <entry>
+    <title>【Web】TypeScript</title>
+    <url>/MyBlog/2020/08/05/Web-TypeScript/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight dos"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
+<li>将 tsconfig.json 中的 outDir 注释取消</li>
+<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
+</ul>
+<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; name: <span class="string">&#x27;lee&#x27;</span>, age: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【Web】前端框架从后端读取路由的弊端</title>
+    <url>/MyBlog/2020/07/22/Web-WhyNotUseBackgroudRouter/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="为什么不要从后端读取路由"><a href="#为什么不要从后端读取路由" class="headerlink" title="为什么不要从后端读取路由"></a>为什么不要从后端读取路由</h1><p>拿 Vue 来说，一般情况下不管是写死路由还是从后端请求路由都是为了解决防止用户进入指定页面的问题。</p>
+<p>就算用户进入了指定页面，所有的实际操作都要经过后端二次验证才能继续进行，用户不可能进入某个页面后就为所欲为。另外，懂技术的人都有自己的特殊手法进入指定页面。</p>
+<p>既然如此，最终结果一致的情况下这种做法相当于伪需求。</p>
+<h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
+<li>动态请求会产生多余的网络请求</li>
+<li>如果后端炸了获取不到路由怎么办</li>
+<li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
+<li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Web</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>事务原则</title>
+    <url>/MyBlog/2020/09/12/Other-ACID-CAP/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h1><ul>
+<li>Atomicity：原子性</li>
+<li>Consistency：一致性</li>
+<li>Isolation：独立性</li>
+<li>Durability：持久性</li>
+</ul>
+<h1 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h1><ul>
+<li>Consistency：一致性</li>
+<li>Availability：高可用</li>
+<li>Partition tolerance：分区容错性</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【算法】七大查找算法</title>
+    <url>/MyBlog/2020/09/10/Other-FindMath/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>【算法】十大排序算法</title>
+    <url>/MyBlog/2020/09/10/Other-SortMath/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
+      <categories>
+        <category>Other</category>
+      </categories>
+  </entry>
+  <entry>
     <title>【Web】ES 6-11 语法</title>
     <url>/MyBlog/2020/07/09/Web-ECMA/</url>
     <content><![CDATA[<blockquote>
@@ -948,7 +961,7 @@
 <li><strong>一般是某些关键字的内置属性，例如数组 Symbol.iterator</strong></li>
 <li>类似 C# 里的扩展方法</li>
 </ul>
-<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><h2 id="for…of-与-for…in-的区别"><a href="#for…of-与-for…in-的区别" class="headerlink" title="for…of 与 for…in 的区别"></a>for…of 与 for…in 的区别</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...of 展示的是 value</span></span><br><span class="line"><span class="comment">// 注意：此方式无法作用于对象</span></span><br><span class="line"><span class="comment">// 原理是必须实现了 symbol.iterator 才能使用</span></span><br><span class="line"><span class="comment">// 请求一次返回一次结果，直到遍历完毕或条件结束</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> value <span class="keyword">of</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...in 展示的是 key</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">of</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><h2 id="for…of-与-for…in-的区别"><a href="#for…of-与-for…in-的区别" class="headerlink" title="for…of 与 for…in 的区别"></a>for…of 与 for…in 的区别</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...of 展示的是 value</span></span><br><span class="line"><span class="comment">// 注意：此方式无法作用于对象</span></span><br><span class="line"><span class="comment">// 原理是必须实现了 symbol.iterator 才能使用</span></span><br><span class="line"><span class="comment">// 请求一次返回一次结果，直到遍历完毕或条件结束</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> value <span class="keyword">of</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// for...in 展示的是 key</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="让对象可以使用-for…of"><a href="#让对象可以使用-for…of" class="headerlink" title="让对象可以使用 for…of"></a>让对象可以使用 for…of</h2><ul>
 <li>为不可遍历的对象添加一个 symbol.iterator 方法，此方法有固定格式</li>
