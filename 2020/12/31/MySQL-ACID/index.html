@@ -22,13 +22,13 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ACID 事务特性">
+<meta property="og:title" content="InnoDB ACID 事务特性">
 <meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/12/31/MySQL-ACID/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-31T04:38:16.524Z">
-<meta property="article:modified_time" content="2020-12-31T05:00:49.105Z">
+<meta property="article:modified_time" content="2020-12-31T06:07:38.599Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 
@@ -45,7 +45,7 @@
   };
 </script>
 
-  <title>ACID 事务特性 | 踩坑日记</title>
+  <title>InnoDB ACID 事务特性 | 踩坑日记</title>
   
 
 
@@ -183,7 +183,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ACID 事务特性
+          InnoDB ACID 事务特性
         </h1>
 
         <div class="post-meta">
@@ -194,7 +194,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-31 12:38:16 / 修改时间：13:00:49" itemprop="dateCreated datePublished" datetime="2020-12-31T12:38:16+08:00">2020-12-31</time>
+              <time title="创建时间：2020-12-31 12:38:16 / 修改时间：14:07:38" itemprop="dateCreated datePublished" datetime="2020-12-31T12:38:16+08:00">2020-12-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,6 +227,23 @@
 <li>一致性（Consistency）</li>
 <li>隔离性（Isolation）</li>
 <li>持久性（Durabilyty）</li>
+</ul>
+<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><ul>
+<li>要么成功要么失败</li>
+<li>提交事务时会在 Undo log 生成一条日志记录操作前的数据，如果发生错误就会根据这条日志执行相反的操作，例如 insert 错误就执行 delete</li>
+</ul>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
+<li><strong>只有先保证其它三个特性才能保证一致性</strong></li>
+</ul>
+<h2 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h2><ul>
+<li>事务一旦提交，对数据的改变是永久性的</li>
+<li>提交事务时会在 Redo log 生成一条记录，之后写入数据库缓存，最后同步到硬盘</li>
+<li>Redo log 是文件追加的形式，所以是有序的，有序比无序快</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 控制 Redo log 机制</span></span><br><span class="line">innodb_flash_log_at_trx_commit</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="operator">-</span> 让主线程同步 Redo log 到硬盘</span><br><span class="line"><span class="number">1</span> <span class="operator">-</span> <span class="keyword">commit</span> 时同步写入</span><br><span class="line"><span class="number">2</span> <span class="operator">-</span> <span class="keyword">commit</span> 时异步写入</span><br><span class="line"></span><br><span class="line">一般采用 <span class="number">1</span> 号</span><br></pre></td></tr></table></figure>
+<h2 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h2><ul>
+<li>写操作：锁</li>
+<li>读写操作：MVCC</li>
 </ul>
 
     </div>
@@ -305,7 +322,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ACID-%E5%9B%9B%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="nav-text">ACID 四大特性</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ACID-%E5%9B%9B%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="nav-text">ACID 四大特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E6%80%A7"><span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-text">隔离性</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -357,7 +374,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

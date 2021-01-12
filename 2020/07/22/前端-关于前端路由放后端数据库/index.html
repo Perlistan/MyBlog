@@ -23,16 +23,16 @@
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
 <meta property="og:title" content="前端框架从后端读取路由的弊端">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-1/index.html">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%85%B3%E4%BA%8E%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E6%94%BE%E5%90%8E%E7%AB%AF%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-22T04:39:26.625Z">
-<meta property="article:modified_time" content="2020-12-31T05:00:49.111Z">
+<meta property="article:modified_time" content="2021-01-12T09:20:45.671Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-1/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%85%B3%E4%BA%8E%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E6%94%BE%E5%90%8E%E7%AB%AF%E6%95%B0%E6%8D%AE%E5%BA%93/">
 
 
 <script id="page-configurations">
@@ -170,7 +170,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-1/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-%E5%85%B3%E4%BA%8E%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E6%94%BE%E5%90%8E%E7%AB%AF%E6%95%B0%E6%8D%AE%E5%BA%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -200,7 +200,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 13:00:49" itemprop="dateModified" datetime="2020-12-31T13:00:49+08:00">2020-12-31</time>
+                <time title="修改时间：2021-01-12 17:20:45" itemprop="dateModified" datetime="2021-01-12T17:20:45+08:00">2021-01-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -228,9 +228,12 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="为什么不要从后端读取路由"><a href="#为什么不要从后端读取路由" class="headerlink" title="为什么不要从后端读取路由"></a>为什么不要从后端读取路由</h1><p>拿 Vue 来说，一般情况下不管是写死路由还是从后端请求路由都是为了解决防止用户进入指定页面的问题。</p>
-<p>就算用户进入了指定页面，所有的实际操作都要经过后端二次验证才能继续进行，用户不可能进入某个页面后就为所欲为。另外，懂技术的人都有自己的特殊手法进入指定页面。</p>
-<p>既然如此，最终结果一致的情况下这种做法相当于伪需求。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>想起以前那帮老油条为了做菜单权限在数据库放 vue 路由就恶心，本来靠路由守卫就能解决的问题非要丢给后端。后端还要为获取路由单独写个 API，前端改了又让后端改，最后上线路由判断有问题，是前端忘记通知后端改路由的锅结果被屌的却是后端</p>
+<p>背锅还不算，前端没缓存好路由导致无限从后端请求路由造成并发最后前后端一起炸</p>
+<p>还美其名曰这是高可用，说是由后端动态绑定路由可以减少代码量且能避免用户进入指定界面。放屁高可用，正常人谁会浪费时间改代码看你的破界面，用户要是能跨后端验证那后端是干什么吃的</p>
+<p>那帮人还好意思举例要是有一百万路由那手写多麻烦。兄弟，你是轻松了，后端倒霉了，况且能出现一百万路由说明项目本身就有问题。前端一体速度最快，非要经过网络传输获取路由，到时候出事就像上面说的前后端一起炸，这算个屁的前后端分离</p>
+<p>真正的分离是前后端互不干涉，路由放后端完全是被 MVC 思维带偏了，最终双方能交互的仅限于 API 逻辑接口；前端只需要用路由守卫判断 JWT 中的 role 就能实现菜单权限，至于怕用户改 JWT 进入指定页面更不用担心，所有逻辑都要经过后端二次验证，用户也只能在这个页面干瞪眼。你说我就不想让客户看到页面？那属于个人洁癖，对团队无利。你之所以认为这么做是正确的，可能是你们公司的制度不够严格，怎么舒服怎么来。我们自从出现文中那种事后完全杜绝任何会产生前后端耦合的行为，至今项目比以前更稳</p>
+<p>本来自己拿着杯子倒水喝水是最快的，现在要把杯子放在别人那里让别人给你倒水，别人一旦不在你就没水喝，而且把水拿过来也要算路程和时间</p>
 <h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
 <li>动态请求会产生多余的网络请求</li>
 <li>如果后端炸了获取不到路由怎么办</li>
@@ -317,7 +320,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%A6%81%E4%BB%8E%E5%90%8E%E7%AB%AF%E8%AF%BB%E5%8F%96%E8%B7%AF%E7%94%B1"><span class="nav-text">为什么不要从后端读取路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E5%90%8E%E7%AB%AF%E8%AF%BB%E5%8F%96%E8%B7%AF%E7%94%B1%E8%A1%8D%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">从后端读取路由衍生的问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E5%90%8E%E7%AB%AF%E8%AF%BB%E5%8F%96%E8%B7%AF%E7%94%B1%E8%A1%8D%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">从后端读取路由衍生的问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -369,7 +372,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
