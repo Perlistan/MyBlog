@@ -172,8 +172,30 @@
       </categories>
   </entry>
   <entry>
-    <title>数据库索引</title>
-    <url>/MyBlog/2020/06/12/MySQL-Index/</url>
+    <title>MySQL 常用语句</title>
+    <url>/MyBlog/2020/06/05/MySQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(name) <span class="keyword">select</span> name <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id<span class="operator">=</span>table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">desc</span> limit <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="强制使用指定索引"><a href="#强制使用指定索引" class="headerlink" title="强制使用指定索引"></a>强制使用指定索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> force index(<span class="string">&#x27;索引名&#x27;</span>) <span class="keyword">where</span> xxx</span><br></pre></td></tr></table></figure>
+<h1 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 前缀索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一般索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 唯一索引</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> INDEX indexName <span class="keyword">ON</span> table_name(column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 复合索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name1, column_name2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>索引原理</title>
+    <url>/MyBlog/2020/06/12/MySQL-%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
@@ -224,28 +246,6 @@
 <li>因为 B+TREE 的原因，最好使用连续的整数字段，更好确定查找访问范围</li>
 </ul>
 ]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>MySQL 常用语句</title>
-    <url>/MyBlog/2020/06/05/MySQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(name) <span class="keyword">select</span> name <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id<span class="operator">=</span>table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">desc</span> limit <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-<h1 id="强制使用指定索引"><a href="#强制使用指定索引" class="headerlink" title="强制使用指定索引"></a>强制使用指定索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> force index(<span class="string">&#x27;索引名&#x27;</span>) <span class="keyword">where</span> xxx</span><br></pre></td></tr></table></figure>
-<h1 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 前缀索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一般索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 唯一索引</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> INDEX indexName <span class="keyword">ON</span> table_name(column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 复合索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name1, column_name2)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>MySQL</category>
       </categories>
@@ -321,6 +321,109 @@
 ]]></content>
       <categories>
         <category>Redis</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Nginx</title>
+    <url>/MyBlog/2021/02/02/%E4%B8%AD%E9%97%B4%E4%BB%B6-Nginx/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="什么是-Nginx"><a href="#什么是-Nginx" class="headerlink" title="什么是 Nginx"></a>什么是 Nginx</h1><ul>
+<li>是一个高性能的 HTTP 和反向代理 Web 服务器</li>
+<li>同时也提供 IMAP / POP3 / SMTP 服务</li>
+<li><strong>反向代理：公网到内网</strong></li>
+<li><strong>正向代理：公网到公网，例如加速器</strong></li>
+<li>理论上能支持 50000 并发</li>
+</ul>
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><h2 id="轮循"><a href="#轮循" class="headerlink" title="轮循"></a>轮循</h2><ul>
+<li>按顺序将网络请求分配到各个业务服务器</li>
+</ul>
+<h2 id="加权轮循"><a href="#加权轮循" class="headerlink" title="加权轮循"></a>加权轮循</h2><ul>
+<li>为某个 IP 分配高优先级，让请求优先分配到指定业务服务器</li>
+</ul>
+<h2 id="IP-HASH"><a href="#IP-HASH" class="headerlink" title="IP HASH"></a>IP HASH</h2><ul>
+<li>将客户的 IP 进行 HASH 并将其分配到指定业务服务器</li>
+</ul>
+<h1 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h1><ul>
+<li>充当静态资源服务器，将其当作 CDN</li>
+</ul>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">nginx start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制停止</span></span><br><span class="line">./nginx -s stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启</span></span><br><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure>
+<h1 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h1><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ==================== 全局配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数 = CPU 核心数</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== 最大连接数</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== HTTP 配置</span></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 组合文件名，相当于分层管理追加文件</span></span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每条连接的生命周期</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 是否开启动态压缩</span></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">## ==================== 端口监听</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 负载均衡</span></span><br><span class="line">    <span class="attribute">upstream</span> 域名 &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听端口</span></span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听 URI</span></span><br><span class="line">        <span class="attribute">server_name</span>  域名;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">### ==================== 监听域名后缀</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开启静态 gzip 文件识别</span></span><br><span class="line">            <span class="attribute">gzip_static</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">root</span> html;</span><br><span class="line">            <span class="attribute">index</span>  index.html;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开枪 vue 路由识别</span></span><br><span class="line">            <span class="attribute">try_files</span> $uri $uri/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> /global &#123;</span><br><span class="line">            <span class="attribute">root</span> /;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>中间件</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>多线程 / 异步</title>
+    <url>/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
+<li>单线程应用：只在主线程运行</li>
+<li>多线程应用：在主线程中调用多个线程运行</li>
+<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
+<li>不要人为的通过延时操控线程执行顺序</li>
+<li>花费大量时间数据传输称为 I/O-Bound</li>
+<li>花费大量时间用 CPU 计算叫 CPU-Bound</li>
+<li><strong>不同线程影响同一变量称为线程安全</strong></li>
+<li>子线程异常无法被主线程捕获</li>
+<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
+<li>线程效率并不是线性增长，它还需要一些管理成本</li>
+</ul>
+<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
+<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
+<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;asd&quot;</span>;</span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 局部变量</span></span><br><span class="line">        <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!done)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(lee);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    threadStart(str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
+<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
+<li>一般使用 lock 关键字来实现线程安全</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">object</span> _lock = <span class="keyword">new</span> <span class="built_in">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
+<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;等待接收信号！此时阻塞线程&quot;</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;接收到信号！&quot;</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
+<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
+<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
+<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
+<li>最简单的执行线程池的方式就是 Task.Run</li>
+<li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
+<li>CLR 通过队列限流防止超额订阅</li>
+</ul>
+<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
+<li>.Net 4.0 可以用 Task.Factory 来使用 Task</li>
+<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
+<li>await 关键字就是 Task.Wait</li>
+<li>如果 Task 还未完成，调用 Task.Result 会阻塞并等待其完成</li>
+<li>如果在 Task 方法块里抛出了一个异常，那么该异常就会抛给 await 或 Task.Result 的地方；如果不想让它抛出异常可以判断 Task 的 IsFaulted 或 IsCanceled 属性</li>
+<li>Continuation 允许 Task 执行完毕后继续执行其它代码</li>
+</ul>
+<h2 id="针对长时间的-IO-操作不采用线程池"><a href="#针对长时间的-IO-操作不采用线程池" class="headerlink" title="针对长时间的 IO 操作不采用线程池"></a>针对长时间的 IO 操作不采用线程池</h2><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> task = Task.Factory.StartNew(() =&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 需要长时间运行的代码</span></span><br><span class="line"></span><br><span class="line">&#125;, TaskCreationOptions.LongRunning);</span><br></pre></td></tr></table></figure>
+<h1 id="Async-Await"><a href="#Async-Await" class="headerlink" title="Async / Await"></a>Async / Await</h1><ul>
+<li>await 关键字简化了 Continuation 的过程</li>
+<li>await 会将结果返回给调用者</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// await 其实是实现了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = x.GetAwaiter();</span><br><span class="line">a.OnCompleted(() =&gt; &#123;</span><br><span class="line">    <span class="keyword">var</span> result = a.GetResult();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>CShard</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
       </categories>
   </entry>
   <entry>
@@ -509,53 +612,6 @@
       </categories>
   </entry>
   <entry>
-    <title>InnoDB ACID 事务特性</title>
-    <url>/MyBlog/2020/12/31/MySQL-ACID/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="ACID-四大特性"><a href="#ACID-四大特性" class="headerlink" title="ACID 四大特性"></a>ACID 四大特性</h1><ul>
-<li>原子性（Atomicity）</li>
-<li>一致性（Consistency）</li>
-<li>隔离性（Isolation）</li>
-<li>持久性（Durabilyty）</li>
-</ul>
-<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><ul>
-<li>要么成功要么失败</li>
-<li>提交事务时会在 Undo log 生成一条日志记录操作前的数据，如果发生错误就会根据这条日志执行相反的操作，例如 insert 错误就执行 delete</li>
-</ul>
-<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
-<li><strong>只有先保证其它三个特性才能保证一致性</strong></li>
-</ul>
-<h2 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h2><ul>
-<li>事务一旦提交，对数据的改变是永久性的</li>
-<li>提交事务时会在 Redo log 生成一条记录，之后写入数据库缓存，最后同步到硬盘</li>
-<li>Redo log 是文件追加的形式，所以是有序的，有序比无序快</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 控制 Redo log 机制</span></span><br><span class="line">innodb_flash_log_at_trx_commit</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="operator">-</span> 让主线程同步 Redo log 到硬盘</span><br><span class="line"><span class="number">1</span> <span class="operator">-</span> <span class="keyword">commit</span> 时同步写入</span><br><span class="line"><span class="number">2</span> <span class="operator">-</span> <span class="keyword">commit</span> 时异步写入</span><br><span class="line"></span><br><span class="line">一般采用 <span class="number">1</span> 号</span><br></pre></td></tr></table></figure>
-<h2 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h2><ul>
-<li>写操作：锁</li>
-<li>读写操作：MVCC</li>
-</ul>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>设计模式</title>
     <url>/MyBlog/2020/08/24/%E5%85%B6%E5%AE%83-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<blockquote>
@@ -653,6 +709,7 @@
 <li>如果后端炸了获取不到路由怎么办</li>
 <li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
 <li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
+<li>如果不及时防范和改正项目就会越来越难维护，最后只能辞职弃坑，留下屎山给新人</li>
 </ul>
 ]]></content>
       <categories>
@@ -668,72 +725,62 @@
 <a id="more"></a>
 
 <h1 id="OSI-七层协议"><a href="#OSI-七层协议" class="headerlink" title="OSI 七层协议"></a>OSI 七层协议</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>TCP/IP 是众多网络协议中的统称</li>
-<li>通讯是双向的，不可能出现第四层跟第五层通信</li>
-<li>网络发现是基于 IP 地址而不是物理地址；数据转发才是基于物理地址</li>
-<li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
-</ul>
 <h1 id="TCP-IP-四层协议"><a href="#TCP-IP-四层协议" class="headerlink" title="TCP/IP 四层协议"></a>TCP/IP 四层协议</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将 OSI 七层整合为四层</span></span><br><span class="line"><span class="comment">// 常见的协议</span></span><br><span class="line"></span><br><span class="line">应用层（应用、表示、会话）：HTTP FTP SMTP DNS</span><br><span class="line">传输层：TCP UDP</span><br><span class="line">网络层：IP</span><br><span class="line">链路层</span><br></pre></td></tr></table></figure>
-<h2 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h2><ul>
-<li>TCP 是可靠的链接传输协议</li>
-<li>三次握手、数据传输、四次挥手</li>
-<li>所有请求都是从应用层到物理层来回往返交换</li>
+<h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><p><img src="https://img-blog.csdn.net/20180620002403691?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzM2NjI5Njk2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="TCP头"></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 端口号</span></span><br><span class="line">端口号是无符号 <span class="number">2</span> byte，最大 <span class="number">65535</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 序号</span></span><br><span class="line">随机值，用于证明请求唯一性</span><br><span class="line"></span><br><span class="line"><span class="comment">// 确认序号</span></span><br><span class="line">通常为序号 + <span class="number">1</span>，只有头类型为 ACK 的时候才有效</span><br><span class="line"></span><br><span class="line"><span class="comment">// 首部长度</span></span><br><span class="line">数据偏移量长度</span><br><span class="line"></span><br><span class="line"><span class="comment">// 保留字段</span></span><br><span class="line">暂未使用</span><br><span class="line"></span><br><span class="line"><span class="comment">// 头类型 - URG / ACK / PSH / RST / SYN / FIN</span></span><br><span class="line">URG：用来保证TCP连接不被中断，并且督促中间层设备要尽快处理这些数据</span><br><span class="line">ACK：一般用于握手挥手中的 ACK 标识</span><br><span class="line">PSH：优先级最高，接收到数据后立刻处理不缓存</span><br><span class="line">RST：复位标识，一般用于拒绝错误连接</span><br><span class="line">SYN：三次握手搭配 ACK 专用</span><br><span class="line">FIN：四次挥手搭配 ACK 专用</span><br></pre></td></tr></table></figure>
+<ul>
+<li>TCP 使用字节流通信，头部默认 20 byte</li>
+<li>每条请求都会完成三次握手、数据传输、四次挥手</li>
+<li>网络上层调用 Send（1024 KB），下层会把其封装多个 TCP 包发送，每个 TCP 大小为 1448 Byte</li>
+<li>以太网最大数据是 1518 Byte</li>
+<li>粘包不是 TCP 协议的问题，而是接收端的问题</li>
+<li>UDP 是单向的不会出现粘包</li>
 </ul>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 常用的流程</span></span><br><span class="line"></span><br><span class="line">网络流进入猫，猫属于物理层</span><br><span class="line">然后猫将数据发到链路层将流数据转换为可读数据</span><br><span class="line">发送到应用层处理完数据再将其返回请求点</span><br></pre></td></tr></table></figure>
-<h2 id="什么是-UDP"><a href="#什么是-UDP" class="headerlink" title="什么是 UDP"></a>什么是 UDP</h2><ul>
+<h2 id="MTU"><a href="#MTU" class="headerlink" title="MTU"></a>MTU</h2><ul>
+<li>以太网头尾共占 18 Byte，剩下的空间最多 1500 Byte，也是路由器等硬件配置中默认大小</li>
+</ul>
+<h2 id="MSS"><a href="#MSS" class="headerlink" title="MSS"></a>MSS</h2><ul>
+<li>最大值为 1460 Byte，由 MTU（1500） - IP 头（20） - TCP 头（20） 得出</li>
+<li>实际情况下，TCP 还会包含 12 Byte 的时间戳，所以 1460 - 12 = 1448，最终每条 TCP 的大小为 1448</li>
+</ul>
+<h2 id="粘包"><a href="#粘包" class="headerlink" title="粘包"></a>粘包</h2><ul>
+<li>TCP 发送 2 个数据，A 为 18 Byte，B 为 14 Byte，服务端一下把两个数据都接收了，两个不同的数据合体称之为粘包</li>
+<li>要发送的数据大于 TCP 发送缓冲区剩余空间大小，将会发生拆包</li>
+<li>待发送数据大于 MSS（最大报文长度），TCP 在传输前将进行拆包</li>
+<li>要发送的数据小于 TCP 发送缓冲区的大小，TCP 将多次写入缓冲区的数据一次发送出去，将会发生粘包</li>
+<li>接收数据端的应用层没有及时读取接收缓冲区中的数据，将发生粘包</li>
+</ul>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>发送端给每个数据包添加 header，header 中包含数据包的长度 length，这样接收端在接收到数据后，通过读取 header 的 length，便知道每一个数据包的实际长度了</li>
+<li>发送端将每个数据包封装为固定长度（不够的可以通过补 0 填充），这样接收端每次从接收缓冲区中读取固定长度的数据就自然而然的把每个数据包拆分开来</li>
+<li>可以在数据包之间设置边界，如添加特殊符号，这样，接收端通过这个边界就可以将不同的数据包拆分开</li>
+</ul>
+<h1 id="什么是-UDP"><a href="#什么是-UDP" class="headerlink" title="什么是 UDP"></a>什么是 UDP</h1><ul>
+<li>UDP 头占 8 byte</li>
 <li>不可靠的连接，单方面只管发送，不管对方是否收到数据</li>
 <li>顺序不保证，可能会丢包</li>
 </ul>
-<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
-<li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
-<li>IP 是为了找到服务器，端口号是为了找到指定的程序</li>
-<li>IP 是唯一的，端口上限是 65535，所以一个 IP 最多建立 65535 条链接</li>
-</ul>
-<h1 id="物理地址、IP-地址、端口地址"><a href="#物理地址、IP-地址、端口地址" class="headerlink" title="物理地址、IP 地址、端口地址"></a>物理地址、IP 地址、端口地址</h1><ul>
-<li>物理地址：一般指网卡硬件地址，硬件码唯一</li>
-<li>IP 地址：网络地址，外网 / 局域网 IP，网络唯一</li>
-<li>端口地址：同一台电脑上唯一</li>
-</ul>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 常用端口</span></span><br><span class="line"></span><br><span class="line">内部端口：<span class="number">0</span> - <span class="number">1023</span></span><br><span class="line">软件端口：<span class="number">1024</span> - <span class="number">49151</span></span><br><span class="line">动态端口：<span class="number">49152</span> - <span class="number">65535</span></span><br></pre></td></tr></table></figure>
-<h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
-<li>主要针对物理地址和 IP 地址</li>
-<li>单播：一个接收者，类似 P2P</li>
-<li>多播：多个接收者，类似群聊</li>
-<li>广播：面向所有人，类似游戏公告</li>
-</ul>
-<h1 id="IP-版本"><a href="#IP-版本" class="headerlink" title="IP 版本"></a>IP 版本</h1><ul>
-<li>IPV4：地址空间不足和 32 位的低效率</li>
-<li>IPV5：基于七层协议，没有投入使用</li>
-<li>IPV6：扩大了地址空间，128 位</li>
-<li>A 类：1 - 126 开头</li>
-<li>本地：127</li>
-<li>B 类：128 - 191 开头</li>
-<li>C 类：192 - 223</li>
-<li>D 类：224 - 239</li>
-<li>广播：255.255.255.255</li>
-</ul>
-<h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
-<li>允许一些电脑在局限的 IP 范围内通信</li>
-<li>目前的局域网都是基于以太网实现</li>
-<li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
-</ul>
-<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
-<li>【DDOS】客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
+<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><p><img src="https://pics6.baidu.com/feed/9d82d158ccbf6c819624f31141341c3332fa40cd.jpeg?token=9dca9d2f40a953f4b671e80c2cad7dc4" alt="三次握手"></p>
+<ul>
 <li>第一次：客户端发送一条 SYN 数据请求服务端</li>
 <li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
 <li>第三次：客户端收到后返回 ACK 到服务端</li>
+<li><strong>【泛洪攻击】客户端故意不返回第三次 ACK 让服务端一直占用资源</strong></li>
+<li><strong>【流量攻击】通过肉鸡发送大量请求导致带宽占满</strong></li>
 </ul>
 <h2 id="2、数据通信"><a href="#2、数据通信" class="headerlink" title="2、数据通信"></a>2、数据通信</h2><ul>
 <li>客户端发送 Get / Post 等 HTTP 协议</li>
 <li>数据会根据 MTU 分批接收</li>
 <li>如今的浏览器会自动开启 HTTP-Alive 保持链接，但取决于服务器是否开启，因为会长时间占用服务器资源</li>
 </ul>
-<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><ul>
+<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><p><img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1030523774,3172495976&fm=26&gp=0.jpg" alt="四次挥手"></p>
+<ul>
 <li>第一次：客户端发送 FIN 到服务端</li>
 <li>第二次：服务端回报 FIN + ACK 给客户端</li>
 <li>第三次：服务端发送 FIN 到客户端</li>
 <li>第四次：客户端回报 ACK 给服务端</li>
+<li><strong>为了接收最后的 ACK 包服务器必须花费一定时间等待，也就是 TIME_WAIT</strong></li>
+<li><strong>【HTTP Keep-Alive】为了避免频繁出现 TIME_WAIT 在短时间内保持长连接</strong></li>
 </ul>
 ]]></content>
       <categories>
@@ -741,62 +788,50 @@
       </categories>
   </entry>
   <entry>
-    <title>多线程 / 异步</title>
-    <url>/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/</url>
+    <title>InnoDB ACID 事务特性</title>
+    <url>/MyBlog/2020/12/31/MySQL-ACID/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
-<li>单线程应用：只在主线程运行</li>
-<li>多线程应用：在主线程中调用多个线程运行</li>
-<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
-<li>不要人为的通过延时操控线程执行顺序</li>
-<li>花费大量时间数据传输称为 I/O-Bound</li>
-<li>花费大量时间用 CPU 计算叫 CPU-Bound</li>
-<li><strong>不同线程影响同一变量称为线程安全</strong></li>
-<li>子线程异常无法被主线程捕获</li>
-<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
-<li>线程效率并不是线性增长，它还需要一些管理成本</li>
+<h1 id="ACID-四大特性"><a href="#ACID-四大特性" class="headerlink" title="ACID 四大特性"></a>ACID 四大特性</h1><ul>
+<li>原子性（Atomicity）</li>
+<li>一致性（Consistency）</li>
+<li>隔离性（Isolation）</li>
+<li>持久性（Durabilyty）</li>
 </ul>
-<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
-<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
-<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
+<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><ul>
+<li>要么成功要么失败</li>
+<li>提交事务时会在 Undo log 生成一条日志记录操作前的数据，如果发生错误就会根据这条日志执行相反的操作，例如 insert 错误就执行 delete</li>
 </ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;asd&quot;</span>;</span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 局部变量</span></span><br><span class="line">        <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!done)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(lee);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    threadStart(str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
-<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
-<li>一般使用 lock 关键字来实现线程安全</li>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
+<li><strong>只有先保证其它三个特性才能保证一致性</strong></li>
 </ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">object</span> _lock = <span class="keyword">new</span> <span class="built_in">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
-<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
+<h2 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h2><ul>
+<li>事务一旦提交，对数据的改变是永久性的</li>
+<li>提交事务时会在 Redo log 生成一条记录，之后写入数据库缓存，最后同步到硬盘</li>
+<li>Redo log 是文件追加的形式，所以是有序的，有序比无序快</li>
 </ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;等待接收信号！此时阻塞线程&quot;</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;接收到信号！&quot;</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
-<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
-<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
-<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
-<li>最简单的执行线程池的方式就是 Task.Run</li>
-<li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
-<li>CLR 通过队列限流防止超额订阅</li>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 控制 Redo log 机制</span></span><br><span class="line">innodb_flash_log_at_trx_commit</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="operator">-</span> 让主线程同步 Redo log 到硬盘</span><br><span class="line"><span class="number">1</span> <span class="operator">-</span> <span class="keyword">commit</span> 时同步写入</span><br><span class="line"><span class="number">2</span> <span class="operator">-</span> <span class="keyword">commit</span> 时异步写入</span><br><span class="line"></span><br><span class="line">一般采用 <span class="number">1</span> 号</span><br></pre></td></tr></table></figure>
+<h2 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h2><ul>
+<li>写操作：锁</li>
+<li>读写操作：MVCC</li>
 </ul>
-<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
-<li>.Net 4.0 可以用 Task.Factory 来使用 Task</li>
-<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
-<li>await 关键字就是 Task.Wait</li>
-<li>如果 Task 还未完成，调用 Task.Result 会阻塞并等待其完成</li>
-<li>如果在 Task 方法块里抛出了一个异常，那么该异常就会抛给 await 或 Task.Result 的地方；如果不想让它抛出异常可以判断 Task 的 IsFaulted 或 IsCanceled 属性</li>
-<li>Continuation 允许 Task 执行完毕后继续执行其它代码</li>
-</ul>
-<h2 id="针对长时间的-IO-操作不采用线程池"><a href="#针对长时间的-IO-操作不采用线程池" class="headerlink" title="针对长时间的 IO 操作不采用线程池"></a>针对长时间的 IO 操作不采用线程池</h2><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> task = Task.Factory.StartNew(() =&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 需要长时间运行的代码</span></span><br><span class="line"></span><br><span class="line">&#125;, TaskCreationOptions.LongRunning);</span><br></pre></td></tr></table></figure>
-<h1 id="Async-Await"><a href="#Async-Await" class="headerlink" title="Async / Await"></a>Async / Await</h1><ul>
-<li>await 关键字简化了 Continuation 的过程</li>
-<li>await 会将结果返回给调用者</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// await 其实是实现了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = x.GetAwaiter();</span><br><span class="line">a.OnCompleted(() =&gt; &#123;</span><br><span class="line">    <span class="keyword">var</span> result = a.GetResult();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>]]></content>
+]]></content>
       <categories>
-        <category>CShard</category>
+        <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>七大查找算法</title>
+    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>其它</category>
       </categories>
   </entry>
   <entry>
@@ -808,17 +843,6 @@
 <a id="more"></a>
 
 <h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>七大查找算法</title>
-    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
       <categories>
         <category>其它</category>
       </categories>

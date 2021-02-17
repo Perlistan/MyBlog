@@ -28,8 +28,11 @@
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180620002403691?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzM2NjI5Njk2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://pics6.baidu.com/feed/9d82d158ccbf6c819624f31141341c3332fa40cd.jpeg?token=9dca9d2f40a953f4b671e80c2cad7dc4">
+<meta property="og:image" content="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1030523774,3172495976&fm=26&gp=0.jpg">
 <meta property="article:published_time" content="2020-06-10T07:34:37.708Z">
-<meta property="article:modified_time" content="2020-12-31T05:00:49.110Z">
+<meta property="article:modified_time" content="2021-02-17T21:36:34.391Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/tcp/1.png">
@@ -202,7 +205,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 13:00:49" itemprop="dateModified" datetime="2020-12-31T13:00:49+08:00">2020-12-31</time>
+                <time title="修改时间：2021-02-18 05:36:34" itemprop="dateModified" datetime="2021-02-18T05:36:34+08:00">2021-02-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -231,72 +234,62 @@
 <a id="more"></a>
 
 <h1 id="OSI-七层协议"><a href="#OSI-七层协议" class="headerlink" title="OSI 七层协议"></a>OSI 七层协议</h1><p><img src="https://tagost.aiur.site/blog-imgs/tcp/1.png" alt="七层协议"></p>
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>TCP/IP 是众多网络协议中的统称</li>
-<li>通讯是双向的，不可能出现第四层跟第五层通信</li>
-<li>网络发现是基于 IP 地址而不是物理地址；数据转发才是基于物理地址</li>
-<li>IPV4 网络层通过与子网掩码进行二进制运算获取网络号</li>
-</ul>
 <h1 id="TCP-IP-四层协议"><a href="#TCP-IP-四层协议" class="headerlink" title="TCP/IP 四层协议"></a>TCP/IP 四层协议</h1><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将 OSI 七层整合为四层</span></span><br><span class="line"><span class="comment">// 常见的协议</span></span><br><span class="line"></span><br><span class="line">应用层（应用、表示、会话）：HTTP FTP SMTP DNS</span><br><span class="line">传输层：TCP UDP</span><br><span class="line">网络层：IP</span><br><span class="line">链路层</span><br></pre></td></tr></table></figure>
-<h2 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h2><ul>
-<li>TCP 是可靠的链接传输协议</li>
-<li>三次握手、数据传输、四次挥手</li>
-<li>所有请求都是从应用层到物理层来回往返交换</li>
+<h1 id="什么是-TCP"><a href="#什么是-TCP" class="headerlink" title="什么是 TCP"></a>什么是 TCP</h1><p><img src="https://img-blog.csdn.net/20180620002403691?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzM2NjI5Njk2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="TCP头"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 端口号</span></span><br><span class="line">端口号是无符号 <span class="number">2</span> byte，最大 <span class="number">65535</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 序号</span></span><br><span class="line">随机值，用于证明请求唯一性</span><br><span class="line"></span><br><span class="line"><span class="comment">// 确认序号</span></span><br><span class="line">通常为序号 + <span class="number">1</span>，只有头类型为 ACK 的时候才有效</span><br><span class="line"></span><br><span class="line"><span class="comment">// 首部长度</span></span><br><span class="line">数据偏移量长度</span><br><span class="line"></span><br><span class="line"><span class="comment">// 保留字段</span></span><br><span class="line">暂未使用</span><br><span class="line"></span><br><span class="line"><span class="comment">// 头类型 - URG / ACK / PSH / RST / SYN / FIN</span></span><br><span class="line">URG：用来保证TCP连接不被中断，并且督促中间层设备要尽快处理这些数据</span><br><span class="line">ACK：一般用于握手挥手中的 ACK 标识</span><br><span class="line">PSH：优先级最高，接收到数据后立刻处理不缓存</span><br><span class="line">RST：复位标识，一般用于拒绝错误连接</span><br><span class="line">SYN：三次握手搭配 ACK 专用</span><br><span class="line">FIN：四次挥手搭配 ACK 专用</span><br></pre></td></tr></table></figure>
+<ul>
+<li>TCP 使用字节流通信，头部默认 20 byte</li>
+<li>每条请求都会完成三次握手、数据传输、四次挥手</li>
+<li>网络上层调用 Send（1024 KB），下层会把其封装多个 TCP 包发送，每个 TCP 大小为 1448 Byte</li>
+<li>以太网最大数据是 1518 Byte</li>
+<li>粘包不是 TCP 协议的问题，而是接收端的问题</li>
+<li>UDP 是单向的不会出现粘包</li>
 </ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常用的流程</span></span><br><span class="line"></span><br><span class="line">网络流进入猫，猫属于物理层</span><br><span class="line">然后猫将数据发到链路层将流数据转换为可读数据</span><br><span class="line">发送到应用层处理完数据再将其返回请求点</span><br></pre></td></tr></table></figure>
-<h2 id="什么是-UDP"><a href="#什么是-UDP" class="headerlink" title="什么是 UDP"></a>什么是 UDP</h2><ul>
+<h2 id="MTU"><a href="#MTU" class="headerlink" title="MTU"></a>MTU</h2><ul>
+<li>以太网头尾共占 18 Byte，剩下的空间最多 1500 Byte，也是路由器等硬件配置中默认大小</li>
+</ul>
+<h2 id="MSS"><a href="#MSS" class="headerlink" title="MSS"></a>MSS</h2><ul>
+<li>最大值为 1460 Byte，由 MTU（1500） - IP 头（20） - TCP 头（20） 得出</li>
+<li>实际情况下，TCP 还会包含 12 Byte 的时间戳，所以 1460 - 12 = 1448，最终每条 TCP 的大小为 1448</li>
+</ul>
+<h2 id="粘包"><a href="#粘包" class="headerlink" title="粘包"></a>粘包</h2><ul>
+<li>TCP 发送 2 个数据，A 为 18 Byte，B 为 14 Byte，服务端一下把两个数据都接收了，两个不同的数据合体称之为粘包</li>
+<li>要发送的数据大于 TCP 发送缓冲区剩余空间大小，将会发生拆包</li>
+<li>待发送数据大于 MSS（最大报文长度），TCP 在传输前将进行拆包</li>
+<li>要发送的数据小于 TCP 发送缓冲区的大小，TCP 将多次写入缓冲区的数据一次发送出去，将会发生粘包</li>
+<li>接收数据端的应用层没有及时读取接收缓冲区中的数据，将发生粘包</li>
+</ul>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>发送端给每个数据包添加 header，header 中包含数据包的长度 length，这样接收端在接收到数据后，通过读取 header 的 length，便知道每一个数据包的实际长度了</li>
+<li>发送端将每个数据包封装为固定长度（不够的可以通过补 0 填充），这样接收端每次从接收缓冲区中读取固定长度的数据就自然而然的把每个数据包拆分开来</li>
+<li>可以在数据包之间设置边界，如添加特殊符号，这样，接收端通过这个边界就可以将不同的数据包拆分开</li>
+</ul>
+<h1 id="什么是-UDP"><a href="#什么是-UDP" class="headerlink" title="什么是 UDP"></a>什么是 UDP</h1><ul>
+<li>UDP 头占 8 byte</li>
 <li>不可靠的连接，单方面只管发送，不管对方是否收到数据</li>
 <li>顺序不保证，可能会丢包</li>
 </ul>
-<h1 id="什么是-Socket"><a href="#什么是-Socket" class="headerlink" title="什么是 Socket"></a>什么是 Socket</h1><ul>
-<li>一种套接字：客户端 IP + 端口：服务端 IP + 端口</li>
-<li>IP 是为了找到服务器，端口号是为了找到指定的程序</li>
-<li>IP 是唯一的，端口上限是 65535，所以一个 IP 最多建立 65535 条链接</li>
-</ul>
-<h1 id="物理地址、IP-地址、端口地址"><a href="#物理地址、IP-地址、端口地址" class="headerlink" title="物理地址、IP 地址、端口地址"></a>物理地址、IP 地址、端口地址</h1><ul>
-<li>物理地址：一般指网卡硬件地址，硬件码唯一</li>
-<li>IP 地址：网络地址，外网 / 局域网 IP，网络唯一</li>
-<li>端口地址：同一台电脑上唯一</li>
-</ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常用端口</span></span><br><span class="line"></span><br><span class="line">内部端口：<span class="number">0</span> - <span class="number">1023</span></span><br><span class="line">软件端口：<span class="number">1024</span> - <span class="number">49151</span></span><br><span class="line">动态端口：<span class="number">49152</span> - <span class="number">65535</span></span><br></pre></td></tr></table></figure>
-<h1 id="单播、多播、广播"><a href="#单播、多播、广播" class="headerlink" title="单播、多播、广播"></a>单播、多播、广播</h1><ul>
-<li>主要针对物理地址和 IP 地址</li>
-<li>单播：一个接收者，类似 P2P</li>
-<li>多播：多个接收者，类似群聊</li>
-<li>广播：面向所有人，类似游戏公告</li>
-</ul>
-<h1 id="IP-版本"><a href="#IP-版本" class="headerlink" title="IP 版本"></a>IP 版本</h1><ul>
-<li>IPV4：地址空间不足和 32 位的低效率</li>
-<li>IPV5：基于七层协议，没有投入使用</li>
-<li>IPV6：扩大了地址空间，128 位</li>
-<li>A 类：1 - 126 开头</li>
-<li>本地：127</li>
-<li>B 类：128 - 191 开头</li>
-<li>C 类：192 - 223</li>
-<li>D 类：224 - 239</li>
-<li>广播：255.255.255.255</li>
-</ul>
-<h1 id="局域网-LAN"><a href="#局域网-LAN" class="headerlink" title="局域网 LAN"></a>局域网 LAN</h1><ul>
-<li>允许一些电脑在局限的 IP 范围内通信</li>
-<li>目前的局域网都是基于以太网实现</li>
-<li>以太网（Ethernet）：CSMA/CD，根据信道是否空闲发送数据，速率 10M、100M、1000M、10G</li>
-</ul>
-<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><ul>
-<li>【DDOS】客户端故意不返回第三次 ACK 给服务端造成一直占用资源</li>
+<h1 id="一般接口请求过程"><a href="#一般接口请求过程" class="headerlink" title="一般接口请求过程"></a>一般接口请求过程</h1><h2 id="1、三次握手"><a href="#1、三次握手" class="headerlink" title="1、三次握手"></a>1、三次握手</h2><p><img src="https://pics6.baidu.com/feed/9d82d158ccbf6c819624f31141341c3332fa40cd.jpeg?token=9dca9d2f40a953f4b671e80c2cad7dc4" alt="三次握手"></p>
+<ul>
 <li>第一次：客户端发送一条 SYN 数据请求服务端</li>
 <li>第二次：服务端回报 SYN + ACK 数据给客户端</li>
 <li>第三次：客户端收到后返回 ACK 到服务端</li>
+<li><strong>【泛洪攻击】客户端故意不返回第三次 ACK 让服务端一直占用资源</strong></li>
+<li><strong>【流量攻击】通过肉鸡发送大量请求导致带宽占满</strong></li>
 </ul>
 <h2 id="2、数据通信"><a href="#2、数据通信" class="headerlink" title="2、数据通信"></a>2、数据通信</h2><ul>
 <li>客户端发送 Get / Post 等 HTTP 协议</li>
 <li>数据会根据 MTU 分批接收</li>
 <li>如今的浏览器会自动开启 HTTP-Alive 保持链接，但取决于服务器是否开启，因为会长时间占用服务器资源</li>
 </ul>
-<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><ul>
+<h2 id="3、四次挥手"><a href="#3、四次挥手" class="headerlink" title="3、四次挥手"></a>3、四次挥手</h2><p><img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1030523774,3172495976&fm=26&gp=0.jpg" alt="四次挥手"></p>
+<ul>
 <li>第一次：客户端发送 FIN 到服务端</li>
 <li>第二次：服务端回报 FIN + ACK 给客户端</li>
 <li>第三次：服务端发送 FIN 到客户端</li>
 <li>第四次：客户端回报 ACK 给服务端</li>
+<li><strong>为了接收最后的 ACK 包服务器必须花费一定时间等待，也就是 TIME_WAIT</strong></li>
+<li><strong>【HTTP Keep-Alive】为了避免频繁出现 TIME_WAIT 在短时间内保持长连接</strong></li>
 </ul>
 
     </div>
@@ -317,8 +310,8 @@
       <i class="fa fa-chevron-left"></i> 解决服务器重启后主键自动增长列倍增问题
     </a></div>
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/06/12/MySQL-Index/" rel="next" title="数据库索引">
-      数据库索引 <i class="fa fa-chevron-right"></i>
+    <a href="/MyBlog/2020/06/12/MySQL-%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" rel="next" title="索引原理">
+      索引原理 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -378,7 +371,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OSI-%E4%B8%83%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-text">OSI 七层协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%94%BB%E7%95%A5"><span class="nav-text">一句话攻略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP-IP-%E5%9B%9B%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-text">TCP&#x2F;IP 四层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-TCP"><span class="nav-text">什么是 TCP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-UDP"><span class="nav-text">什么是 UDP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Socket"><span class="nav-text">什么是 Socket</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E3%80%81IP-%E5%9C%B0%E5%9D%80%E3%80%81%E7%AB%AF%E5%8F%A3%E5%9C%B0%E5%9D%80"><span class="nav-text">物理地址、IP 地址、端口地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E6%92%AD%E3%80%81%E5%A4%9A%E6%92%AD%E3%80%81%E5%B9%BF%E6%92%AD"><span class="nav-text">单播、多播、广播</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IP-%E7%89%88%E6%9C%AC"><span class="nav-text">IP 版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91-LAN"><span class="nav-text">局域网 LAN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%8E%A5%E5%8F%A3%E8%AF%B7%E6%B1%82%E8%BF%87%E7%A8%8B"><span class="nav-text">一般接口请求过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-text">1、三次握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1"><span class="nav-text">2、数据通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-text">3、四次挥手</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OSI-%E4%B8%83%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-text">OSI 七层协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP-IP-%E5%9B%9B%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-text">TCP&#x2F;IP 四层协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-TCP"><span class="nav-text">什么是 TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MTU"><span class="nav-text">MTU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MSS"><span class="nav-text">MSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%98%E5%8C%85"><span class="nav-text">粘包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-UDP"><span class="nav-text">什么是 UDP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%8E%A5%E5%8F%A3%E8%AF%B7%E6%B1%82%E8%BF%87%E7%A8%8B"><span class="nav-text">一般接口请求过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-text">1、三次握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1"><span class="nav-text">2、数据通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-text">3、四次挥手</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -393,13 +386,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/MyBlog/archives">
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/MyBlog/categories/">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
