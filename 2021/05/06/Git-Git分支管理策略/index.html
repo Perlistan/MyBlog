@@ -22,17 +22,19 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="十大排序算法">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:title" content="Git 分支管理策略">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2021/05/06/Git-Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-09-10T03:57:39.344Z">
-<meta property="article:modified_time" content="2020-12-31T04:48:42.911Z">
+<meta property="og:image" content="https://tagost.aiur.site/blog-imgs/git/fast-farward%20merge.png">
+<meta property="article:published_time" content="2021-05-06T14:58:56.795Z">
+<meta property="article:modified_time" content="2021-05-06T17:48:13.353Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/git/fast-farward%20merge.png">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2021/05/06/Git-Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/">
 
 
 <script id="page-configurations">
@@ -45,7 +47,7 @@
   };
 </script>
 
-  <title>十大排序算法 | 踩坑日记</title>
+  <title>Git 分支管理策略 | 踩坑日记</title>
   
 
 
@@ -170,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2021/05/06/Git-Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -183,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          十大排序算法
+          Git 分支管理策略
         </h1>
 
         <div class="post-meta">
@@ -193,14 +195,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-10 11:57:39" itemprop="dateCreated datePublished" datetime="2020-09-10T11:57:39+08:00">2020-09-10</time>
+              <time title="创建时间：2021-05-06 22:58:56" itemprop="dateCreated datePublished" datetime="2021-05-06T22:58:56+08:00">2021-05-06</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 12:48:42" itemprop="dateModified" datetime="2020-12-31T12:48:42+08:00">2020-12-31</time>
+                <time title="修改时间：2021-05-07 01:48:13" itemprop="dateModified" datetime="2021-05-07T01:48:13+08:00">2021-05-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -208,7 +210,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/MyBlog/categories/%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">其它</span></a>
+                  <a href="/MyBlog/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
                 </span>
             </span>
 
@@ -228,7 +230,33 @@
 </blockquote>
 <a id="more"></a>
 
-<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>
+<h1 id="一个项目必须包含以下分支"><a href="#一个项目必须包含以下分支" class="headerlink" title="一个项目必须包含以下分支"></a>一个项目必须包含以下分支</h1><ul>
+<li>生产分支 master</li>
+<li>开发分支 dev</li>
+<li>临时分支 feature / release / fixbug</li>
+</ul>
+<h1 id="关于-–no-ff"><a href="#关于-–no-ff" class="headerlink" title="关于 –no-ff"></a>关于 –no-ff</h1><p><img src="https://tagost.aiur.site/blog-imgs/git/fast-farward%20merge.png" alt="快进式合并"></p>
+<ul>
+<li>默认情况下，Git 执行”快进式合并”（fast-farward merge），会直接将 Master 分支指向 Dev 分支</li>
+<li>使用 –no-ff 参数后，会执行正常合并，在 Master 分支上生成一个新节点。为了保证版本演进的清晰，我们希望采用这种做法</li>
+</ul>
+<h1 id="dev-开发分支"><a href="#dev-开发分支" class="headerlink" title="dev 开发分支"></a>dev 开发分支</h1><ul>
+<li>用于开发的分支，最终会合并到 Master</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Git 创建 Dev 分支的命令：</span></span><br><span class="line">git checkout -b dev master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 Dev 分支发布到 Master 分支的命令：</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 切换到 Master 分支</span></span><br><span class="line">git checkout master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对 Dev 分支进行合并</span></span><br><span class="line">git merge --no-ff develop</span><br></pre></td></tr></table></figure>
+<h1 id="临时分支"><a href="#临时分支" class="headerlink" title="临时分支"></a>临时分支</h1><h2 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h2><ul>
+<li>它是为了开发某种特定功能，从 Dev 分支上面分出来的。开发完成后，要再并入 Dev</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个功能分支</span></span><br><span class="line">git checkout -b feature-<span class="number">1</span> develop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 开发完成后，将功能分支合并到 dev 分支</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff feature-<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除 feature 分支</span></span><br><span class="line">git branch -d feature-<span class="number">1</span></span><br><span class="line">git push origin --<span class="keyword">delete</span> feature-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="release"><a href="#release" class="headerlink" title="release"></a>release</h2><ul>
+<li>它是指合并到 Master 之前，我们可能需要有一个预发布的版本进行测试</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个预发布分支</span></span><br><span class="line">git checkout -b release-<span class="number">1.2</span> develop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 确认没有问题后，合并到master分支：</span></span><br><span class="line">git checkout master</span><br><span class="line">git merge --no-ff release-<span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 对合并生成的新节点，做一个标签</span></span><br><span class="line">git tag -a <span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 再合并到develop分支：</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff release-<span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除预发布分支：</span></span><br><span class="line">git branch -d release-<span class="number">1.2</span></span><br><span class="line">git push origin --<span class="keyword">delete</span> release-<span class="number">1.2</span></span><br></pre></td></tr></table></figure>
+<h2 id="fixbug"><a href="#fixbug" class="headerlink" title="fixbug"></a>fixbug</h2><ul>
+<li>修补 bug 分支是从 Master 分支上面分出来的。修补结束以后，再合并进 Master 和 Dev 分支。它的命名，可以采用 fixbug-“BUG 代号” 的形式</li>
+<li>如果是开发阶段有 bug，无需特意建立 bug 分支，直接在 dev 分支改 bug</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个修补 bug 分支：</span></span><br><span class="line">git checkout -b fixbug-UserService-DtoEx master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修补结束后，合并到 master 分支：</span></span><br><span class="line">git checkout master</span><br><span class="line">git merge --no-ff fixbug-UserService-DtoEx</span><br><span class="line"></span><br><span class="line"><span class="comment">// 再合并到 dev 分支：</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff fixbug-UserService-DtoEx</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后删除该分支：</span></span><br><span class="line">git branch -d fixbug-UserService-DtoEx</span><br><span class="line">git push origin --<span class="keyword">delete</span> fixbug-UserService-DtoEx</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -243,13 +271,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/MyBlog/2020/08/24/%E5%85%B6%E5%AE%83-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="设计模式">
-      <i class="fa fa-chevron-left"></i> 设计模式
+    <a href="/MyBlog/2021/04/22/%E5%85%B6%E5%AE%83-Nlog/" rel="prev" title="Nlog 配置代码">
+      <i class="fa fa-chevron-left"></i> Nlog 配置代码
     </a></div>
-      <div class="post-nav-item">
-    <a href="/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" rel="next" title="七大查找算法">
-      七大查找算法 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -308,7 +333,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F"><span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F"><span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F"><span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F"><span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A0%86%E6%8E%92%E5%BA%8F"><span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F"><span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-text">计数排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F"><span class="nav-text">基数排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%B6%E6%8E%92%E5%BA%8F"><span class="nav-text">桶排序</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E4%BB%A5%E4%B8%8B%E5%88%86%E6%94%AF"><span class="nav-text">一个项目必须包含以下分支</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E-%E2%80%93no-ff"><span class="nav-text">关于 –no-ff</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dev-%E5%BC%80%E5%8F%91%E5%88%86%E6%94%AF"><span class="nav-text">dev 开发分支</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E5%88%86%E6%94%AF"><span class="nav-text">临时分支</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#feature"><span class="nav-text">feature</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#release"><span class="nav-text">release</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fixbug"><span class="nav-text">fixbug</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

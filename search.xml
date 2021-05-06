@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Asp.Net Fx / Core 全局异常处理实例</title>
-    <url>/MyBlog/2020/07/07/Asp.Net-%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%AE%9E%E4%BE%8B/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="Asp-net-Framework-MVC"><a href="#Asp-net-Framework-MVC" class="headerlink" title="Asp.net Framework MVC"></a>Asp.net Framework MVC</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 先继承 HandleError 特性</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">HandleErrorAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 OnException 方法</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnException</span>(<span class="params">ExceptionContext filterContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        filterContext.Result = <span class="keyword">new</span> JsonResult</span><br><span class="line">        &#123;</span><br><span class="line">            ContentType = HttpStatusCode.BadRequest.ToString(),</span><br><span class="line">            Data = <span class="keyword">new</span> &#123; msg = filterContext.Exception.Message &#125;,</span><br><span class="line">            JsonRequestBehavior = JsonRequestBehavior.AllowGet</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        filterContext.ExceptionHandled = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局过滤器，如果不存在此文件自己创建</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FilterConfig</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RegisterGlobalFilters</span>(<span class="params">GlobalFilterCollection filters</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        filters.Add(<span class="keyword">new</span> MyGlobalException());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 Global Application_Start 添加过滤器</span></span><br><span class="line">FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);</span><br></pre></td></tr></table></figure>
-<h1 id="Asp-net-Framework-WebAPI"><a href="#Asp-net-Framework-WebAPI" class="headerlink" title="Asp.net Framework WebAPI"></a>Asp.net Framework WebAPI</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 继承指定类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">ExceptionHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 Handle</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Handle</span>(<span class="params">ExceptionHandlerContext context</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        context.Result = <span class="keyword">new</span> ResponseMessageResult(context.Request.CreateResponse(System.Net.HttpStatusCode.NotFound));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 WebConfig 中添加</span></span><br><span class="line">config.Services.Replace(<span class="keyword">typeof</span>(IExceptionHandler), <span class="keyword">new</span> MyGlobalException());</span><br></pre></td></tr></table></figure>
-<h1 id="Asp-Net-Core"><a href="#Asp-Net-Core" class="headerlink" title="Asp.Net Core"></a>Asp.Net Core</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 新建一个中间件类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyExceptionMiddleware</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> RequestDelegate _next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddleware</span>(<span class="params">RequestDelegate requestDelegate</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._next = requestDelegate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 捕获所有下层中间件引发的异常</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext httpContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> _next(httpContext);</span><br><span class="line">        &#125;</span><br><span class="line">        catch(RegexException ane)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status200OK;</span><br><span class="line">            <span class="keyword">await</span> httpContext.Response.WriteAsync(JsonConvert.SerializeObject(<span class="keyword">new</span> &#123; msg = ane.Message &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">        catch (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;</span><br><span class="line">            <span class="comment">// logger write</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 StartUP Configure 最上面添加</span></span><br><span class="line">app.UseMiddleware&lt;MyExceptionMiddleware&gt;();</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Asp.Net</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Asp.Net Core 身份验证配置</title>
     <url>/MyBlog/2021/04/22/Asp.Net-%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<blockquote>
@@ -27,6 +12,60 @@
 <h1 id="IServiceCollection-扩展方法"><a href="#IServiceCollection-扩展方法" class="headerlink" title="IServiceCollection 扩展方法"></a>IServiceCollection 扩展方法</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">MyAuthStartUpSetting</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 配置自定义角色</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;services&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetMyAuthorization</span>(<span class="params"><span class="keyword">this</span> IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        services.AddAuthorization(options =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            options.AddPolicy(<span class="string">&quot;AdminAuth&quot;</span>, need =&gt; &#123; need.RequireRole(RoleEnum.Admin.ToString()); &#125;);</span><br><span class="line">            options.AddPolicy(<span class="string">&quot;UserAuth&quot;</span>, need =&gt; &#123; need.RequireRole(RoleEnum.User.ToString()); &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 配置身份验证</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;services&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetMyAuthentication</span>(<span class="params"><span class="keyword">this</span> IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        services.AddAuthentication(<span class="string">&quot;MyAuth&quot;</span>)</span><br><span class="line">        .AddJwtBearer(<span class="string">&quot;MyAuth&quot;</span>, options =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> key = <span class="keyword">new</span> SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthTokenHelper.AuthKey));</span><br><span class="line"></span><br><span class="line">            options.TokenValidationParameters = <span class="keyword">new</span> TokenValidationParameters</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 验证秘钥</span></span><br><span class="line">                ValidateIssuerSigningKey = <span class="literal">true</span>,</span><br><span class="line">                IssuerSigningKey = key,</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 验证发布者</span></span><br><span class="line">                ValidateIssuer = <span class="literal">true</span>,</span><br><span class="line">                ValidIssuer = <span class="string">&quot;URI&quot;</span>,</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 验证订阅者</span></span><br><span class="line">                ValidateAudience = <span class="literal">true</span>,</span><br><span class="line">                ValidAudience = <span class="string">&quot;TAGOST&quot;</span>,</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 验证过期时间</span></span><br><span class="line">                ValidateLifetime = <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">                <span class="comment">// JWT 过期偏移，防止瞬间过期</span></span><br><span class="line">                ClockSkew = TimeSpan.FromSeconds(<span class="number">20</span>),</span><br><span class="line"></span><br><span class="line">                <span class="comment">// JWT 必须包含过期时间</span></span><br><span class="line">                RequireExpirationTime = <span class="literal">true</span></span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="角色枚举"><a href="#角色枚举" class="headerlink" title="角色枚举"></a>角色枚举</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> RoleEnum</span><br><span class="line">&#123;</span><br><span class="line">    User,</span><br><span class="line">    Admin</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="Startup-配置"><a href="#Startup-配置" class="headerlink" title="Startup 配置"></a>Startup 配置</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 身份验证自定义配置</span></span><br><span class="line"><span class="comment">// ConfigureServices</span></span><br><span class="line">services.SetMyAuthorization();</span><br><span class="line">services.SetMyAuthentication();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 身份验证，先 Cation 再 Zation</span></span><br><span class="line"><span class="comment">// Configure</span></span><br><span class="line">app.UseAuthentication();</span><br><span class="line">app.UseAuthorization();</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Asp.Net</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Git 分支管理策略</title>
+    <url>/MyBlog/2021/05/06/Git-Git%E5%88%86%E6%94%AF%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="一个项目必须包含以下分支"><a href="#一个项目必须包含以下分支" class="headerlink" title="一个项目必须包含以下分支"></a>一个项目必须包含以下分支</h1><ul>
+<li>生产分支 master</li>
+<li>开发分支 dev</li>
+<li>临时分支 feature / release / fixbug</li>
+</ul>
+<h1 id="关于-–no-ff"><a href="#关于-–no-ff" class="headerlink" title="关于 –no-ff"></a>关于 –no-ff</h1><p><img src="https://tagost.aiur.site/blog-imgs/git/fast-farward%20merge.png" alt="快进式合并"></p>
+<ul>
+<li>默认情况下，Git 执行”快进式合并”（fast-farward merge），会直接将 Master 分支指向 Dev 分支</li>
+<li>使用 –no-ff 参数后，会执行正常合并，在 Master 分支上生成一个新节点。为了保证版本演进的清晰，我们希望采用这种做法</li>
+</ul>
+<h1 id="dev-开发分支"><a href="#dev-开发分支" class="headerlink" title="dev 开发分支"></a>dev 开发分支</h1><ul>
+<li>用于开发的分支，最终会合并到 Master</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Git 创建 Dev 分支的命令：</span></span><br><span class="line">git checkout -b dev master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 Dev 分支发布到 Master 分支的命令：</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 切换到 Master 分支</span></span><br><span class="line">git checkout master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对 Dev 分支进行合并</span></span><br><span class="line">git merge --no-ff develop</span><br></pre></td></tr></table></figure>
+<h1 id="临时分支"><a href="#临时分支" class="headerlink" title="临时分支"></a>临时分支</h1><h2 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h2><ul>
+<li>它是为了开发某种特定功能，从 Dev 分支上面分出来的。开发完成后，要再并入 Dev</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个功能分支</span></span><br><span class="line">git checkout -b feature-<span class="number">1</span> develop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 开发完成后，将功能分支合并到 dev 分支</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff feature-<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除 feature 分支</span></span><br><span class="line">git branch -d feature-<span class="number">1</span></span><br><span class="line">git push origin --<span class="keyword">delete</span> feature-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="release"><a href="#release" class="headerlink" title="release"></a>release</h2><ul>
+<li>它是指合并到 Master 之前，我们可能需要有一个预发布的版本进行测试</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个预发布分支</span></span><br><span class="line">git checkout -b release-<span class="number">1.2</span> develop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 确认没有问题后，合并到master分支：</span></span><br><span class="line">git checkout master</span><br><span class="line">git merge --no-ff release-<span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 对合并生成的新节点，做一个标签</span></span><br><span class="line">git tag -a <span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 再合并到develop分支：</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff release-<span class="number">1.2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除预发布分支：</span></span><br><span class="line">git branch -d release-<span class="number">1.2</span></span><br><span class="line">git push origin --<span class="keyword">delete</span> release-<span class="number">1.2</span></span><br></pre></td></tr></table></figure>
+<h2 id="fixbug"><a href="#fixbug" class="headerlink" title="fixbug"></a>fixbug</h2><ul>
+<li>修补 bug 分支是从 Master 分支上面分出来的。修补结束以后，再合并进 Master 和 Dev 分支。它的命名，可以采用 fixbug-“BUG 代号” 的形式</li>
+<li>如果是开发阶段有 bug，无需特意建立 bug 分支，直接在 dev 分支改 bug</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个修补 bug 分支：</span></span><br><span class="line">git checkout -b fixbug-UserService-DtoEx master</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修补结束后，合并到 master 分支：</span></span><br><span class="line">git checkout master</span><br><span class="line">git merge --no-ff fixbug-UserService-DtoEx</span><br><span class="line"></span><br><span class="line"><span class="comment">// 再合并到 dev 分支：</span></span><br><span class="line">git checkout develop</span><br><span class="line">git merge --no-ff fixbug-UserService-DtoEx</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后删除该分支：</span></span><br><span class="line">git branch -d fixbug-UserService-DtoEx</span><br><span class="line">git push origin --<span class="keyword">delete</span> fixbug-UserService-DtoEx</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Asp.Net Fx / Core 全局异常处理实例</title>
+    <url>/MyBlog/2020/07/07/Asp.Net-%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%AE%9E%E4%BE%8B/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Asp-net-Framework-MVC"><a href="#Asp-net-Framework-MVC" class="headerlink" title="Asp.net Framework MVC"></a>Asp.net Framework MVC</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 先继承 HandleError 特性</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">HandleErrorAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 OnException 方法</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnException</span>(<span class="params">ExceptionContext filterContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        filterContext.Result = <span class="keyword">new</span> JsonResult</span><br><span class="line">        &#123;</span><br><span class="line">            ContentType = HttpStatusCode.BadRequest.ToString(),</span><br><span class="line">            Data = <span class="keyword">new</span> &#123; msg = filterContext.Exception.Message &#125;,</span><br><span class="line">            JsonRequestBehavior = JsonRequestBehavior.AllowGet</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        filterContext.ExceptionHandled = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册全局过滤器，如果不存在此文件自己创建</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FilterConfig</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RegisterGlobalFilters</span>(<span class="params">GlobalFilterCollection filters</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        filters.Add(<span class="keyword">new</span> MyGlobalException());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 Global Application_Start 添加过滤器</span></span><br><span class="line">FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);</span><br></pre></td></tr></table></figure>
+<h1 id="Asp-net-Framework-WebAPI"><a href="#Asp-net-Framework-WebAPI" class="headerlink" title="Asp.net Framework WebAPI"></a>Asp.net Framework WebAPI</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 继承指定类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyGlobalException</span> : <span class="title">ExceptionHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 重写 Handle</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Handle</span>(<span class="params">ExceptionHandlerContext context</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 实现业务</span></span><br><span class="line">        context.Result = <span class="keyword">new</span> ResponseMessageResult(context.Request.CreateResponse(System.Net.HttpStatusCode.NotFound));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 WebConfig 中添加</span></span><br><span class="line">config.Services.Replace(<span class="keyword">typeof</span>(IExceptionHandler), <span class="keyword">new</span> MyGlobalException());</span><br></pre></td></tr></table></figure>
+<h1 id="Asp-Net-Core"><a href="#Asp-Net-Core" class="headerlink" title="Asp.Net Core"></a>Asp.Net Core</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 新建一个中间件类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyExceptionMiddleware</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> RequestDelegate _next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddleware</span>(<span class="params">RequestDelegate requestDelegate</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._next = requestDelegate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 捕获所有下层中间件引发的异常</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext httpContext</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> _next(httpContext);</span><br><span class="line">        &#125;</span><br><span class="line">        catch(RegexException ane)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status200OK;</span><br><span class="line">            <span class="keyword">await</span> httpContext.Response.WriteAsync(JsonConvert.SerializeObject(<span class="keyword">new</span> &#123; msg = ane.Message &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">        catch (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;</span><br><span class="line">            <span class="comment">// logger write</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后在 StartUP Configure 最上面添加</span></span><br><span class="line">app.UseMiddleware&lt;MyExceptionMiddleware&gt;();</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Asp.Net</category>
       </categories>
@@ -57,6 +96,113 @@
 ]]></content>
       <categories>
         <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据库基础理论</title>
+    <url>/MyBlog/2020/12/31/MySQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h1><ul>
+<li>第一范式：原子性，一个字段不能包含多个信息，所有关系数据库自带第一范式</li>
+<li>第二范式：满足第一范式，一张表只描述一种类型，举例就是一张表不要同时出现产品和订单信息</li>
+<li>第三范式：满足一二范式下的消除冗余数据</li>
+<li><strong>在数据量庞大下为了避免表联结会适当的添加冗余字段，还有在不能加索引的情况下需要添加一个关键字字段充当伪索引</strong></li>
+</ul>
+<h1 id="ACID-四大特性"><a href="#ACID-四大特性" class="headerlink" title="ACID 四大特性"></a>ACID 四大特性</h1><ul>
+<li>原子性（Atomicity）</li>
+<li>一致性（Consistency）</li>
+<li>隔离性（Isolation）</li>
+<li>持久性（Durabilyty）</li>
+</ul>
+<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><ul>
+<li>要么成功要么失败</li>
+<li>提交事务时会在 Undo log 生成一条日志记录操作前的数据，如果发生错误就会根据这条日志执行相反的操作，例如 insert 错误就执行 delete</li>
+</ul>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
+<li><strong>只有先保证其它三个特性才能保证一致性</strong></li>
+</ul>
+<h2 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h2><ul>
+<li>事务一旦提交，对数据的改变是永久性的</li>
+<li>提交事务时会在 Redo log 生成一条记录，之后写入数据库缓存，最后同步到硬盘</li>
+<li>Redo log 是文件追加的形式，所以是有序的，有序比无序快</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 控制 Redo log 机制</span></span><br><span class="line">innodb_flash_log_at_trx_commit</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="operator">-</span> 让主线程同步 Redo log 到硬盘</span><br><span class="line"><span class="number">1</span> <span class="operator">-</span> <span class="keyword">commit</span> 时同步写入</span><br><span class="line"><span class="number">2</span> <span class="operator">-</span> <span class="keyword">commit</span> 时异步写入</span><br><span class="line"></span><br><span class="line">一般采用 <span class="number">1</span> 号</span><br></pre></td></tr></table></figure>
+<h2 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h2><ul>
+<li>写操作：锁</li>
+<li>读写操作：MVCC</li>
+</ul>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>MySQL 常用语句</title>
+    <url>/MyBlog/2020/06/05/MySQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(name) <span class="keyword">select</span> name <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
+<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id<span class="operator">=</span>table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
+<li>limit 前是跳过多少数据，后是提取多少数据</li>
+<li>注意先筛选后分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">desc</span> limit <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="强制使用指定索引"><a href="#强制使用指定索引" class="headerlink" title="强制使用指定索引"></a>强制使用指定索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> force index(<span class="string">&#x27;索引名&#x27;</span>) <span class="keyword">where</span> xxx</span><br></pre></td></tr></table></figure>
+<h1 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 前缀索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一般索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 唯一索引</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> INDEX indexName <span class="keyword">ON</span> table_name(column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 复合索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name1, column_name2)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>解决服务器重启后主键自动增长列倍增问题</title>
+    <url>/MyBlog/2020/06/08/MSSQL-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-1/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="解决主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
+<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
+</ul>
+<blockquote>
+<p>选择服务器</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
+<blockquote>
+<p>点击属性</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
+<blockquote>
+<p>在启动参数中输入 -t272</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
+<blockquote>
+<p>重新启动</p>
+</blockquote>
+<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
+]]></content>
+      <categories>
+        <category>MSSQL</category>
       </categories>
   </entry>
   <entry>
@@ -135,113 +281,6 @@
       </categories>
   </entry>
   <entry>
-    <title>解决服务器重启后主键自动增长列倍增问题</title>
-    <url>/MyBlog/2020/06/08/MSSQL-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-1/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="解决主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况"><a href="#解决主键-ID-自动增长列从-1-2-3-变成-1001-1002-1003-的情况" class="headerlink" title="解决主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况"></a>解决主键 ID 自动增长列从 1 2 3 变成 1001 1002 1003 的情况</h1><ul>
-<li>注意：重新启动后第一次添加还是会倍增，可以用 Truncate table xxx 清除所有数据同时重置主键索引</li>
-</ul>
-<blockquote>
-<p>选择服务器</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/1.png" alt="选择服务器"></p>
-<blockquote>
-<p>点击属性</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/2.png" alt="点击属性"></p>
-<blockquote>
-<p>在启动参数中输入 -t272</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/3.png" alt="在启动参数中输入-t272"></p>
-<blockquote>
-<p>重新启动</p>
-</blockquote>
-<p><img src="https://tagost.aiur.site/blog-imgs/mssql-qa-2/4.png" alt="重新启动"></p>
-]]></content>
-      <categories>
-        <category>MSSQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>MySQL 常用语句</title>
-    <url>/MyBlog/2020/06/05/MySQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="如果两张表的字段一致，并且希望插入全部数据"><a href="#如果两张表的字段一致，并且希望插入全部数据" class="headerlink" title="如果两张表的字段一致，并且希望插入全部数据"></a>如果两张表的字段一致，并且希望插入全部数据</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1 <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-<h1 id="导入指定字段"><a href="#导入指定字段" class="headerlink" title="导入指定字段"></a>导入指定字段</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1(name) <span class="keyword">select</span> name <span class="keyword">from</span> table2;</span><br></pre></td></tr></table></figure>
-<h1 id="导入目标表中不存在的记录"><a href="#导入目标表中不存在的记录" class="headerlink" title="导入目标表中不存在的记录"></a>导入目标表中不存在的记录</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table1</span><br><span class="line">(</span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line">)</span><br><span class="line"><span class="keyword">select</span></span><br><span class="line">id,</span><br><span class="line">name</span><br><span class="line"><span class="keyword">from</span> table2</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> (</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1</span><br><span class="line">    <span class="keyword">where</span> table1.id<span class="operator">=</span>table2.id</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><ul>
-<li>limit 前是跳过多少数据，后是提取多少数据</li>
-<li>注意先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table1 <span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">desc</span> limit <span class="number">3</span>,<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-<h1 id="强制使用指定索引"><a href="#强制使用指定索引" class="headerlink" title="强制使用指定索引"></a>强制使用指定索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> force index(<span class="string">&#x27;索引名&#x27;</span>) <span class="keyword">where</span> xxx</span><br></pre></td></tr></table></figure>
-<h1 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 前缀索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一般索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 唯一索引</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">UNIQUE</span> INDEX indexName <span class="keyword">ON</span> table_name(column_name(length))</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 复合索引</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> table_name (column_name1, column_name2)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>数据库基础理论</title>
-    <url>/MyBlog/2020/12/31/MySQL-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%90%86%E8%AE%BA/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="数据库三范式"><a href="#数据库三范式" class="headerlink" title="数据库三范式"></a>数据库三范式</h1><ul>
-<li>第一范式：原子性，一个字段不能包含多个信息，所有关系数据库自带第一范式</li>
-<li>第二范式：满足第一范式，一张表只描述一种类型，举例就是一张表不要同时出现产品和订单信息</li>
-<li>第三范式：满足一二范式下的消除冗余数据</li>
-<li><strong>在数据量庞大下为了避免表联结会适当的添加冗余字段，还有在不能加索引的情况下需要添加一个关键字字段充当伪索引</strong></li>
-</ul>
-<h1 id="ACID-四大特性"><a href="#ACID-四大特性" class="headerlink" title="ACID 四大特性"></a>ACID 四大特性</h1><ul>
-<li>原子性（Atomicity）</li>
-<li>一致性（Consistency）</li>
-<li>隔离性（Isolation）</li>
-<li>持久性（Durabilyty）</li>
-</ul>
-<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><ul>
-<li>要么成功要么失败</li>
-<li>提交事务时会在 Undo log 生成一条日志记录操作前的数据，如果发生错误就会根据这条日志执行相反的操作，例如 insert 错误就执行 delete</li>
-</ul>
-<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
-<li><strong>只有先保证其它三个特性才能保证一致性</strong></li>
-</ul>
-<h2 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h2><ul>
-<li>事务一旦提交，对数据的改变是永久性的</li>
-<li>提交事务时会在 Redo log 生成一条记录，之后写入数据库缓存，最后同步到硬盘</li>
-<li>Redo log 是文件追加的形式，所以是有序的，有序比无序快</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 控制 Redo log 机制</span></span><br><span class="line">innodb_flash_log_at_trx_commit</span><br><span class="line"></span><br><span class="line"><span class="number">0</span> <span class="operator">-</span> 让主线程同步 Redo log 到硬盘</span><br><span class="line"><span class="number">1</span> <span class="operator">-</span> <span class="keyword">commit</span> 时同步写入</span><br><span class="line"><span class="number">2</span> <span class="operator">-</span> <span class="keyword">commit</span> 时异步写入</span><br><span class="line"></span><br><span class="line">一般采用 <span class="number">1</span> 号</span><br></pre></td></tr></table></figure>
-<h2 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h2><ul>
-<li>写操作：锁</li>
-<li>读写操作：MVCC</li>
-</ul>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
-      </categories>
-  </entry>
-  <entry>
     <title>多线程 / 异步</title>
     <url>/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/</url>
     <content><![CDATA[<blockquote>
@@ -301,36 +340,24 @@
       </categories>
   </entry>
   <entry>
-    <title>Nginx</title>
-    <url>/MyBlog/2021/02/02/%E4%B8%AD%E9%97%B4%E4%BB%B6-Nginx/</url>
+    <title>MSSQL 常用语句</title>
+    <url>/MyBlog/2020/06/08/MSSQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="什么是-Nginx"><a href="#什么是-Nginx" class="headerlink" title="什么是 Nginx"></a>什么是 Nginx</h1><ul>
-<li>是一个高性能的 HTTP 和反向代理 Web 服务器</li>
-<li>同时也提供 IMAP / POP3 / SMTP 服务</li>
-<li><strong>反向代理：公网到内网</strong></li>
-<li><strong>正向代理：公网到公网，例如加速器</strong></li>
-<li>理论上能支持 50000 并发</li>
+<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="type">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) main</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="type">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
+<li>offset 跳过 n 条数据，可单独使用</li>
+<li>fetch next 是选择 n 行数据</li>
+<li>注意大数据下先筛选后分页</li>
 </ul>
-<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><h2 id="轮循"><a href="#轮循" class="headerlink" title="轮循"></a>轮循</h2><ul>
-<li>按顺序将网络请求分配到各个业务服务器</li>
-</ul>
-<h2 id="加权轮循"><a href="#加权轮循" class="headerlink" title="加权轮循"></a>加权轮循</h2><ul>
-<li>为某个 IP 分配高优先级，让请求优先分配到指定业务服务器</li>
-</ul>
-<h2 id="IP-HASH"><a href="#IP-HASH" class="headerlink" title="IP HASH"></a>IP HASH</h2><ul>
-<li>将客户的 IP 进行 HASH 并将其分配到指定业务服务器</li>
-</ul>
-<h1 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h1><ul>
-<li>充当静态资源服务器，将其当作 CDN</li>
-</ul>
-<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">nginx start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制停止</span></span><br><span class="line">./nginx -s stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启</span></span><br><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure>
-<h1 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h1><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ==================== 全局配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数 = CPU 核心数</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== 最大连接数</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== HTTP 配置</span></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 组合文件名，相当于分层管理追加文件</span></span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每条连接的生命周期</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 是否开启动态压缩</span></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">## ==================== 端口监听</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 负载均衡</span></span><br><span class="line">    <span class="attribute">upstream</span> 域名 &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听端口</span></span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听 URI</span></span><br><span class="line">        <span class="attribute">server_name</span>  域名;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">### ==================== 监听域名后缀</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开启静态 gzip 文件识别</span></span><br><span class="line">            <span class="attribute">gzip_static</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">root</span> html;</span><br><span class="line">            <span class="attribute">index</span>  index.html;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开枪 vue 路由识别</span></span><br><span class="line">            <span class="attribute">try_files</span> $uri $uri/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> /global &#123;</span><br><span class="line">            <span class="attribute">root</span> /;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> next <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
+<h1 id="读写分离时复制功能登录失败问题"><a href="#读写分离时复制功能登录失败问题" class="headerlink" title="读写分离时复制功能登录失败问题"></a>读写分离时复制功能登录失败问题</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 先查询出本地计算机名和数据库名</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> @<span class="variable">@SERVERNAME</span></span><br><span class="line"><span class="keyword">select</span> serverproperty(<span class="string">&#x27;servername&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 同步两者名字即可使用计算机名登录</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">exec</span> sp_dropserver <span class="string">&#x27;DESKTOP-7RNV68B&#x27;</span></span><br><span class="line"><span class="keyword">exec</span> sp_addserver <span class="string">&#x27;TAGOST&#x27;</span>,<span class="string">&#x27;local&#x27;</span></span><br></pre></td></tr></table></figure>
+<h1 id="Varchar-自动增长列"><a href="#Varchar-自动增长列" class="headerlink" title="Varchar 自动增长列"></a>Varchar 自动增长列</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="type">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@nowtime</span> datetime</span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@newUUID</span> <span class="type">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> <span class="variable">@nowtime</span> <span class="operator">=</span> GETDATE()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="variable">@newUUID</span> <span class="operator">=</span> <span class="string">&#x27;DC&#x27;</span><span class="operator">+</span><span class="keyword">CONVERT</span>(<span class="type">varchar</span>,<span class="keyword">YEAR</span>(<span class="variable">@nowtime</span>))<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">100</span><span class="operator">+</span><span class="keyword">MONTH</span>(<span class="variable">@nowtime</span>),<span class="number">2</span>)<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">10000</span><span class="operator">+</span>ISNULL(<span class="keyword">RIGHT</span>(<span class="built_in">max</span>(uuid),<span class="number">4</span>),<span class="number">0</span>)<span class="operator">+</span><span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> Test</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="variable">@newUUID</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">go</span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> Test</span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> uuID</span><br><span class="line">go</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>中间件</category>
+        <category>MSSQL</category>
       </categories>
   </entry>
   <entry>
@@ -342,10 +369,67 @@
 <a id="more"></a>
 
 <h1 id="单独配置文件-Profile"><a href="#单独配置文件-Profile" class="headerlink" title="单独配置文件 Profile"></a>单独配置文件 Profile</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserProfile</span> : <span class="title">Profile</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserProfile</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        CreateMap&lt;T_User, UserDTO&gt;()</span><br><span class="line">            .ReverseMap();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="Asp-net-Core-Startup-ConfigureServices"><a href="#Asp-net-Core-Startup-ConfigureServices" class="headerlink" title="Asp.net Core Startup ConfigureServices"></a>Asp.net Core Startup ConfigureServices</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Automapper 配置</span></span><br><span class="line"><span class="keyword">var</span> assemblies = <span class="keyword">new</span> Assembly[] &#123;</span><br><span class="line">    Assembly.Load(<span class="string">@&quot;MyFrame.Infrastructure&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">services.AddAutoMapper(cfg =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    cfg.ForAllMaps((a, cfg) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        cfg.ForAllMembers(options =&gt; options.Condition((b, c, <span class="keyword">value</span>) =&gt; <span class="keyword">value</span> != <span class="literal">null</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;, assemblies);</span><br></pre></td></tr></table></figure>
+<h1 id="Asp-net-Core-Startup-ConfigureServices"><a href="#Asp-net-Core-Startup-ConfigureServices" class="headerlink" title="Asp.net Core Startup ConfigureServices"></a>Asp.net Core Startup ConfigureServices</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Automapper 配置</span></span><br><span class="line"><span class="keyword">var</span> assemblies = <span class="keyword">new</span> Assembly[] &#123;</span><br><span class="line">    Assembly.Load(<span class="string">@&quot;MyFrame.Infrastructure&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">services.AddAutoMapper(cfg =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    cfg.ForAllMaps((_, cfg) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        cfg.ForAllMembers(options =&gt; options.Condition((_, _, <span class="keyword">value</span>) =&gt; <span class="keyword">value</span> != <span class="literal">null</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;, assemblies);</span><br></pre></td></tr></table></figure>
 <h1 id="注入-IMapper-使用"><a href="#注入-IMapper-使用" class="headerlink" title="注入 IMapper 使用"></a>注入 IMapper 使用</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> IMapper mapper;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HomeController</span>(<span class="params">IMapper mapper</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> entity = <span class="keyword">new</span> T_User()</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;实体到DTO&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dto = <span class="keyword">new</span> UserDTO</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;DTO到实体&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> s = mapper.Map&lt;UserDTO&gt;(entity);</span><br><span class="line">    <span class="keyword">var</span> d = mapper.Map&lt;T_User&gt;(dto);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Ok(<span class="keyword">new</span> &#123; a = s, b = d &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>其它</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>索引原理</title>
+    <url>/MyBlog/2020/06/12/MySQL-%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
+<li>索引是一种数据结构</li>
+<li>索引是空间换时间</li>
+<li>MySQL 禁止手动创建哈希索引，因为其主要存在内存，会占用空间</li>
+<li>查询优化器会自动调整 SQL 语句的顺序，将有索引的前置</li>
+<li>当一张表全部字段都是索引时，最左原则无效</li>
+</ul>
+<h1 id="聚集索引（InnoDB）"><a href="#聚集索引（InnoDB）" class="headerlink" title="聚集索引（InnoDB）"></a>聚集索引（InnoDB）</h1><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/1.png" alt="聚集索引图"></p>
+<ul>
+<li>将数据与索引放到了一块，找到索引也就找到了数据</li>
+<li>索引的叶子节点就是对应的数据节点，可以直接获取到对应的全部列的数据</li>
+<li>聚集索引默认实现是主键索引</li>
+<li><strong>在 InnoDB 中主键索引以外的都叫辅助索引（二级索引），例如复合索引、唯一索引、前缀索引</strong></li>
+<li>如果没有主键，系统会先选择一个唯一非 NULL 索引代替；如果整张表没有索引则会生成一个隐藏的聚集索引；不管怎样都会保证有一个聚集索引</li>
+</ul>
+<h2 id="回表"><a href="#回表" class="headerlink" title="回表"></a>回表</h2><ul>
+<li>当一句 SQL 需要查询主键索引以及辅助索引以外的字段时就会造成回表，因为索引里没有你要的数据，肯定要回表查询</li>
+</ul>
+<h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><ul>
+<li>查询的的数据列只从辅助索引中就能够取得，不必从主键索引获取</li>
+</ul>
+<h2 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h2><h1 id="非聚集索引（Myisam）"><a href="#非聚集索引（Myisam）" class="headerlink" title="非聚集索引（Myisam）"></a>非聚集索引（Myisam）</h1><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/2.png" alt="非聚集索引"></p>
+<ul>
+<li>将数据、索引分开存储，数据顺序与索引顺序无关</li>
+<li>先在索引表中查找数据的物理地址然后再到数据表中查找对应数据</li>
+</ul>
+<h1 id="避免跳过索引"><a href="#避免跳过索引" class="headerlink" title="避免跳过索引"></a>避免跳过索引</h1><ul>
+<li>索引遇到范围查询 &gt;、&lt;、between、like 会停止匹配</li>
+<li>实际开发不要用数据库做逻辑</li>
+<li>同时也要注意数据类型，不要将数字类型用字符串查询</li>
+</ul>
+<h2 id="不要在-SQL-语句中使用以下运算符"><a href="#不要在-SQL-语句中使用以下运算符" class="headerlink" title="不要在 SQL 语句中使用以下运算符"></a>不要在 SQL 语句中使用以下运算符</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span></span><br><span class="line"><span class="operator">-</span></span><br><span class="line"><span class="operator">*</span></span><br><span class="line"><span class="operator">/</span></span><br><span class="line"><span class="operator">!=</span></span><br><span class="line"><span class="operator">&lt;&gt;</span></span><br><span class="line"><span class="keyword">is</span> <span class="keyword">null</span></span><br><span class="line"><span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">null</span></span><br><span class="line"><span class="keyword">or</span></span><br></pre></td></tr></table></figure>
+<h1 id="索引失效原理"><a href="#索引失效原理" class="headerlink" title="索引失效原理"></a>索引失效原理</h1><ul>
+<li>索引是根据二分查找实现的，而二分查找是有序的，任何无序的数据都会导致索引失效</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 例如复合索引 A、B，A 是有序的情况下 B 才有序，否则索引失效</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="operator">=</span> <span class="number">1</span> <span class="keyword">and</span> B <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 为什么范围查询后面的条件无法命中索引？</span></span><br><span class="line"><span class="comment">-- 因为范围查询会导致后面条件无序</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="operator">&gt;</span> <span class="number">1</span> <span class="keyword">and</span> B <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- like 同理，因为双 % 会导致模糊查询，所以无法命中索引</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="keyword">like</span> <span class="string">&#x27;%1%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 而 % 前面是固定值的情况下是有效的，因为符合左前缀法则</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="keyword">like</span> <span class="string">&#x27;1%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="InnoDB-和-Myisam-区别"><a href="#InnoDB-和-Myisam-区别" class="headerlink" title="InnoDB 和 Myisam 区别"></a>InnoDB 和 Myisam 区别</h1><ul>
+<li>InnoDB 支持事务、外键、聚集索引、行锁、物理两个文件（FRM 表定义、IBD 数据和索引）</li>
+<li>Myisam 不支持事务、不支持外键、非聚集索引、表锁、物理三个文件（FRM 表定义、MYD 数据文件、MYI 索引文件）、支持全文索引（还是交给 ES 吧）</li>
+</ul>
+<h1 id="主键类型的选择"><a href="#主键类型的选择" class="headerlink" title="主键类型的选择"></a>主键类型的选择</h1><ul>
+<li>分布式的情况下可以采用中心服务器生成雪花 ID</li>
+<li>因为 B+TREE 的原因，最好使用连续的整数字段，更好确定查找访问范围</li>
+</ul>
+]]></content>
+      <categories>
+        <category>MySQL</category>
       </categories>
   </entry>
   <entry>
@@ -462,31 +546,96 @@
 <a id="more"></a>
 
 <h1 id="Nlog-config"><a href="#Nlog-config" class="headerlink" title="Nlog.config"></a>Nlog.config</h1><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nlog</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.nlog-project.org/schemas/NLog.xsd&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.nlog-project.org/schemas/NLog.xsd NLog.xsd&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">autoReload</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">throwExceptions</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">throwConfigExceptions</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">internalLogLevel</span>=<span class="string">&quot;Off&quot;</span> <span class="attr">internalLogFile</span>=<span class="string">&quot;c:\temp\nlog-internal.log&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">variable</span> <span class="attr">name</span>=<span class="string">&quot;myvar&quot;</span> <span class="attr">value</span>=<span class="string">&quot;myvalue&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- 设置 NLOG 日志存储方式 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">targets</span> <span class="attr">async</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">&lt;!-- 设置存储路径 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">&quot;mylog&quot;</span> <span class="attr">xsi:type</span>=<span class="string">&quot;File&quot;</span></span></span><br><span class="line"><span class="tag">			<span class="attr">fileName</span>=<span class="string">&quot;$&#123;basedir&#125;/logs/$&#123;shortdate&#125;/$&#123;level&#125;.json&quot;</span></span></span><br><span class="line"><span class="tag">				<span class="attr">encoding</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">&lt;!-- 设置存储类型 &amp; 配置参数 --&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">layout</span> <span class="attr">xsi:type</span>=<span class="string">&quot;JsonLayout&quot;</span> <span class="attr">excludeProperties</span>=<span class="string">&quot;Comma-separated list (string)&quot;</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">attribute</span> <span class="attr">name</span>=<span class="string">&quot;Time&quot;</span> <span class="attr">layout</span>=<span class="string">&quot;$&#123;longdate&#125;&quot;</span> /&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">attribute</span> <span class="attr">name</span>=<span class="string">&quot;Level&quot;</span> <span class="attr">layout</span>=<span class="string">&quot;$&#123;level:upperCase=true&#125;&quot;</span>/&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">attribute</span> <span class="attr">name</span>=<span class="string">&quot;ExceptionType&quot;</span> <span class="attr">layout</span>=<span class="string">&quot;【错误类型】$&#123;exception&#125;&quot;</span> <span class="attr">escapeUnicode</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">attribute</span> <span class="attr">name</span>=<span class="string">&quot;ExceptionInfo&quot;</span> <span class="attr">layout</span>=<span class="string">&quot;【错误信息】$&#123;exception:format=toString&#125;&quot;</span> <span class="attr">escapeUnicode</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;/<span class="name">targets</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">&lt;!-- 启用配置 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">rules</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">&lt;!-- 设置异常输出等级，与存储方式挂钩 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;*&quot;</span> <span class="attr">minlevel</span>=<span class="string">&quot;Error&quot;</span> <span class="attr">writeTo</span>=<span class="string">&quot;mylog&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;/<span class="name">rules</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nlog</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h1 id="Program-配置"><a href="#Program-配置" class="headerlink" title="Program 配置"></a>Program 配置</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IHostBuilder <span class="title">CreateHostBuilder</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span> =&gt;</span><br><span class="line">    Host.CreateDefaultBuilder(args)</span><br><span class="line">    .UseServiceProviderFactory(<span class="keyword">new</span> AutofacServiceProviderFactory())</span><br><span class="line">        .ConfigureWebHostDefaults(webBuilder =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            webBuilder.UseStartup&lt;Startup&gt;();</span><br><span class="line">        &#125;)</span><br><span class="line">    .UseNLog(); <span class="comment">// &lt;==</span></span><br></pre></td></tr></table></figure>
-<h1 id="注入使用"><a href="#注入使用" class="headerlink" title="注入使用"></a>注入使用</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;MyExceptionMiddle&gt; logger;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddle</span>(<span class="params">ILogger&lt;MyExceptionMiddle&gt; logger</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.logger = logger;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Fun</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    logger.LogError(ex, <span class="literal">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+<h1 id="Program-配置"><a href="#Program-配置" class="headerlink" title="Program 配置"></a>Program 配置</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IHostBuilder <span class="title">CreateHostBuilder</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span> =&gt;</span><br><span class="line">    Host.CreateDefaultBuilder(args)</span><br><span class="line">    .UseServiceProviderFactory(<span class="keyword">new</span> AutofacServiceProviderFactory())</span><br><span class="line">        .ConfigureWebHostDefaults(webBuilder =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            webBuilder.UseStartup&lt;Startup&gt;();</span><br><span class="line">        &#125;)</span><br><span class="line">    .UseNLog(); <span class="comment">// 使用 Nlog</span></span><br></pre></td></tr></table></figure>
+<h1 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;MyExceptionMiddle&gt; logger;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyExceptionMiddle</span>(<span class="params">ILogger&lt;MyExceptionMiddle&gt; logger</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.logger = logger;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Fun</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    logger.LogError(ex, <span class="literal">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>其它</category>
       </categories>
   </entry>
   <entry>
-    <title>MSSQL 常用语句</title>
-    <url>/MyBlog/2020/06/08/MSSQL-%E5%B8%B8%E7%94%A8%E8%AF%AD%E5%8F%A5/</url>
+    <title>十大排序算法</title>
+    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="ROW-NUMBER-适用于-2008-及以下的版本"><a href="#ROW-NUMBER-适用于-2008-及以下的版本" class="headerlink" title="ROW_NUMBER 适用于 2008 及以下的版本"></a>ROW_NUMBER 适用于 2008 及以下的版本</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    UserName,</span><br><span class="line">    <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span>(<span class="keyword">ORDER</span> <span class="keyword">BY</span> UserName) <span class="keyword">as</span> <span class="type">row</span></span><br><span class="line">    <span class="keyword">from</span> T_UserInfo</span><br><span class="line">) main</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line"><span class="type">row</span></span><br><span class="line"><span class="keyword">between</span> <span class="number">50</span> <span class="keyword">and</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
-<h1 id="OFFSET，FETCH-NEXT-适用于-2012-及以上的版本"><a href="#OFFSET，FETCH-NEXT-适用于-2012-及以上的版本" class="headerlink" title="OFFSET，FETCH NEXT 适用于 2012 及以上的版本"></a>OFFSET，FETCH NEXT 适用于 2012 及以上的版本</h1><ul>
-<li>offset 跳过 n 条数据，可单独使用</li>
-<li>fetch next 是选择 n 行数据</li>
-<li>注意大数据下先筛选后分页</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">UserName</span><br><span class="line"><span class="keyword">from</span> table1</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> UserName</span><br><span class="line"><span class="keyword">offset</span> <span class="number">1000</span> <span class="keyword">rows</span> <span class="keyword">fetch</span> next <span class="number">50</span> <span class="keyword">rows</span> <span class="keyword">only</span></span><br></pre></td></tr></table></figure>
-<h1 id="读写分离时复制功能登录失败问题"><a href="#读写分离时复制功能登录失败问题" class="headerlink" title="读写分离时复制功能登录失败问题"></a>读写分离时复制功能登录失败问题</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 先查询出本地计算机名和数据库名</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> @<span class="variable">@SERVERNAME</span></span><br><span class="line"><span class="keyword">select</span> serverproperty(<span class="string">&#x27;servername&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 同步两者名字即可使用计算机名登录</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">exec</span> sp_dropserver <span class="string">&#x27;DESKTOP-7RNV68B&#x27;</span></span><br><span class="line"><span class="keyword">exec</span> sp_addserver <span class="string">&#x27;TAGOST&#x27;</span>,<span class="string">&#x27;local&#x27;</span></span><br></pre></td></tr></table></figure>
-<h1 id="Varchar-自动增长列"><a href="#Varchar-自动增长列" class="headerlink" title="Varchar 自动增长列"></a>Varchar 自动增长列</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="type">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@nowtime</span> datetime</span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@newUUID</span> <span class="type">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> <span class="variable">@nowtime</span> <span class="operator">=</span> GETDATE()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="variable">@newUUID</span> <span class="operator">=</span> <span class="string">&#x27;DC&#x27;</span><span class="operator">+</span><span class="keyword">CONVERT</span>(<span class="type">varchar</span>,<span class="keyword">YEAR</span>(<span class="variable">@nowtime</span>))<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">100</span><span class="operator">+</span><span class="keyword">MONTH</span>(<span class="variable">@nowtime</span>),<span class="number">2</span>)<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">10000</span><span class="operator">+</span>ISNULL(<span class="keyword">RIGHT</span>(<span class="built_in">max</span>(uuid),<span class="number">4</span>),<span class="number">0</span>)<span class="operator">+</span><span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> Test</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="variable">@newUUID</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">go</span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> Test</span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> uuID</span><br><span class="line">go</span><br></pre></td></tr></table></figure>]]></content>
+<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
       <categories>
-        <category>MSSQL</category>
+        <category>其它</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>缓存穿透/布隆过滤器/分布式锁</title>
+    <url>/MyBlog/2020/07/06/Redis-%E7%BC%93%E5%AD%98%E5%B8%83%E9%9A%86%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="数据库瓶颈"><a href="#数据库瓶颈" class="headerlink" title="数据库瓶颈"></a>数据库瓶颈</h1><ul>
+<li>一般情况下数据库最先有瓶颈，最开始的解决方法是创建数据库连接池避免频繁创建链接（类似线程池）</li>
+<li>接下来是缓存层、分区、分表、分库、数据库集群</li>
+<li>目前常用的情况是用 Redis 作缓存层</li>
+</ul>
+<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><ul>
+<li>请求 Redis 没有的数据导致直接查询数据库的行为叫缓存穿透</li>
+<li>可以将不存在的数据用 NULL 缓存进 Redis，但这种做法会被连续穿透产生 N 个 NULL 最后把 Redis 撑爆</li>
+<li>缓存雪崩与缓存击穿也属于穿透，是特殊情况下的表现</li>
+<li><strong>一般项目不需要解决穿透问题，因为数据太小数据库都能硬抗</strong></li>
+<li>可以使用布隆过滤器解决</li>
+</ul>
+<h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><ul>
+<li>缓存层突然失效导致所有请求访问数据库</li>
+<li><strong>Redis 所有的 key 有效期不能一致，否则会统一过期；可以采用随机过期时间避免这个问题</strong></li>
+<li><strong>Redis 宕机也会雪崩；可以采用分布式集群 Redis</strong></li>
+<li>切片集群：将主数据分切多个部分存在多个 Redis</li>
+<li>副本集群：将主数据完整复制一份到多个 Redis</li>
+<li>如果所有 Redis 服务雪崩那么可以读取持久化数据或先缓存常用数据，例如用户表</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 采用 HASH 环</span></span><br><span class="line"><span class="comment">// 假设环的大小为 2 的 32 次方</span></span><br><span class="line"><span class="comment">// 用 Redis 的 IP 取模</span></span><br><span class="line"></span><br><span class="line">Hash(ip) % (Redis数量 ^ <span class="number">32</span>) = Redis 服务器所在环的位置</span><br></pre></td></tr></table></figure>
+<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><ul>
+<li>只缓存了一条数据并且失效</li>
+</ul>
+<h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><ul>
+<li>布隆过滤器会创建一个 Bit 数组，将请求的数据经过 HASH 后在指定的数组位置上标记为 True，然后再用数据库的值经过哈希后进行对比，如果为 1，则数据存在</li>
+<li>布隆算法有一定错误率，如果布隆告诉你数据存在，那数据库可能不存在；如果布隆告诉你数据不存在，那就一定不存在</li>
+<li>布隆过滤器是一个用错误率换取空间和时间的算法</li>
+<li>如果使用一个 HASH 方法被暴力破解，那么可以使用多个 HASH 方法来解决。如果还被破解那就只能重写 HASH 方法</li>
+<li>多个 HASH 方法下只要有一个结果为 FALSE，那么直接返回不存在</li>
+<li>HASH 方法不是越多越好，Bit 数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
+<li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
+</ul>
+<h1 id="简易布隆过滤器实现"><a href="#简易布隆过滤器实现" class="headerlink" title="简易布隆过滤器实现"></a>简易布隆过滤器实现</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BitArray 大小</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">int</span> BitArrayLength &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Hash 的数量（用多个 Hash 匹配更精确）</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">byte</span> HashCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 位数组</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> BitArray BitArray &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 配置方法</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fpp&quot;&gt;</span>精准率<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fieldCount&quot;&gt;</span>数据库字段数量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Config</span>(<span class="params"><span class="built_in">float</span> fpp = <span class="number">0.001f</span>, <span class="built_in">int</span> fieldCount = <span class="number">10000</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置布隆数组大小</span></span><br><span class="line">    BitArrayLength = (<span class="built_in">int</span>)Math.Round(-(fieldCount * Math.Log(fpp) / Math.Pow(Math.Log(<span class="number">2</span>), <span class="number">2</span>)));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置合适的 bit 集合数量</span></span><br><span class="line">    HashCount = (<span class="built_in">byte</span>)Math.Round(BitArrayLength / fieldCount * Math.Log(<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line">    BitArray = <span class="keyword">new</span> BitArray(BitArrayLength);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 获取 key 的哈希集合</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;<span class="built_in">int</span>&gt; <span class="title">GetHashList</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> hash = key.GetHashCode();</span><br><span class="line">    <span class="keyword">var</span> random = <span class="keyword">new</span> Random(hash);</span><br><span class="line">    <span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; HashCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        list.Add(random.Next() % BitArrayLength);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合添加 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetBitArray</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        BitArray.Set(data, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合查询 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">GetBitArray</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (BitArray[data])</span><br><span class="line">        &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> count == HashCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加元素</span></span><br><span class="line">BF.ADD newFilter foo</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.EXISTS newFilter foo</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MADD myFilter foo bar baz</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、数据库某个字段的数据量</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span></span><br></pre></td></tr></table></figure>
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><ul>
+<li>单一应用的锁只能解决当前项目的问题，分布式应用下要有一个中间商来解决锁的问题</li>
+<li>死锁：抢到锁后无法释放锁</li>
+<li>正常情况下可以为分布式锁加过期时间来解锁，但在并发情况下可能无法正确设置过期时间</li>
+<li>可以使用消息队列来排队加锁避免并发产生的系列问题</li>
+</ul>
+<h1 id="Redis-锁与-Zookeeper-的不同"><a href="#Redis-锁与-Zookeeper-的不同" class="headerlink" title="Redis 锁与 Zookeeper 的不同"></a>Redis 锁与 Zookeeper 的不同</h1><ul>
+<li>Redis 锁设置有效期可能会在设置前发生并发而跳过设置过期时间，同时锁的过期时间不知道设置多少合适</li>
+<li>Zookeeper 是基于最终一致性的服务框架，它可以在多节点上写入数据；有持久节点和临时节点</li>
+</ul>
+<h1 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h1><ul>
+<li>使用 config get dir 命令行获取 Redis 根目录</li>
+</ul>
+<h2 id="RDB-二进制文件保存"><a href="#RDB-二进制文件保存" class="headerlink" title="RDB 二进制文件保存"></a>RDB 二进制文件保存</h2><ul>
+<li>默认保存方式；适用于非强一致数据；占用大量内存</li>
+<li>使用 SAVE / LOAD 会阻塞</li>
+<li>在输入 BGSAVE 时创建子进程，利用系统的 fork / Copy or Write 机制复制共享内存快照到临时 RDB 文件最后写入实际 RDB（定时触发时默认使用这种方式）</li>
+<li>启动 Redis 时会自动检测是否有 RDB 文件</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># redis.conf</span></span><br><span class="line"><span class="comment"># 每 X 秒内判断是否有 N 条数据发生改变时触发</span></span><br><span class="line">save 60 100</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其它命令也会生成 RDB 文件</span></span><br><span class="line">flushall</span><br><span class="line"></span><br><span class="line"><span class="comment"># 退出 Redis 也会产生 RDB</span></span><br></pre></td></tr></table></figure>
+<h2 id="AOF-日记保存"><a href="#AOF-日记保存" class="headerlink" title="AOF 日记保存"></a>AOF 日记保存</h2><ul>
+<li>通过在日记文件中追加记录达到持久化效果</li>
+<li>一般情况下使用每秒写入的配置方式</li>
+<li>启动 Redis 时会自动检测是否有 AOF 文件（优先度大于 RDB）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Redis</category>
       </categories>
   </entry>
   <entry>
@@ -570,17 +719,6 @@
       </categories>
   </entry>
   <entry>
-    <title>七大查找算法</title>
-    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-  </entry>
-  <entry>
     <title>设计模式</title>
     <url>/MyBlog/2020/08/24/%E5%85%B6%E5%AE%83-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<blockquote>
@@ -639,6 +777,17 @@
       </categories>
   </entry>
   <entry>
+    <title>七大查找算法</title>
+    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+  </entry>
+  <entry>
     <title>TypeScript 语法</title>
     <url>/MyBlog/2020/08/05/%E5%89%8D%E7%AB%AF-TypeScript%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<blockquote>
@@ -657,162 +806,6 @@
 <h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; <span class="attr">name</span>: <span class="string">&#x27;lee&#x27;</span>, <span class="attr">age</span>: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>前端</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Vue 路由放到 MySQL 的弊端</title>
-    <url>/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-Vue%E8%B7%AF%E7%94%B1%E6%94%BE%E5%88%B0MySQL%E7%9A%84%E5%BC%8A%E7%AB%AF/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>想起以前那帮老油条为了做菜单权限在数据库放 Vue 路由就恶心，本来靠路由守卫就能解决的问题非要丢给后端。后端还要为获取路由单独写个 API，前端改了又让后端改，最后上线路由判断有问题，是前端忘记通知后端改路由的锅结果被屌的却是后端</p>
-<p>背锅还不算，前端没缓存好路由导致无限从后端请求路由造成并发最后前后端一起炸</p>
-<p>还美其名曰这是高可用，说是由后端动态绑定路由可以减少代码量且能避免用户进入指定界面。放屁高可用，正常人谁会浪费时间改代码看你的破界面，用户要是能跨后端验证那后端是干什么吃的</p>
-<p>那帮人还好意思举例要是有一百万路由那手写多麻烦。兄弟，你是轻松了，后端倒霉了，况且能出现一百万路由说明项目本身就有问题。前端一体速度最快，非要经过网络传输获取路由，到时候出事就像上面说的前后端一起炸，这算个屁的前后端分离</p>
-<p>真正的分离是前后端互不干涉，路由放后端完全是被 MVC 思维带偏了，最终双方能交互的仅限于 API 逻辑接口；前端只需要用路由守卫判断 JWT 中的 Role 就能实现菜单权限，至于怕用户改 JWT 进入指定页面更不用担心，所有逻辑都要经过后端二次验证，用户也只能在这个页面干瞪眼。你说我就不想让客户看到页面？那属于个人洁癖，对团队无利。你之所以认为这么做是正确的，可能是你们公司的制度不够严格，怎么舒服怎么来。我们自从出现文中那种事后完全杜绝任何会产生前后端耦合的行为，至今项目比以前更稳</p>
-<p>本来自己拿着杯子倒水喝水是最快的，现在要把杯子放在别人那里让别人给你倒水，别人一旦不在你就没水喝，而且把水拿过来也要算路程和时间</p>
-<h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
-<li>动态请求会产生多余的网络请求</li>
-<li>如果后端炸了获取不到路由怎么办</li>
-<li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
-<li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
-<li>如果不及时防范和改正项目就会越来越难维护，最后只能辞职弃坑，留下屎山给新人</li>
-</ul>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>缓存穿透/布隆过滤器/分布式锁</title>
-    <url>/MyBlog/2020/07/06/Redis-%E7%BC%93%E5%AD%98%E5%B8%83%E9%9A%86%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="数据库瓶颈"><a href="#数据库瓶颈" class="headerlink" title="数据库瓶颈"></a>数据库瓶颈</h1><ul>
-<li>一般情况下数据库最先有瓶颈，最开始的解决方法是创建数据库连接池避免频繁创建链接（类似线程池）</li>
-<li>接下来是缓存层、分区、分表、分库、数据库集群</li>
-<li>目前常用的情况是用 Redis 作缓存层</li>
-</ul>
-<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><ul>
-<li>请求 Redis 没有的数据导致直接查询数据库的行为叫缓存穿透</li>
-<li>可以将不存在的数据用 NULL 缓存进 Redis，但这种做法会被连续穿透产生 N 个 NULL 最后把 Redis 撑爆</li>
-<li>缓存雪崩与缓存击穿也属于穿透，是特殊情况下的表现</li>
-<li><strong>一般项目不需要解决穿透问题，因为数据太小数据库都能硬抗</strong></li>
-<li>可以使用布隆过滤器解决</li>
-</ul>
-<h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><ul>
-<li>缓存层突然失效导致所有请求访问数据库</li>
-<li><strong>Redis 所有的 key 有效期不能一致，否则会统一过期；可以采用随机过期时间避免这个问题</strong></li>
-<li><strong>Redis 宕机也会雪崩；可以采用分布式集群 Redis</strong></li>
-<li>切片集群：将主数据分切多个部分存在多个 Redis</li>
-<li>副本集群：将主数据完整复制一份到多个 Redis</li>
-<li>如果所有 Redis 服务雪崩那么可以读取持久化数据或先缓存常用数据，例如用户表</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 采用 HASH 环</span></span><br><span class="line"><span class="comment">// 假设环的大小为 2 的 32 次方</span></span><br><span class="line"><span class="comment">// 用 Redis 的 IP 取模</span></span><br><span class="line"></span><br><span class="line">Hash(ip) % (Redis数量 ^ <span class="number">32</span>) = Redis 服务器所在环的位置</span><br></pre></td></tr></table></figure>
-<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><ul>
-<li>只缓存了一条数据并且失效</li>
-</ul>
-<h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><ul>
-<li>布隆过滤器会创建一个 Bit 数组，将请求的数据经过 HASH 后在指定的数组位置上标记为 True，然后再用数据库的值经过哈希后进行对比，如果为 1，则数据存在</li>
-<li>布隆算法有一定错误率，如果布隆告诉你数据存在，那数据库可能不存在；如果布隆告诉你数据不存在，那就一定不存在</li>
-<li>布隆过滤器是一个用错误率换取空间和时间的算法</li>
-<li>如果使用一个 HASH 方法被暴力破解，那么可以使用多个 HASH 方法来解决。如果还被破解那就只能重写 HASH 方法</li>
-<li>多个 HASH 方法下只要有一个结果为 FALSE，那么直接返回不存在</li>
-<li>HASH 方法不是越多越好，Bit 数组也不是越长越好（如果内存够大能塞进整张表的数据则例外，但这样就违背了布隆过滤器的原则）</li>
-<li>如果数据库更新，那么可以做一个定时任务更新布隆过滤器</li>
-</ul>
-<h1 id="简易布隆过滤器实现"><a href="#简易布隆过滤器实现" class="headerlink" title="简易布隆过滤器实现"></a>简易布隆过滤器实现</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BitArray 大小</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">int</span> BitArrayLength &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Hash 的数量（用多个 Hash 匹配更精确）</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">byte</span> HashCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 位数组</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> BitArray BitArray &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 配置方法</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fpp&quot;&gt;</span>精准率<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;fieldCount&quot;&gt;</span>数据库字段数量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Config</span>(<span class="params"><span class="built_in">float</span> fpp = <span class="number">0.001f</span>, <span class="built_in">int</span> fieldCount = <span class="number">10000</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 设置布隆数组大小</span></span><br><span class="line">    BitArrayLength = (<span class="built_in">int</span>)Math.Round(-(fieldCount * Math.Log(fpp) / Math.Pow(Math.Log(<span class="number">2</span>), <span class="number">2</span>)));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置合适的 bit 集合数量</span></span><br><span class="line">    HashCount = (<span class="built_in">byte</span>)Math.Round(BitArrayLength / fieldCount * Math.Log(<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line">    BitArray = <span class="keyword">new</span> BitArray(BitArrayLength);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 获取 key 的哈希集合</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;<span class="built_in">int</span>&gt; <span class="title">GetHashList</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> hash = key.GetHashCode();</span><br><span class="line">    <span class="keyword">var</span> random = <span class="keyword">new</span> Random(hash);</span><br><span class="line">    <span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; HashCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        list.Add(random.Next() % BitArrayLength);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合添加 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetBitArray</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        BitArray.Set(data, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据哈希集合查询 Bloom</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;key&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">GetBitArray</span>(<span class="params"><span class="built_in">string</span> key</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = GetHashList(key);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> data <span class="keyword">in</span> list)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (BitArray[data])</span><br><span class="line">        &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> count == HashCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="Redis-中使用布隆过滤器插件"><a href="#Redis-中使用布隆过滤器插件" class="headerlink" title="Redis 中使用布隆过滤器插件"></a>Redis 中使用布隆过滤器插件</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 docker 运行 redis 布隆过滤器插件</span></span><br><span class="line">docker run -p <span class="number">6379</span>:<span class="number">6379</span> --name redis-redisbloom redislabs/rebloom:latest</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加元素</span></span><br><span class="line">BF.ADD newFilter foo</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询元素是否存在</span></span><br><span class="line">BF.EXISTS newFilter foo</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加多个元素</span></span><br><span class="line">BF.MADD myFilter foo bar baz</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询多个元素</span></span><br><span class="line">BF.MEXISTS myFilter foo nonexist bar</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置布隆过滤器：1、redis key 2、能接受的错误率 3、数据库某个字段的数据量</span></span><br><span class="line">BF.RESERVE customFilter <span class="number">0.0001</span> <span class="number">600000</span></span><br></pre></td></tr></table></figure>
-<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><ul>
-<li>单一应用的锁只能解决当前项目的问题，分布式应用下要有一个中间商来解决锁的问题</li>
-<li>死锁：抢到锁后无法释放锁</li>
-<li>正常情况下可以为分布式锁加过期时间来解锁，但在并发情况下可能无法正确设置过期时间</li>
-<li>可以使用消息队列来排队加锁避免并发产生的系列问题</li>
-</ul>
-<h1 id="Redis-锁与-Zookeeper-的不同"><a href="#Redis-锁与-Zookeeper-的不同" class="headerlink" title="Redis 锁与 Zookeeper 的不同"></a>Redis 锁与 Zookeeper 的不同</h1><ul>
-<li>Redis 锁设置有效期可能会在设置前发生并发而跳过设置过期时间，同时锁的过期时间不知道设置多少合适</li>
-<li>Zookeeper 是基于最终一致性的服务框架，它可以在多节点上写入数据；有持久节点和临时节点</li>
-</ul>
-<h1 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h1><ul>
-<li>使用 config get dir 命令行获取 Redis 根目录</li>
-</ul>
-<h2 id="RDB-二进制文件保存"><a href="#RDB-二进制文件保存" class="headerlink" title="RDB 二进制文件保存"></a>RDB 二进制文件保存</h2><ul>
-<li>默认保存方式；适用于非强一致数据；占用大量内存</li>
-<li>使用 SAVE / LOAD 会阻塞</li>
-<li>在输入 BGSAVE 时创建子进程，利用系统的 fork / Copy or Write 机制复制共享内存快照到临时 RDB 文件最后写入实际 RDB（定时触发时默认使用这种方式）</li>
-<li>启动 Redis 时会自动检测是否有 RDB 文件</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># redis.conf</span></span><br><span class="line"><span class="comment"># 每 X 秒内判断是否有 N 条数据发生改变时触发</span></span><br><span class="line">save 60 100</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其它命令也会生成 RDB 文件</span></span><br><span class="line">flushall</span><br><span class="line"></span><br><span class="line"><span class="comment"># 退出 Redis 也会产生 RDB</span></span><br></pre></td></tr></table></figure>
-<h2 id="AOF-日记保存"><a href="#AOF-日记保存" class="headerlink" title="AOF 日记保存"></a>AOF 日记保存</h2><ul>
-<li>通过在日记文件中追加记录达到持久化效果</li>
-<li>一般情况下使用每秒写入的配置方式</li>
-<li>启动 Redis 时会自动检测是否有 AOF 文件（优先度大于 RDB）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Redis</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>索引原理</title>
-    <url>/MyBlog/2020/06/12/MySQL-%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="一句话攻略"><a href="#一句话攻略" class="headerlink" title="一句话攻略"></a>一句话攻略</h1><ul>
-<li>索引是一种数据结构</li>
-<li>索引是空间换时间</li>
-<li>MySQL 禁止手动创建哈希索引，因为其主要存在内存，会占用空间</li>
-<li>查询优化器会自动调整 SQL 语句的顺序，将有索引的前置</li>
-<li>当一张表全部字段都是索引时，最左原则无效</li>
-</ul>
-<h1 id="聚集索引（InnoDB）"><a href="#聚集索引（InnoDB）" class="headerlink" title="聚集索引（InnoDB）"></a>聚集索引（InnoDB）</h1><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/1.png" alt="聚集索引图"></p>
-<ul>
-<li>将数据与索引放到了一块，找到索引也就找到了数据</li>
-<li>索引的叶子节点就是对应的数据节点，可以直接获取到对应的全部列的数据</li>
-<li>聚集索引默认实现是主键索引</li>
-<li><strong>在 InnoDB 中主键索引以外的都叫辅助索引（二级索引），例如复合索引、唯一索引、前缀索引</strong></li>
-<li>如果没有主键，系统会先选择一个唯一非 NULL 索引代替；如果整张表没有索引则会生成一个隐藏的聚集索引；不管怎样都会保证有一个聚集索引</li>
-</ul>
-<h2 id="回表"><a href="#回表" class="headerlink" title="回表"></a>回表</h2><ul>
-<li>当一句 SQL 需要查询主键索引以及辅助索引以外的字段时就会造成回表，因为索引里没有你要的数据，肯定要回表查询</li>
-</ul>
-<h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><ul>
-<li>查询的的数据列只从辅助索引中就能够取得，不必从主键索引获取</li>
-</ul>
-<h2 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h2><h1 id="非聚集索引（Myisam）"><a href="#非聚集索引（Myisam）" class="headerlink" title="非聚集索引（Myisam）"></a>非聚集索引（Myisam）</h1><p><img src="https://tagost.aiur.site/blog-imgs/sql-index/2.png" alt="非聚集索引"></p>
-<ul>
-<li>将数据、索引分开存储，数据顺序与索引顺序无关</li>
-<li>先在索引表中查找数据的物理地址然后再到数据表中查找对应数据</li>
-</ul>
-<h1 id="避免跳过索引"><a href="#避免跳过索引" class="headerlink" title="避免跳过索引"></a>避免跳过索引</h1><ul>
-<li>索引遇到范围查询 &gt;、&lt;、between、like 会停止匹配</li>
-<li>实际开发不要用数据库做逻辑</li>
-<li>同时也要注意数据类型，不要将数字类型用字符串查询</li>
-</ul>
-<h2 id="不要在-SQL-语句中使用以下运算符"><a href="#不要在-SQL-语句中使用以下运算符" class="headerlink" title="不要在 SQL 语句中使用以下运算符"></a>不要在 SQL 语句中使用以下运算符</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span></span><br><span class="line"><span class="operator">-</span></span><br><span class="line"><span class="operator">*</span></span><br><span class="line"><span class="operator">/</span></span><br><span class="line"><span class="operator">!=</span></span><br><span class="line"><span class="operator">&lt;&gt;</span></span><br><span class="line"><span class="keyword">is</span> <span class="keyword">null</span></span><br><span class="line"><span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">null</span></span><br><span class="line"><span class="keyword">or</span></span><br></pre></td></tr></table></figure>
-<h1 id="索引失效原理"><a href="#索引失效原理" class="headerlink" title="索引失效原理"></a>索引失效原理</h1><ul>
-<li>索引是根据二分查找实现的，而二分查找是有序的，任何无序的数据都会导致索引失效</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 例如复合索引 A、B，A 是有序的情况下 B 才有序，否则索引失效</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="operator">=</span> <span class="number">1</span> <span class="keyword">and</span> B <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 为什么范围查询后面的条件无法命中索引？</span></span><br><span class="line"><span class="comment">-- 因为范围查询会导致后面条件无序</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="operator">&gt;</span> <span class="number">1</span> <span class="keyword">and</span> B <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- like 同理，因为双 % 会导致模糊查询，所以无法命中索引</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="keyword">like</span> <span class="string">&#x27;%1%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 而 % 前面是固定值的情况下是有效的，因为符合左前缀法则</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> A <span class="keyword">like</span> <span class="string">&#x27;1%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<h1 id="InnoDB-和-Myisam-区别"><a href="#InnoDB-和-Myisam-区别" class="headerlink" title="InnoDB 和 Myisam 区别"></a>InnoDB 和 Myisam 区别</h1><ul>
-<li>InnoDB 支持事务、外键、聚集索引、行锁、物理两个文件（FRM 表定义、IBD 数据和索引）</li>
-<li>Myisam 不支持事务、不支持外键、非聚集索引、表锁、物理三个文件（FRM 表定义、MYD 数据文件、MYI 索引文件）、支持全文索引（还是交给 ES 吧）</li>
-</ul>
-<h1 id="主键类型的选择"><a href="#主键类型的选择" class="headerlink" title="主键类型的选择"></a>主键类型的选择</h1><ul>
-<li>分布式的情况下可以采用中心服务器生成雪花 ID</li>
-<li>因为 B+TREE 的原因，最好使用连续的整数字段，更好确定查找访问范围</li>
-</ul>
-]]></content>
-      <categories>
-        <category>MySQL</category>
       </categories>
   </entry>
   <entry>
@@ -890,16 +883,62 @@
       </categories>
   </entry>
   <entry>
-    <title>十大排序算法</title>
-    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
+    <title>Vue 路由放到 MySQL 的弊端</title>
+    <url>/MyBlog/2020/07/22/%E5%89%8D%E7%AB%AF-Vue%E8%B7%AF%E7%94%B1%E6%94%BE%E5%88%B0MySQL%E7%9A%84%E5%BC%8A%E7%AB%AF/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>想起以前那帮老油条为了做菜单权限在数据库放 Vue 路由就恶心，本来靠路由守卫就能解决的问题非要丢给后端。后端还要为获取路由单独写个 API，前端改了又让后端改，最后上线路由判断有问题，是前端忘记通知后端改路由的锅结果被屌的却是后端</p>
+<p>背锅还不算，前端没缓存好路由导致无限从后端请求路由造成并发最后前后端一起炸</p>
+<p>还美其名曰这是高可用，说是由后端动态绑定路由可以减少代码量且能避免用户进入指定界面。放屁高可用，正常人谁会浪费时间改代码看你的破界面，用户要是能跨后端验证那后端是干什么吃的</p>
+<p>那帮人还好意思举例要是有一百万路由那手写多麻烦。兄弟，你是轻松了，后端倒霉了，况且能出现一百万路由说明项目本身就有问题。前端一体速度最快，非要经过网络传输获取路由，到时候出事就像上面说的前后端一起炸，这算个屁的前后端分离</p>
+<p>真正的分离是前后端互不干涉，路由放后端完全是被 MVC 思维带偏了，最终双方能交互的仅限于 API 逻辑接口；前端只需要用路由守卫判断 JWT 中的 Role 就能实现菜单权限，至于怕用户改 JWT 进入指定页面更不用担心，所有逻辑都要经过后端二次验证，用户也只能在这个页面干瞪眼。你说我就不想让客户看到页面？那属于个人洁癖，对团队无利。你之所以认为这么做是正确的，可能是你们公司的制度不够严格，怎么舒服怎么来。我们自从出现文中那种事后完全杜绝任何会产生前后端耦合的行为，至今项目比以前更稳</p>
+<p>本来自己拿着杯子倒水喝水是最快的，现在要把杯子放在别人那里让别人给你倒水，别人一旦不在你就没水喝，而且把水拿过来也要算路程和时间</p>
+<h1 id="从后端读取路由衍生的问题"><a href="#从后端读取路由衍生的问题" class="headerlink" title="从后端读取路由衍生的问题"></a>从后端读取路由衍生的问题</h1><ul>
+<li>动态请求会产生多余的网络请求</li>
+<li>如果后端炸了获取不到路由怎么办</li>
+<li>如何解决前端框架的一系列问题，例如：获取路由后肯定要缓存路由到本地，获取最新路由还要涉及网络请求；如果不缓存，那么刷新时就会路由丢失，这时重新加载路由又要涉及网络请求</li>
+<li>本来是前端全权负责，现在后端耦合所以不属于真正的前后端分离。测试时一起加班，上线后一起加班，出事后互相甩锅，维护成本增加</li>
+<li>如果不及时防范和改正项目就会越来越难维护，最后只能辞职弃坑，留下屎山给新人</li>
+</ul>
+]]></content>
       <categories>
-        <category>其它</category>
+        <category>前端</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Nginx</title>
+    <url>/MyBlog/2021/02/02/%E4%B8%AD%E9%97%B4%E4%BB%B6-Nginx/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="什么是-Nginx"><a href="#什么是-Nginx" class="headerlink" title="什么是 Nginx"></a>什么是 Nginx</h1><ul>
+<li>是一个高性能的 HTTP 和反向代理 Web 服务器</li>
+<li>同时也提供 IMAP / POP3 / SMTP 服务</li>
+<li><strong>反向代理：公网到内网</strong></li>
+<li><strong>正向代理：公网到公网，例如加速器</strong></li>
+<li>理论上能支持 50000 并发</li>
+</ul>
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><h2 id="轮循"><a href="#轮循" class="headerlink" title="轮循"></a>轮循</h2><ul>
+<li>按顺序将网络请求分配到各个业务服务器</li>
+</ul>
+<h2 id="加权轮循"><a href="#加权轮循" class="headerlink" title="加权轮循"></a>加权轮循</h2><ul>
+<li>为某个 IP 分配高优先级，让请求优先分配到指定业务服务器</li>
+</ul>
+<h2 id="IP-HASH"><a href="#IP-HASH" class="headerlink" title="IP HASH"></a>IP HASH</h2><ul>
+<li>将客户的 IP 进行 HASH 并将其分配到指定业务服务器</li>
+</ul>
+<h1 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h1><ul>
+<li>充当静态资源服务器，将其当作 CDN</li>
+</ul>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">nginx start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制停止</span></span><br><span class="line">./nginx -s stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启</span></span><br><span class="line">./nginx -s reload</span><br></pre></td></tr></table></figure>
+<h1 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h1><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ==================== 全局配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数 = CPU 核心数</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== 最大连接数</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== HTTP 配置</span></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 组合文件名，相当于分层管理追加文件</span></span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每条连接的生命周期</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 是否开启动态压缩</span></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">## ==================== 端口监听</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 负载均衡</span></span><br><span class="line">    <span class="attribute">upstream</span> 域名 &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听端口</span></span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听 URI</span></span><br><span class="line">        <span class="attribute">server_name</span>  域名;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">### ==================== 监听域名后缀</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开启静态 gzip 文件识别</span></span><br><span class="line">            <span class="attribute">gzip_static</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">root</span> html;</span><br><span class="line">            <span class="attribute">index</span>  index.html;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开枪 vue 路由识别</span></span><br><span class="line">            <span class="attribute">try_files</span> $uri $uri/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> /global &#123;</span><br><span class="line">            <span class="attribute">root</span> /;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>中间件</category>
       </categories>
   </entry>
   <entry>
