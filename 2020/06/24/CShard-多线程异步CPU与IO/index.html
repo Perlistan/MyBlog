@@ -22,20 +22,20 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多线程 &#x2F; 异步">
-<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/index.html">
+<meta property="og:title" content="多线程 &#x2F; 异步 &#x2F; CPU与IO">
+<meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5CPU%E4%B8%8EIO/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
 <meta property="og:image" content="https://tagost.aiur.site/blog-imgs/thread/2.png">
 <meta property="article:published_time" content="2020-06-24T08:12:05.068Z">
-<meta property="article:modified_time" content="2020-12-31T04:58:22.835Z">
+<meta property="article:modified_time" content="2021-11-10T04:56:06.839Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tagost.aiur.site/blog-imgs/thread/1.png">
 
-<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/">
+<link rel="canonical" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5CPU%E4%B8%8EIO/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>多线程 / 异步 | 踩坑日记</title>
+  <title>多线程 / 异步 / CPU与IO | 踩坑日记</title>
   
 
 
@@ -173,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%BC%82%E6%AD%A5/">
+    <link itemprop="mainEntityOfPage" href="https://perlistan.github.io/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5CPU%E4%B8%8EIO/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/MyBlog/images/head.png">
@@ -186,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          多线程 / 异步
+          多线程 / 异步 / CPU与IO
         </h1>
 
         <div class="post-meta">
@@ -203,7 +203,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 12:58:22" itemprop="dateModified" datetime="2020-12-31T12:58:22+08:00">2020-12-31</time>
+                <time title="修改时间：2021-11-10 12:56:06" itemprop="dateModified" datetime="2021-11-10T12:56:06+08:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -231,14 +231,26 @@
 </blockquote>
 <a id="more"></a>
 
+<h1 id="CPU-Cache（SRAM）"><a href="#CPU-Cache（SRAM）" class="headerlink" title="CPU Cache（SRAM）"></a>CPU Cache（SRAM）</h1><ul>
+<li>CPU Cache 存在的目的就是为了解决内存向 CPU 传输过慢导致的性能问题。CPU Cache 是内存与 CPU 的变压器，它比内存快，CPU 先从 CPU Cache 里找数据，如果没有才到内存找</li>
+<li>CPU Cache 分为 L1 / L2 / L3，顺序模式调用，最后到内存</li>
+<li>所有物理核都包含 L1 / L2，但共享 L3</li>
+</ul>
+<h2 id="内存（DRAM）"><a href="#内存（DRAM）" class="headerlink" title="内存（DRAM）"></a>内存（DRAM）</h2><ul>
+<li>内存是按块存储，读取的时候是将整块数据缓存到 L3，每块 64 byte 大小</li>
+</ul>
+<h3 id="Cache-line-对齐"><a href="#Cache-line-对齐" class="headerlink" title="Cache line 对齐"></a>Cache line 对齐</h3><ul>
+<li>如果数据在同一个内存块，在 CPU 处理时会互相通信确认一致性导致耗时，不在同一块内存则不需要通信</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试代码</span></span><br><span class="line"><span class="comment">// debug 环境</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">My</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 注释第一、第三行速度会明显不同</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> a, b, c, d, e, f, g;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> A &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> h, i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">Program</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        mies[<span class="number">0</span>] = <span class="keyword">new</span> My();</span><br><span class="line">        mies[<span class="number">1</span>] = <span class="keyword">new</span> My();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">const</span> <span class="built_in">long</span> MAR = <span class="number">100</span>_000_000L;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> My[] mies = <span class="keyword">new</span> My[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread1.Start(mies[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread2.Start(mies[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">        Console.ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MathA</span>(<span class="params"><span class="built_in">object</span> my</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> stopwatch = <span class="keyword">new</span> Stopwatch();</span><br><span class="line">        stopwatch.Start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> mine = (My)my;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; MAR; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            mine.A += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stopwatch.Stop();</span><br><span class="line">        Console.WriteLine(<span class="string">$&quot;<span class="subst">&#123;<span class="keyword">nameof</span>(my)&#125;</span> OK - <span class="subst">&#123;stopwatch.ElapsedMilliseconds&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
 <li>单线程应用：只在主线程运行</li>
-<li>多线程应用：在主线程中调用多个线程运行</li>
-<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行</strong></li>
-<li>不要人为的通过延时操控线程执行顺序</li>
+<li>多线程应用：在主线程中调用多个子线程运行</li>
+<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行；一般情况下是单核单线程，如果执行速度很快可能产生伪多线程效果</strong></li>
+<li>不要人为通过延时操控线程执行顺序</li>
 <li>花费大量时间数据传输称为 I/O-Bound</li>
 <li>花费大量时间用 CPU 计算叫 CPU-Bound</li>
-<li><strong>不同线程影响同一变量称为线程安全</strong></li>
+<li><strong>不同线程影响同一变量称为非线程安全</strong></li>
 <li>子线程异常无法被主线程捕获</li>
 <li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
 <li>线程效率并不是线性增长，它还需要一些管理成本</li>
@@ -261,7 +273,7 @@
 <li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
 <li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
 <li>最简单的执行线程池的方式就是 Task.Run</li>
-<li><strong>超额订阅：活跃的线程成果 CPU 的核数，系统就会分割线程的运行时间</strong></li>
+<li><strong>超额订阅：活跃的线程超过 CPU 的物理核数，系统就会分割线程的运行时间</strong></li>
 <li>CLR 通过队列限流防止超额订阅</li>
 </ul>
 <h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
@@ -357,7 +369,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-text">线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-text">线程的运行流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%8C%BF%E5%90%8D%E5%A7%94%E6%89%98%E7%9A%84%E9%97%AD%E5%8C%85%E5%8F%98%E9%87%8F%E4%BC%A0%E9%80%92"><span class="nav-text">关于匿名委托的闭包变量传递</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%94%81"><span class="nav-text">线程锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-text">信号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TASK"><span class="nav-text">TASK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E9%95%BF%E6%97%B6%E9%97%B4%E7%9A%84-IO-%E6%93%8D%E4%BD%9C%E4%B8%8D%E9%87%87%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-text">针对长时间的 IO 操作不采用线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Async-Await"><span class="nav-text">Async &#x2F; Await</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CPU-Cache%EF%BC%88SRAM%EF%BC%89"><span class="nav-text">CPU Cache（SRAM）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%EF%BC%88DRAM%EF%BC%89"><span class="nav-text">内存（DRAM）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache-line-%E5%AF%B9%E9%BD%90"><span class="nav-text">Cache line 对齐</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-text">线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-text">线程的运行流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%8C%BF%E5%90%8D%E5%A7%94%E6%89%98%E7%9A%84%E9%97%AD%E5%8C%85%E5%8F%98%E9%87%8F%E4%BC%A0%E9%80%92"><span class="nav-text">关于匿名委托的闭包变量传递</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%94%81"><span class="nav-text">线程锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-text">信号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TASK"><span class="nav-text">TASK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E9%95%BF%E6%97%B6%E9%97%B4%E7%9A%84-IO-%E6%93%8D%E4%BD%9C%E4%B8%8D%E9%87%87%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-text">针对长时间的 IO 操作不采用线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Async-Await"><span class="nav-text">Async &#x2F; Await</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -372,7 +384,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/MyBlog/archives">
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

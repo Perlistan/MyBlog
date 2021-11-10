@@ -22,13 +22,13 @@
 
   <meta name="description" content="点击查看更多">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Centos7】Docker">
+<meta property="og:title" content="Docker">
 <meta property="og:url" content="https://perlistan.github.io/MyBlog/2020/07/25/Linux-Docker/index.html">
 <meta property="og:site_name" content="踩坑日记">
 <meta property="og:description" content="点击查看更多">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-25T12:17:23.219Z">
-<meta property="article:modified_time" content="2020-12-31T05:00:49.105Z">
+<meta property="article:modified_time" content="2021-09-17T08:58:21.602Z">
 <meta property="article:author" content="TAGOST">
 <meta name="twitter:card" content="summary">
 
@@ -45,7 +45,7 @@
   };
 </script>
 
-  <title>【Centos7】Docker | 踩坑日记</title>
+  <title>Docker | 踩坑日记</title>
   
 
 
@@ -183,7 +183,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Centos7】Docker
+          Docker
         </h1>
 
         <div class="post-meta">
@@ -200,7 +200,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 13:00:49" itemprop="dateModified" datetime="2020-12-31T13:00:49+08:00">2020-12-31</time>
+                <time title="修改时间：2021-09-17 16:58:21" itemprop="dateModified" datetime="2021-09-17T16:58:21+08:00">2021-09-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -229,21 +229,16 @@
 <a id="more"></a>
 
 <h1 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h1><ul>
-<li>它类似沙盒，沙盒里面放着一堆集装箱，每个集装箱相互独立互不影响，拥有独立的运行环境</li>
-<li>Docker 主要解决了运维问题，它能将应用所需环境都封装起来打包成一个镜像，然后交给 Docker 沙盒托管，减少运维成本</li>
+<li>Docker 能将应用和环境打包成一个 Image，然后交给 Docker 托管，减少运维成本</li>
 <li>实现 DevOps 完成代码自动测试、发布、打包为镜像最后发布到服务器的 CI/CD 流程</li>
 <li>Docker 基于 Golang 开发</li>
-<li>能快速的迭代运行环境与应用版本，只需要修改配置文件批量更新即可</li>
-<li>支持横向扩展，例如高并发的情况下业务后端处理不过来时可以一键开启 N 个相同的业务镜像进行负载均衡</li>
 </ul>
 <h1 id="Docker-与-VM-的区别"><a href="#Docker-与-VM-的区别" class="headerlink" title="Docker 与 VM 的区别"></a>Docker 与 VM 的区别</h1><ul>
 <li><strong>Docker 是使用 Linux 中的 namespace 实现的</strong></li>
 <li>VM 过于笨重，使用硬件模拟出一台虚拟主机，占用物理机资源</li>
-<li>Docker 直接使用物理机资源运行镜像，镜像大小很小</li>
-<li>性能上使用 VM 可能开 3 个就卡，Docker 可以开 30 个不卡</li>
-<li>Linux 111 服务器上可以做到开启几十个镜像服务，相同配置下用 Windows 服务器开一个 VM 都卡死</li>
+<li>Docker 直接使用物理机资源运行镜像，镜像很小</li>
 </ul>
-
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 停止所有容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker stop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有停止的容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker rm</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有 none 镜像</span></span><br><span class="line">docker images | grep none | awk <span class="string">&#x27;&#123;print $3 &#125;&#x27;</span> | xargs docker rmi</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定端口启动</span></span><br><span class="line">docker run -p 宿主端口:容器端口 image名 [-d（后台运行）]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 后台模式转前台</span></span><br><span class="line">docker attach 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查看后台模式日志</span></span><br><span class="line">docker logs [-f（跟踪）] 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 进入交互模式</span></span><br><span class="line">docker exec -it 容器名</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -323,7 +318,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">Docker 是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-%E4%B8%8E-VM-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">Docker 与 VM 的区别</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">Docker 是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-%E4%B8%8E-VM-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">Docker 与 VM 的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">常用命令</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -338,7 +333,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/MyBlog/archives">
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
