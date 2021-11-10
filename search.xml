@@ -32,77 +32,6 @@
       </categories>
   </entry>
   <entry>
-    <title>多线程 / 异步 / CPU与IO</title>
-    <url>/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5CPU%E4%B8%8EIO/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="CPU-Cache（SRAM）"><a href="#CPU-Cache（SRAM）" class="headerlink" title="CPU Cache（SRAM）"></a>CPU Cache（SRAM）</h1><ul>
-<li>CPU Cache 存在的目的就是为了解决内存向 CPU 传输过慢导致的性能问题。CPU Cache 是内存与 CPU 的变压器，它比内存快，CPU 先从 CPU Cache 里找数据，如果没有才到内存找</li>
-<li>CPU Cache 分为 L1 / L2 / L3，顺序模式调用，最后到内存</li>
-<li>所有物理核都包含 L1 / L2，但共享 L3</li>
-</ul>
-<h2 id="内存（DRAM）"><a href="#内存（DRAM）" class="headerlink" title="内存（DRAM）"></a>内存（DRAM）</h2><ul>
-<li>内存是按块存储，读取的时候是将整块数据缓存到 L3，每块 64 byte 大小</li>
-</ul>
-<h3 id="Cache-line-对齐"><a href="#Cache-line-对齐" class="headerlink" title="Cache line 对齐"></a>Cache line 对齐</h3><ul>
-<li>如果数据在同一个内存块，在 CPU 处理时会互相通信确认一致性导致耗时，不在同一块内存则不需要通信</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 测试代码</span></span><br><span class="line"><span class="comment">// debug 环境</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">My</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 注释第一、第三行速度会明显不同</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> a, b, c, d, e, f, g;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> A &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> h, i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">Program</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        mies[<span class="number">0</span>] = <span class="keyword">new</span> My();</span><br><span class="line">        mies[<span class="number">1</span>] = <span class="keyword">new</span> My();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">const</span> <span class="built_in">long</span> MAR = <span class="number">100</span>_000_000L;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> My[] mies = <span class="keyword">new</span> My[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread1.Start(mies[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread2.Start(mies[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">        Console.ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MathA</span>(<span class="params"><span class="built_in">object</span> my</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> stopwatch = <span class="keyword">new</span> Stopwatch();</span><br><span class="line">        stopwatch.Start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> mine = (My)my;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; MAR; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            mine.A += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stopwatch.Stop();</span><br><span class="line">        Console.WriteLine(<span class="string">$&quot;<span class="subst">&#123;<span class="keyword">nameof</span>(my)&#125;</span> OK - <span class="subst">&#123;stopwatch.ElapsedMilliseconds&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
-<li>单线程应用：只在主线程运行</li>
-<li>多线程应用：在主线程中调用多个子线程运行</li>
-<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行；一般情况下是单核单线程，如果执行速度很快可能产生伪多线程效果</strong></li>
-<li>不要人为通过延时操控线程执行顺序</li>
-<li>花费大量时间数据传输称为 I/O-Bound</li>
-<li>花费大量时间用 CPU 计算叫 CPU-Bound</li>
-<li><strong>不同线程影响同一变量称为非线程安全</strong></li>
-<li>子线程异常无法被主线程捕获</li>
-<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
-<li>线程效率并不是线性增长，它还需要一些管理成本</li>
-</ul>
-<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
-<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
-<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;asd&quot;</span>;</span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 局部变量</span></span><br><span class="line">        <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!done)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(lee);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    threadStart(str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
-<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
-<li>一般使用 lock 关键字来实现线程安全</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">object</span> _lock = <span class="keyword">new</span> <span class="built_in">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
-<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;等待接收信号！此时阻塞线程&quot;</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;接收到信号！&quot;</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
-<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
-<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
-<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
-<li>最简单的执行线程池的方式就是 Task.Run</li>
-<li><strong>超额订阅：活跃的线程超过 CPU 的物理核数，系统就会分割线程的运行时间</strong></li>
-<li>CLR 通过队列限流防止超额订阅</li>
-</ul>
-<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
-<li>.Net 4.0 可以用 Task.Factory 来使用 Task</li>
-<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
-<li>await 关键字就是 Task.Wait</li>
-<li>如果 Task 还未完成，调用 Task.Result 会阻塞并等待其完成</li>
-<li>如果在 Task 方法块里抛出了一个异常，那么该异常就会抛给 await 或 Task.Result 的地方；如果不想让它抛出异常可以判断 Task 的 IsFaulted 或 IsCanceled 属性</li>
-<li>Continuation 允许 Task 执行完毕后继续执行其它代码</li>
-</ul>
-<h2 id="针对长时间的-IO-操作不采用线程池"><a href="#针对长时间的-IO-操作不采用线程池" class="headerlink" title="针对长时间的 IO 操作不采用线程池"></a>针对长时间的 IO 操作不采用线程池</h2><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> task = Task.Factory.StartNew(() =&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 需要长时间运行的代码</span></span><br><span class="line"></span><br><span class="line">&#125;, TaskCreationOptions.LongRunning);</span><br></pre></td></tr></table></figure>
-<h1 id="Async-Await"><a href="#Async-Await" class="headerlink" title="Async / Await"></a>Async / Await</h1><ul>
-<li>await 关键字简化了 Continuation 的过程</li>
-<li>await 会将结果返回给调用者</li>
-</ul>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// await 其实是实现了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = x.GetAwaiter();</span><br><span class="line">a.OnCompleted(() =&gt; &#123;</span><br><span class="line">    <span class="keyword">var</span> result = a.GetResult();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>CShard</category>
-      </categories>
-  </entry>
-  <entry>
     <title>语言基础</title>
     <url>/MyBlog/2020/06/05/CShard-Nutshell-1/</url>
     <content><![CDATA[<blockquote>
@@ -178,26 +107,85 @@
       </categories>
   </entry>
   <entry>
-    <title>Docker</title>
-    <url>/MyBlog/2020/07/25/Linux-Docker/</url>
+    <title>语言基础2</title>
+    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>《CShard 核心技术指南》笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>多线程 / 异步 / CPU与IO</title>
+    <url>/MyBlog/2020/06/24/CShard-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5CPU%E4%B8%8EIO/</url>
     <content><![CDATA[<blockquote>
 <p>点击查看更多</p>
 </blockquote>
 <a id="more"></a>
 
-<h1 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h1><ul>
-<li>Docker 能将应用和环境打包成一个 Image，然后交给 Docker 托管，减少运维成本</li>
-<li>实现 DevOps 完成代码自动测试、发布、打包为镜像最后发布到服务器的 CI/CD 流程</li>
-<li>Docker 基于 Golang 开发</li>
+<h1 id="CPU-Cache（SRAM）"><a href="#CPU-Cache（SRAM）" class="headerlink" title="CPU Cache（SRAM）"></a>CPU Cache（SRAM）</h1><ul>
+<li>CPU Cache 存在的目的就是为了解决内存向 CPU 传输过慢导致的性能问题。CPU Cache 是内存与 CPU 的变压器，它比内存快，CPU 先从 CPU Cache 里找数据，如果没有才到内存找</li>
+<li>CPU Cache 分为 L1 / L2 / L3，顺序模式调用，最后到内存</li>
+<li>所有物理核都包含 L1 / L2，但共享 L3</li>
 </ul>
-<h1 id="Docker-与-VM-的区别"><a href="#Docker-与-VM-的区别" class="headerlink" title="Docker 与 VM 的区别"></a>Docker 与 VM 的区别</h1><ul>
-<li><strong>Docker 是使用 Linux 中的 namespace 实现的</strong></li>
-<li>VM 过于笨重，使用硬件模拟出一台虚拟主机，占用物理机资源</li>
-<li>Docker 直接使用物理机资源运行镜像，镜像很小</li>
+<h2 id="内存（DRAM）"><a href="#内存（DRAM）" class="headerlink" title="内存（DRAM）"></a>内存（DRAM）</h2><ul>
+<li>内存是按块存储，读取的时候是将整块数据缓存到 L3，每块 64 byte 大小</li>
 </ul>
-<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 停止所有容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker stop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有停止的容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker rm</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有 none 镜像</span></span><br><span class="line">docker images | grep none | awk <span class="string">&#x27;&#123;print $3 &#125;&#x27;</span> | xargs docker rmi</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定端口启动</span></span><br><span class="line">docker run -p 宿主端口:容器端口 image名 [-d（后台运行）]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 后台模式转前台</span></span><br><span class="line">docker attach 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查看后台模式日志</span></span><br><span class="line">docker logs [-f（跟踪）] 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 进入交互模式</span></span><br><span class="line">docker exec -it 容器名</span><br></pre></td></tr></table></figure>]]></content>
+<h3 id="Cache-line-对齐"><a href="#Cache-line-对齐" class="headerlink" title="Cache line 对齐"></a>Cache line 对齐</h3><ul>
+<li>如果数据在同一个内存块，在 CPU 处理时会互相通信确认一致性导致耗时，不在同一块内存则不需要通信</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 测试代码</span></span><br><span class="line"><span class="comment">// debug 环境</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">My</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 注释第一、第三行速度会明显不同</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> a, b, c, d, e, f, g;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> A &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">long</span> h, i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">Program</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        mies[<span class="number">0</span>] = <span class="keyword">new</span> My();</span><br><span class="line">        mies[<span class="number">1</span>] = <span class="keyword">new</span> My();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">const</span> <span class="built_in">long</span> MAR = <span class="number">100</span>_000_000L;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> My[] mies = <span class="keyword">new</span> My[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread1.Start(mies[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ParameterizedThreadStart(MathA));</span><br><span class="line">        thread2.Start(mies[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">        Console.ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MathA</span>(<span class="params"><span class="built_in">object</span> my</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> stopwatch = <span class="keyword">new</span> Stopwatch();</span><br><span class="line">        stopwatch.Start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> mine = (My)my;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; MAR; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            mine.A += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stopwatch.Stop();</span><br><span class="line">        Console.WriteLine(<span class="string">$&quot;<span class="subst">&#123;<span class="keyword">nameof</span>(my)&#125;</span> OK - <span class="subst">&#123;stopwatch.ElapsedMilliseconds&#125;</span>&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><ul>
+<li>单线程应用：只在主线程运行</li>
+<li>多线程应用：在主线程中调用多个子线程运行</li>
+<li><strong>在单核服务器上线程会以时间块分段执行，在多核服务器上线程可以并行执行；一般情况下是单核单线程，如果执行速度很快可能产生伪多线程效果</strong></li>
+<li>不要人为通过延时操控线程执行顺序</li>
+<li>花费大量时间数据传输称为 I/O-Bound</li>
+<li>花费大量时间用 CPU 计算叫 CPU-Bound</li>
+<li><strong>不同线程影响同一变量称为非线程安全</strong></li>
+<li>子线程异常无法被主线程捕获</li>
+<li>默认情况下创建的是前台线程，前台线程需要等待运行；后台线程不需要等待，生命周期随主线程的终止而终止</li>
+<li>线程效率并不是线性增长，它还需要一些管理成本</li>
+</ul>
+<h1 id="线程的运行流程"><a href="#线程的运行流程" class="headerlink" title="线程的运行流程"></a>线程的运行流程</h1><p><img src="https://tagost.aiur.site/blog-imgs/thread/1.png" alt="线程的运行流程"></p>
+<h1 id="关于匿名委托的闭包变量传递"><a href="#关于匿名委托的闭包变量传递" class="headerlink" title="关于匿名委托的闭包变量传递"></a>关于匿名委托的闭包变量传递</h1><ul>
+<li>在匿名委托中，因为方法是闭包的，所以引入的局部变量会被编译为成员变量。如果是以参数形式传入则不会</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">&quot;asd&quot;</span>;</span><br><span class="line"></span><br><span class="line">    Action&lt;<span class="built_in">string</span>&gt; threadStart = (str) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 局部变量</span></span><br><span class="line">        <span class="keyword">var</span> lee = str;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!done)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(lee);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    threadStart(str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://tagost.aiur.site/blog-imgs/thread/2.png" alt="IL"></p>
+<h1 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h1><ul>
+<li>一般使用 lock 关键字来实现线程安全</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">object</span> _lock = <span class="keyword">new</span> <span class="built_in">object</span>();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Get</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span>(_lock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><ul>
+<li>就像在线程执行的过程中加了一把锁，满足条件后解锁</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="keyword">event</span> = <span class="keyword">new</span> MaunalResetEvent(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread() =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 阻塞线程并开始等待信号</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;等待接收信号！此时阻塞线程&quot;</span>);</span><br><span class="line">    <span class="keyword">event</span>.WaitOne();</span><br><span class="line">    <span class="keyword">event</span>.Dispose();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收到信号后运行</span></span><br><span class="line">    Console.WriteLine(<span class="string">&quot;接收到信号！&quot;</span>);</span><br><span class="line">&#125;.Start();</span><br><span class="line"></span><br><span class="line">Console.ReadKey();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开信号</span></span><br><span class="line"><span class="keyword">event</span>.Set();</span><br></pre></td></tr></table></figure>
+<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><ul>
+<li>如果是自己调用 Thread 类操作线程，那么每次创建关闭都会消耗系统资源</li>
+<li>线程池可以让软件在刚开始帮你创建 N 条线程以复用</li>
+<li>最简单的执行线程池的方式就是 Task.Run</li>
+<li><strong>超额订阅：活跃的线程超过 CPU 的物理核数，系统就会分割线程的运行时间</strong></li>
+<li>CLR 通过队列限流防止超额订阅</li>
+</ul>
+<h1 id="TASK"><a href="#TASK" class="headerlink" title="TASK"></a>TASK</h1><ul>
+<li>.Net 4.0 可以用 Task.Factory 来使用 Task</li>
+<li>Task 默认使用后台线程池，所以当主线程结束 Task 也会结束</li>
+<li>await 关键字就是 Task.Wait</li>
+<li>如果 Task 还未完成，调用 Task.Result 会阻塞并等待其完成</li>
+<li>如果在 Task 方法块里抛出了一个异常，那么该异常就会抛给 await 或 Task.Result 的地方；如果不想让它抛出异常可以判断 Task 的 IsFaulted 或 IsCanceled 属性</li>
+<li>Continuation 允许 Task 执行完毕后继续执行其它代码</li>
+</ul>
+<h2 id="针对长时间的-IO-操作不采用线程池"><a href="#针对长时间的-IO-操作不采用线程池" class="headerlink" title="针对长时间的 IO 操作不采用线程池"></a>针对长时间的 IO 操作不采用线程池</h2><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> task = Task.Factory.StartNew(() =&gt;</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// 需要长时间运行的代码</span></span><br><span class="line"></span><br><span class="line">&#125;, TaskCreationOptions.LongRunning);</span><br></pre></td></tr></table></figure>
+<h1 id="Async-Await"><a href="#Async-Await" class="headerlink" title="Async / Await"></a>Async / Await</h1><ul>
+<li>await 关键字简化了 Continuation 的过程</li>
+<li>await 会将结果返回给调用者</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// await 其实是实现了</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = x.GetAwaiter();</span><br><span class="line">a.OnCompleted(() =&gt; &#123;</span><br><span class="line">    <span class="keyword">var</span> result = a.GetResult();</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Linux</category>
+        <category>CShard</category>
       </categories>
   </entry>
   <entry>
@@ -258,6 +246,29 @@
 <h1 id="Varchar-自动增长列"><a href="#Varchar-自动增长列" class="headerlink" title="Varchar 自动增长列"></a>Varchar 自动增长列</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">--编号总共12位，由字母DC+年月+4位数字编号组成（如DC2017070001），必须唯一，在新增时自动生成，数字编号自动增长</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> F_GetUUID()</span><br><span class="line"><span class="keyword">returns</span> <span class="type">varchar</span>(<span class="number">12</span>) <span class="keyword">as</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--变量</span></span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@nowtime</span> datetime</span><br><span class="line"><span class="keyword">declare</span> <span class="variable">@newUUID</span> <span class="type">varchar</span>(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> <span class="variable">@nowtime</span> <span class="operator">=</span> GETDATE()</span><br><span class="line"></span><br><span class="line"><span class="comment">--1、获取当前年份并转换为varchar</span></span><br><span class="line"><span class="comment">--2、获取月份（因为MONTH获取的是没有0的月所以要进行截取）</span></span><br><span class="line"><span class="comment">--3、获取Test表内的最大值ID并截取右4位，如果为NULL则返回0。之后与10000相加为4位数字编号原值并加1变成新ID，之后再截取右4位得到新ID</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span></span><br><span class="line"><span class="variable">@newUUID</span> <span class="operator">=</span> <span class="string">&#x27;DC&#x27;</span><span class="operator">+</span><span class="keyword">CONVERT</span>(<span class="type">varchar</span>,<span class="keyword">YEAR</span>(<span class="variable">@nowtime</span>))<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">100</span><span class="operator">+</span><span class="keyword">MONTH</span>(<span class="variable">@nowtime</span>),<span class="number">2</span>)<span class="operator">+</span><span class="keyword">RIGHT</span>(<span class="number">10000</span><span class="operator">+</span>ISNULL(<span class="keyword">RIGHT</span>(<span class="built_in">max</span>(uuid),<span class="number">4</span>),<span class="number">0</span>)<span class="operator">+</span><span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">from</span> Test</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="variable">@newUUID</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">go</span><br><span class="line"></span><br><span class="line"><span class="comment">--设置列默认值</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> Test</span><br><span class="line"><span class="keyword">add</span> <span class="keyword">default</span> ([dbo].F_GetUUID()) <span class="keyword">for</span> uuID</span><br><span class="line">go</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>MSSQL</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker</title>
+    <url>/MyBlog/2020/07/25/Linux-Docker/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Docker-是什么？"><a href="#Docker-是什么？" class="headerlink" title="Docker 是什么？"></a>Docker 是什么？</h1><ul>
+<li>Docker 能将应用和环境打包成一个 Image，然后交给 Docker 托管，减少运维成本</li>
+<li>实现 DevOps 完成代码自动测试、发布、打包为镜像最后发布到服务器的 CI/CD 流程</li>
+<li>Docker 基于 Golang 开发</li>
+</ul>
+<h1 id="Docker-与-VM-的区别"><a href="#Docker-与-VM-的区别" class="headerlink" title="Docker 与 VM 的区别"></a>Docker 与 VM 的区别</h1><ul>
+<li><strong>Docker 是使用 Linux 中的 namespace 实现的</strong></li>
+<li>VM 过于笨重，使用硬件模拟出一台虚拟主机，占用物理机资源</li>
+<li>Docker 直接使用物理机资源运行镜像，镜像很小</li>
+</ul>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 停止所有容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker stop</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有停止的容器</span></span><br><span class="line">docker ps -a | grep <span class="string">&quot;Exited&quot;</span> | awk <span class="string">&#x27;&#123;print $1 &#125;&#x27;</span> | xargs docker rm</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除所有 none 镜像</span></span><br><span class="line">docker images | grep none | awk <span class="string">&#x27;&#123;print $3 &#125;&#x27;</span> | xargs docker rmi</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定端口启动</span></span><br><span class="line">docker run -p 宿主端口:容器端口 image名 [-d（后台运行）]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 后台模式转前台</span></span><br><span class="line">docker attach 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查看后台模式日志</span></span><br><span class="line">docker logs [-f（跟踪）] 容器id</span><br><span class="line"></span><br><span class="line"><span class="comment">// 进入交互模式</span></span><br><span class="line">docker exec -it 容器名</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
       </categories>
   </entry>
   <entry>
@@ -414,21 +425,6 @@
       </categories>
   </entry>
   <entry>
-    <title>Automapper 10.1 配置代码</title>
-    <url>/MyBlog/2021/04/22/%E5%85%B6%E5%AE%83-Automapper/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="单独配置文件-Profile"><a href="#单独配置文件-Profile" class="headerlink" title="单独配置文件 Profile"></a>单独配置文件 Profile</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserProfile</span> : <span class="title">Profile</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserProfile</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        CreateMap&lt;T_User, UserDTO&gt;()</span><br><span class="line">            .ReverseMap();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="Asp-net-Core-Startup-ConfigureServices"><a href="#Asp-net-Core-Startup-ConfigureServices" class="headerlink" title="Asp.net Core Startup ConfigureServices"></a>Asp.net Core Startup ConfigureServices</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Automapper 配置</span></span><br><span class="line"><span class="keyword">var</span> assemblies = <span class="keyword">new</span> Assembly[] &#123;</span><br><span class="line">    Assembly.Load(<span class="string">@&quot;MyFrame.Infrastructure&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">services.AddAutoMapper(cfg =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    cfg.ForAllMaps((_, cfg) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        cfg.ForAllMembers(options =&gt; options.Condition((_, _, <span class="keyword">value</span>) =&gt; <span class="keyword">value</span> != <span class="literal">null</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;, assemblies);</span><br></pre></td></tr></table></figure>
-<h1 id="注入-IMapper-使用"><a href="#注入-IMapper-使用" class="headerlink" title="注入 IMapper 使用"></a>注入 IMapper 使用</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> IMapper mapper;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HomeController</span>(<span class="params">IMapper mapper</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> entity = <span class="keyword">new</span> T_User()</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;实体到DTO&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dto = <span class="keyword">new</span> UserDTO</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;DTO到实体&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> s = mapper.Map&lt;UserDTO&gt;(entity);</span><br><span class="line">    <span class="keyword">var</span> d = mapper.Map&lt;T_User&gt;(dto);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Ok(<span class="keyword">new</span> &#123; a = s, b = d &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-  </entry>
-  <entry>
     <title>缓存穿透/布隆过滤器/分布式锁</title>
     <url>/MyBlog/2020/07/06/Redis-%E7%BC%93%E5%AD%98%E5%B8%83%E9%9A%86%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
     <content><![CDATA[<blockquote>
@@ -532,6 +528,21 @@
 <h1 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h1><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ==================== 全局配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程数 = CPU 核心数</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== 最大连接数</span></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ==================== HTTP 配置</span></span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 组合文件名，相当于分层管理追加文件</span></span><br><span class="line">    <span class="attribute">include</span>       mime.types;</span><br><span class="line">    <span class="attribute">default_type</span>  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每条连接的生命周期</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 是否开启动态压缩</span></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">## ==================== 端口监听</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 负载均衡</span></span><br><span class="line">    <span class="attribute">upstream</span> 域名 &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听端口</span></span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 监听 URI</span></span><br><span class="line">        <span class="attribute">server_name</span>  域名;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">### ==================== 监听域名后缀</span></span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开启静态 gzip 文件识别</span></span><br><span class="line">            <span class="attribute">gzip_static</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="attribute">root</span> html;</span><br><span class="line">            <span class="attribute">index</span>  index.html;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 开枪 vue 路由识别</span></span><br><span class="line">            <span class="attribute">try_files</span> $uri $uri/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> /global &#123;</span><br><span class="line">            <span class="attribute">root</span> /;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTPS server</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment">#server &#123;</span></span><br><span class="line">    <span class="comment">#    listen       443 ssl;</span></span><br><span class="line">    <span class="comment">#    server_name  localhost;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_certificate      cert.pem;</span></span><br><span class="line">    <span class="comment">#    ssl_certificate_key  cert.key;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_session_cache    shared:SSL:1m;</span></span><br><span class="line">    <span class="comment">#    ssl_session_timeout  5m;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    ssl_ciphers  HIGH:!aNULL:!MD5;</span></span><br><span class="line">    <span class="comment">#    ssl_prefer_server_ciphers  on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#    location / &#123;</span></span><br><span class="line">    <span class="comment">#        root   html;</span></span><br><span class="line">    <span class="comment">#        index  index.html index.htm;</span></span><br><span class="line">    <span class="comment">#    &#125;</span></span><br><span class="line">    <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>中间件</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Automapper 10.1 配置代码</title>
+    <url>/MyBlog/2021/04/22/%E5%85%B6%E5%AE%83-Automapper/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="单独配置文件-Profile"><a href="#单独配置文件-Profile" class="headerlink" title="单独配置文件 Profile"></a>单独配置文件 Profile</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserProfile</span> : <span class="title">Profile</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserProfile</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        CreateMap&lt;T_User, UserDTO&gt;()</span><br><span class="line">            .ReverseMap();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Asp-net-Core-Startup-ConfigureServices"><a href="#Asp-net-Core-Startup-ConfigureServices" class="headerlink" title="Asp.net Core Startup ConfigureServices"></a>Asp.net Core Startup ConfigureServices</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Automapper 配置</span></span><br><span class="line"><span class="keyword">var</span> assemblies = <span class="keyword">new</span> Assembly[] &#123;</span><br><span class="line">    Assembly.Load(<span class="string">@&quot;MyFrame.Infrastructure&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">services.AddAutoMapper(cfg =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    cfg.ForAllMaps((_, cfg) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        cfg.ForAllMembers(options =&gt; options.Condition((_, _, <span class="keyword">value</span>) =&gt; <span class="keyword">value</span> != <span class="literal">null</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;, assemblies);</span><br></pre></td></tr></table></figure>
+<h1 id="注入-IMapper-使用"><a href="#注入-IMapper-使用" class="headerlink" title="注入 IMapper 使用"></a>注入 IMapper 使用</h1><figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> IMapper mapper;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HomeController</span>(<span class="params">IMapper mapper</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> entity = <span class="keyword">new</span> T_User()</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;实体到DTO&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dto = <span class="keyword">new</span> UserDTO</span><br><span class="line">    &#123;</span><br><span class="line">        Account = <span class="string">&quot;DTO到实体&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> s = mapper.Map&lt;UserDTO&gt;(entity);</span><br><span class="line">    <span class="keyword">var</span> d = mapper.Map&lt;T_User&gt;(dto);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Ok(<span class="keyword">new</span> &#123; a = s, b = d &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>其它</category>
       </categories>
   </entry>
   <entry>
@@ -640,30 +651,6 @@
       </categories>
   </entry>
   <entry>
-    <title>十大排序算法</title>
-    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>七大查找算法</title>
-    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-  </entry>
-  <entry>
     <title>TDD 测试驱动开发</title>
     <url>/MyBlog/2020/07/31/%E5%85%B6%E5%AE%83-TDD/</url>
     <content><![CDATA[<blockquote>
@@ -759,6 +746,30 @@
       </categories>
   </entry>
   <entry>
+    <title>十大排序算法</title>
+    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h1 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a>计数排序</h1><h1 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a>基数排序</h1><h1 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h1>]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>七大查找算法</title>
+    <url>/MyBlog/2020/09/10/%E5%85%B6%E5%AE%83-%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+  </entry>
+  <entry>
     <title>设计模式</title>
     <url>/MyBlog/2020/08/24/%E5%85%B6%E5%AE%83-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<blockquote>
@@ -826,6 +837,27 @@
 
 <h1 id="先定义-keyframe-关键帧"><a href="#先定义-keyframe-关键帧" class="headerlink" title="先定义 @keyframe 关键帧"></a>先定义 @keyframe 关键帧</h1><figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 百分比进度的关键帧 */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@keyframes</span> my1 &#123;</span><br><span class="line">  0% &#123;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  25% &#123;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">200px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  50% &#123;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">100px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  75% &#123;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">200px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  100% &#123;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 起始到结束的关键帧 */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@keyframes</span> my2 &#123;</span><br><span class="line">  <span class="selector-tag">from</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="selector-tag">to</span> &#123;</span><br><span class="line">    color yellow;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="然后定义-animation-动画引用关键帧"><a href="#然后定义-animation-动画引用关键帧" class="headerlink" title="然后定义 animation 动画引用关键帧"></a>然后定义 animation 动画引用关键帧</h1><figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">  <span class="comment">/* 引用关键帧名 */</span></span><br><span class="line">  <span class="attribute">animation-name</span>: my1;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 完成动画的时间 */</span></span><br><span class="line">  <span class="attribute">animation-duration</span>: <span class="number">2s</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 开始延迟 */</span></span><br><span class="line">  <span class="attribute">animation-delay</span>: <span class="number">0s</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 是否反向播放 */</span></span><br><span class="line">  <span class="attribute">animation-direction</span>: normal 否 | alternate 是;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 播放次数 */</span></span><br><span class="line">  <span class="attribute">animation-iteration-count</span>: n | infinite 循环;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 播放速度 */</span></span><br><span class="line">  <span class="attribute">animation-timing-function</span>: linear 恒定 | ease 默认 | ease-in 逐渐变快 |</span><br><span class="line">    ease-out 逐渐变慢 | ease-in-out 开始与结束慢，中间快;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>TypeScript 语法</title>
+    <url>/MyBlog/2020/08/05/%E5%89%8D%E7%AB%AF-TypeScript%E8%AF%AD%E6%B3%95/</url>
+    <content><![CDATA[<blockquote>
+<p>点击查看更多</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
+<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
+<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
+<li>将 tsconfig.json 中的 outDir 注释取消</li>
+<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
+</ul>
+<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; <span class="attr">name</span>: <span class="string">&#x27;lee&#x27;</span>, <span class="attr">age</span>: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>前端</category>
       </categories>
@@ -928,38 +960,6 @@
 ]]></content>
       <categories>
         <category>前端</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>TypeScript 语法</title>
-    <url>/MyBlog/2020/08/05/%E5%89%8D%E7%AB%AF-TypeScript%E8%AF%AD%E6%B3%95/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>
-
-<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure>
-<h2 id="编译成-js"><a href="#编译成-js" class="headerlink" title="编译成 js"></a>编译成 js</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tsc 文件名.ts</span><br></pre></td></tr></table></figure>
-<h2 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h2><ul>
-<li>将 tsconfig.json 中的 outDir 注释取消</li>
-<li>在 vscode 终端点击运行任务 -&gt; typescript -&gt; watch</li>
-</ul>
-<h1 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h1><figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 布尔</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bool: <span class="built_in">boolean</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> num: <span class="built_in">number</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> str: <span class="built_in">string</span> = <span class="string">&#x27;!&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> num3: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 元组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr3: [<span class="built_in">string</span>, <span class="built_in">number</span>, <span class="built_in">boolean</span>] = [<span class="string">&#x27;1&#x27;</span>, <span class="number">2</span>, <span class="literal">true</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 枚举</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">enum</span> ErrorFlag &#123;</span><br><span class="line">  OK = <span class="number">1</span>,</span><br><span class="line">  UserNameError = <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 任意类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">any</span> = <span class="number">123</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 联合类型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: <span class="built_in">number</span> | <span class="literal">undefined</span> = <span class="number">1</span>; <span class="comment">// 未赋值则为 undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void 类型</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">User</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> IUser &#123;</span><br><span class="line">  GetUserInfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="方法参数"><a href="#方法参数" class="headerlink" title="方法参数"></a>方法参数</h1><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 可选参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">name?: <span class="built_in">string</span></span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象参数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Get</span>(<span class="params">userDTO: UserDTO</span>): <span class="title">void</span> </span>&#123;&#125;</span><br><span class="line">Get(&#123; <span class="attr">name</span>: <span class="string">&#x27;lee&#x27;</span>, <span class="attr">age</span>: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>语言基础2</title>
-    <url>/MyBlog/2020/06/05/CShard-Nutshell-2/</url>
-    <content><![CDATA[<blockquote>
-<p>点击查看更多</p>
-</blockquote>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>《CShard 核心技术指南》笔记</category>
       </categories>
   </entry>
   <entry>
